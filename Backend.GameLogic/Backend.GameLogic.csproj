@@ -39,6 +39,7 @@
       <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.2.0\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -50,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LobbyClientImpl.cs" />
+    <Compile Include="LobbyConnection.cs" />
     <Compile Include="LobbyConnector.cs" />
     <Compile Include="LobbyServerImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

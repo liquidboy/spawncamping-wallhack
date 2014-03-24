@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0F7EAD82-5646-47DF-A7FB-F6E06DB435E4}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{131092D2-B72C-4972-90B2-EA5FC70CF695}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Backend.LobbyServer</RootNamespace>
-    <AssemblyName>Backend.LobbyServer</AssemblyName>
+    <RootNamespace>DevelopmentSettings</RootNamespace>
+    <AssemblyName>DevelopmentSettings</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -34,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.Composition.Registration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -42,25 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LobbyServerProgram.cs" />
+    <Compile Include="EnvironmentSettingsProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Backend.GameLogic\Backend.GameLogic.csproj">
-      <Project>{a70b2016-1d1c-4e31-b887-3ecff4c27cf9}</Project>
-      <Name>Backend.GameLogic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Backend.Utils\Backend.Utils.csproj">
-      <Project>{0593f317-d7ce-4e7c-816a-f895505366d7}</Project>
-      <Name>Backend.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DevelopmentSettings\DevelopmentSettings.csproj">
-      <Project>{131092d2-b72c-4972-90b2-ea5fc70cf695}</Project>
-      <Name>DevelopmentSettings</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

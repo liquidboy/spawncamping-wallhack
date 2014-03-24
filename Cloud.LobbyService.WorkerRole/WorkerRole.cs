@@ -1,15 +1,13 @@
 namespace Cloud.LobbyService.WorkerRole
 {
-    using System;
-    using System.Collections.Generic;
+    using Backend.GameLogic;
+    using DevelopmentSettings;
+    using Microsoft.WindowsAzure.ServiceRuntime;
+    using System.ComponentModel.Composition;
+    using System.ComponentModel.Composition.Hosting;
     using System.Diagnostics;
-    using System.Linq;
     using System.Net;
     using System.Threading;
-    using Microsoft.WindowsAzure;
-    using Microsoft.WindowsAzure.Diagnostics;
-    using Microsoft.WindowsAzure.ServiceRuntime;
-    using Microsoft.WindowsAzure.Storage;
 
     public class WorkerRole : RoleEntryPoint
     {
@@ -27,6 +25,10 @@ namespace Cloud.LobbyService.WorkerRole
 
         public override bool OnStart()
         {
+            var compositionContainer = new CompositionContainer(new AggregateCatalog(
+                new AssemblyCatalog(typeof(RoleEnvironmentSettingsProvider).Assembly),
+                new AssemblyCatalog(typeof(LobbyConnector).Assembly)));
+
             // Set the maximum number of concurrent connections 
             ServicePointManager.DefaultConnectionLimit = 12;
 
@@ -36,4 +38,6 @@ namespace Cloud.LobbyService.WorkerRole
             return base.OnStart();
         }
     }
+
+ 
 }

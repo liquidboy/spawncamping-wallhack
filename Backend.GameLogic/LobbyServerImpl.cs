@@ -8,10 +8,25 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Backend.Utils.Networking.Extensions;
+    using System.ComponentModel.Composition;
 
-    public class LobbyServerImpl
+    [Export(typeof(LobbyServerImpl))]
+    public class LobbyServerImpl : IPartImportsSatisfiedNotification
     {
         public LobbyServerImpl() { }
+
+        [Import]
+        public LobbyConnector LobbyConnector { get; set; }
+
+        void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
+        { 
+            InitAsync().Wait(); 
+        }
+
+        public async Task InitAsync()
+        {
+            await this.LobbyConnector.EnsureSetupAsync();
+        }
 
         public async Task HandleClient(TcpClient tcpClient, CancellationToken ct)
         {
@@ -21,28 +36,5 @@
         }
     }
 
-    public class LobbyConnection
-    {
-        private readonly TcpClient tcpClient;
-
-        public LobbyConnection(TcpClient tcpClient)
-        {
-            this.tcpClient = tcpClient;
-        }
-
-        public async Task Handlerequest()
-        {
-            Socket socket = tcpClient.Client;
-
-            var clientId = await JoinLobbyAsync(socket);
-            Console.WriteLine("Connect from client {0}", clientId);
-        }
-
-        public async Task<int> JoinLobbyAsync(Socket socket)
-        {
-            var clientId = await socket.ReadInt32Async();
-
-            return clientId;
-        }
-    }
+   
 }
