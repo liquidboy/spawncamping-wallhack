@@ -14,7 +14,7 @@
             }
         }
 
-        [Import("LobbyServiceInstanceId")]
+        [Export("LobbyServiceInstanceId")]
         public string LobbyServiceInstanceId
         {
             get
