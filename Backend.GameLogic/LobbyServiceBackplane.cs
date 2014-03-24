@@ -20,25 +20,35 @@
 
         public LobbyServiceBackplane() { }
 
-        void IPartImportsSatisfiedNotification.OnImportsSatisfied() { }
+        void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
+        {
+            this._namespaceManager = NamespaceManager.CreateFromConnectionString(this.ServiceBusCredentials);
+        }
+
+        private NamespaceManager _namespaceManager;
 
         private const string LobbyServiceTopic = "LobbyServiceTopic";
 
         public async Task EnsureSetupAsync()    
         {
-            var namespaceManager = NamespaceManager.CreateFromConnectionString(this.ServiceBusCredentials);
-
-            if (!await namespaceManager.TopicExistsAsync(LobbyServiceTopic))
+            if (!await _namespaceManager.TopicExistsAsync(LobbyServiceTopic))
             {
-                await namespaceManager.CreateTopicAsync(LobbyServiceTopic);
+                await _namespaceManager.CreateTopicAsync(LobbyServiceTopic);
             }
 
-            await namespaceManager.CreateSubscriptionAsync(new SubscriptionDescription(
+            await _namespaceManager.CreateSubscriptionAsync(new SubscriptionDescription(
                 topicPath: LobbyServiceTopic, 
                 subscriptionName: this.LobbyServiceInstanceId)
             {
                 AutoDeleteOnIdle = TimeSpan.FromMinutes(5)
             });
+        }
+
+        public async Task DetachAsync()
+        {
+            await _namespaceManager.DeleteSubscriptionAsync(
+                topicPath: LobbyServiceTopic, 
+                name: this.LobbyServiceInstanceId);
         }
     }
 }

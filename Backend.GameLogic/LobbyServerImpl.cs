@@ -29,5 +29,9 @@
 
             await connection.Handlerequest();
         }
+        public async Task ShutDownAsync()
+        {
+            await this.LobbyConnector.DetachAsync();
+        }
     }
 }

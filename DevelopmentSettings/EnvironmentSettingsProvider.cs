@@ -20,12 +20,12 @@
         }
 
 
-        [Import("LobbyServiceInstanceId")]
+        [Export("LobbyServiceInstanceId")]
         public string LobbyServiceInstanceId
         {
             get
             {
-                return "development-lobby-service-" + Guid.NewGuid();
+                return "dev-" + Guid.NewGuid();
             }
         }
     }

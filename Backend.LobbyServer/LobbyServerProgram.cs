@@ -19,22 +19,18 @@
             var server = new AsyncServerHost(ipAddress: IPAddress.Loopback, port: 3000);
 
             var compositionContainer = new CompositionContainer(new AggregateCatalog(
-                new TypeCatalog(typeof(LobbyServiceBackplane), typeof(LobbyServerImpl), typeof(EnvironmentSettingsProvider))
-                //new AssemblyCatalog(typeof(DevelopmentSettings.EnvironmentSettingsProvider).Assembly),
-                //new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly)
+                // new TypeCatalog(typeof(LobbyServiceBackplane), typeof(LobbyServerImpl), typeof(EnvironmentSettingsProvider))
+                new AssemblyCatalog(typeof(DevelopmentSettings.EnvironmentSettingsProvider).Assembly),
+                new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly)
                 ));
-
-
-            var x = compositionContainer.GetExportedValue<string>("ServiceBusCredentials");
-            var x2 = compositionContainer.GetExportedValue<string>("LobbyServiceInstanceId");
-
-            var bp = compositionContainer.GetExportedValue<LobbyServiceBackplane>();
 
             var lobbyServerImpl = compositionContainer.GetExportedValue<LobbyServerImpl>();
             Task t = server.Start(lobbyServerImpl.HandleClient, cts.Token);
 
             Console.ReadLine();
             cts.Cancel();
+
+            lobbyServerImpl.ShutDownAsync().Wait();
         }
     }
 }
