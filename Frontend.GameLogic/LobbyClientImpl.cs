@@ -4,6 +4,7 @@
     using System.Net;
     using System.Net.Sockets;
     using System.Threading.Tasks;
+    using Backend.Utils.Networking.Extensions;
 
     public class LobbyClientImpl
     {
@@ -32,11 +33,15 @@
         {
             await client.ConnectAsync(this._ipAddress, this._port);
             await LogAsync("connected to lobby");
+
         }
 
         public async Task JoinLobby()
         {
             await LogAsync("try to join to lobby");
+
+            int clientId = 13;
+            await client.Client.WriteAsync(clientId);
         }
     }
 }

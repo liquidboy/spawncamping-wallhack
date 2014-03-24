@@ -11,12 +11,13 @@
 
     public class LobbyServerImpl
     {
-        public async Task Server(TcpClient serverSocket, CancellationToken ct)
+        public async Task HandleClient(TcpClient serverSocket, CancellationToken ct)
         {
             Socket socket = serverSocket.Client;
 
             var clientId = await socket.ReadInt32Async();
-            
+
+            Console.WriteLine("Connect from client {0}", clientId);
         }
     }
 }

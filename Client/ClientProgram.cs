@@ -35,7 +35,6 @@
 
             await lobbyClient.ConnectAsync();
             await lobbyClient.JoinLobby();
-
         }
     }
 }

@@ -18,7 +18,7 @@
             var server = new AsyncServerHost(ipAddress: IPAddress.Loopback, port: 3000);
 
             var lobbyServerImpl = new LobbyServerImpl();
-            Task t = server.Start(lobbyServerImpl.Server, cts.Token);
+            Task t = server.Start(lobbyServerImpl.HandleClient, cts.Token);
 
             Console.ReadLine();
             cts.Cancel();
