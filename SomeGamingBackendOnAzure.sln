@@ -25,6 +25,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3D88DE
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Cloud.LobbyService", "Cloud.LobbyService\Cloud.LobbyService.ccproj", "{B1E50017-7763-49C0-951F-2D7A2BF28A8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cloud.LobbyService.WorkerRole", "Cloud.LobbyService.WorkerRole\Cloud.LobbyService.WorkerRole.csproj", "{58ABC7F0-EA51-41D7-8B76-6E5D930F6F77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{30F81D4D-6B84-4DB4-94DA-4CB5D58EA509}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30F81D4D-6B84-4DB4-94DA-4CB5D58EA509}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30F81D4D-6B84-4DB4-94DA-4CB5D58EA509}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1E50017-7763-49C0-951F-2D7A2BF28A8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1E50017-7763-49C0-951F-2D7A2BF28A8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1E50017-7763-49C0-951F-2D7A2BF28A8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1E50017-7763-49C0-951F-2D7A2BF28A8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58ABC7F0-EA51-41D7-8B76-6E5D930F6F77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58ABC7F0-EA51-41D7-8B76-6E5D930F6F77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58ABC7F0-EA51-41D7-8B76-6E5D930F6F77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58ABC7F0-EA51-41D7-8B76-6E5D930F6F77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
