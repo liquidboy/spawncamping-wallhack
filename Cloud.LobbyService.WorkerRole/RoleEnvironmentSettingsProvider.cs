@@ -13,5 +13,14 @@
                 return RoleEnvironment.GetConfigurationSettingValue("ServiceBusCredentials");
             }
         }
+
+        [Import("LobbyServiceInstanceId")]
+        public string LobbyServiceInstanceId
+        {
+            get
+            {
+                return RoleEnvironment.DeploymentId + "-" + RoleEnvironment.CurrentRoleInstance.Id;
+            }
+        }
     }
 }

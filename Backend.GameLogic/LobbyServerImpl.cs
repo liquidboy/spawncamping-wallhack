@@ -1,22 +1,17 @@
 ﻿namespace Backend.GameLogic
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    using System.ComponentModel.Composition;
     using System.Net.Sockets;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Backend.Utils.Networking.Extensions;
-    using System.ComponentModel.Composition;
 
-    [Export(typeof(LobbyServerImpl))]
+    [Export]
     public class LobbyServerImpl : IPartImportsSatisfiedNotification
     {
         public LobbyServerImpl() { }
 
-        [Import]
-        public LobbyConnector LobbyConnector { get; set; }
+        [Import(typeof(LobbyServiceBackplane))]
+        public LobbyServiceBackplane LobbyConnector { get; set; }
 
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
         { 
@@ -35,6 +30,4 @@
             await connection.Handlerequest();
         }
     }
-
-   
 }

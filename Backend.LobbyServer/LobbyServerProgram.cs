@@ -2,6 +2,7 @@
 {
     using Backend.GameLogic;
     using Backend.Utils.Networking;
+    using DevelopmentSettings;
     using System;
     using System.ComponentModel.Composition.Hosting;
     using System.Net;
@@ -18,8 +19,16 @@
             var server = new AsyncServerHost(ipAddress: IPAddress.Loopback, port: 3000);
 
             var compositionContainer = new CompositionContainer(new AggregateCatalog(
-                new AssemblyCatalog(typeof(DevelopmentSettings.EnvironmentSettingsProvider).Assembly),
-                new AssemblyCatalog(typeof(LobbyConnector).Assembly)));
+                new TypeCatalog(typeof(LobbyServiceBackplane), typeof(LobbyServerImpl), typeof(EnvironmentSettingsProvider))
+                //new AssemblyCatalog(typeof(DevelopmentSettings.EnvironmentSettingsProvider).Assembly),
+                //new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly)
+                ));
+
+
+            var x = compositionContainer.GetExportedValue<string>("ServiceBusCredentials");
+            var x2 = compositionContainer.GetExportedValue<string>("LobbyServiceInstanceId");
+
+            var bp = compositionContainer.GetExportedValue<LobbyServiceBackplane>();
 
             var lobbyServerImpl = compositionContainer.GetExportedValue<LobbyServerImpl>();
             Task t = server.Start(lobbyServerImpl.HandleClient, cts.Token);

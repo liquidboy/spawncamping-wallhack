@@ -18,5 +18,15 @@
                 return Environment.GetEnvironmentVariable("ServiceBusCredentials");
             } 
         }
+
+
+        [Import("LobbyServiceInstanceId")]
+        public string LobbyServiceInstanceId
+        {
+            get
+            {
+                return "development-lobby-service-" + Guid.NewGuid();
+            }
+        }
     }
 }

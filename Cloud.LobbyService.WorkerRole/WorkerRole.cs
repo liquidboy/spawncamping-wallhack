@@ -27,7 +27,7 @@ namespace Cloud.LobbyService.WorkerRole
         {
             var compositionContainer = new CompositionContainer(new AggregateCatalog(
                 new AssemblyCatalog(typeof(RoleEnvironmentSettingsProvider).Assembly),
-                new AssemblyCatalog(typeof(LobbyConnector).Assembly)));
+                new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly)));
 
             // Set the maximum number of concurrent connections 
             ServicePointManager.DefaultConnectionLimit = 12;

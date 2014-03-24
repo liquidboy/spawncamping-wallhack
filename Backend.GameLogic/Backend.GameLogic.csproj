@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="LobbyClientImpl.cs" />
     <Compile Include="LobbyConnection.cs" />
-    <Compile Include="LobbyConnector.cs" />
+    <Compile Include="LobbyServiceBackplane.cs" />
     <Compile Include="LobbyServerImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
