@@ -10,6 +10,7 @@ namespace Backend.GameServer
     {
         static void Main(string[] args)
         {
+            Console.Title = "Backend.GameServer";
         }
     }
 }
