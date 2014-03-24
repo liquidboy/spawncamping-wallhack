@@ -1,6 +1,6 @@
 ﻿namespace Client
 {
-    using Frontend.GameLogic;
+    using Backend.GameLogic;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -34,7 +34,7 @@
             };
 
             await lobbyClient.ConnectAsync();
-            await lobbyClient.JoinLobby();
+            await lobbyClient.JoinLobbyAsync(clientId: 13);
         }
     }
 }

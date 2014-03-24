@@ -11,13 +11,38 @@
 
     public class LobbyServerImpl
     {
-        public async Task HandleClient(TcpClient serverSocket, CancellationToken ct)
-        {
-            Socket socket = serverSocket.Client;
+        public LobbyServerImpl() { }
 
+        public async Task HandleClient(TcpClient tcpClient, CancellationToken ct)
+        {
+            var connection = new LobbyConnection(tcpClient);
+
+            await connection.Handlerequest();
+        }
+    }
+
+    public class LobbyConnection
+    {
+        private readonly TcpClient tcpClient;
+
+        public LobbyConnection(TcpClient tcpClient)
+        {
+            this.tcpClient = tcpClient;
+        }
+
+        public async Task Handlerequest()
+        {
+            Socket socket = tcpClient.Client;
+
+            var clientId = await JoinLobbyAsync(socket);
+            Console.WriteLine("Connect from client {0}", clientId);
+        }
+
+        public async Task<int> JoinLobbyAsync(Socket socket)
+        {
             var clientId = await socket.ReadInt32Async();
 
-            Console.WriteLine("Connect from client {0}", clientId);
+            return clientId;
         }
     }
 }

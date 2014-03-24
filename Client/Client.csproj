@@ -48,9 +48,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Frontend.GameLogic\Frontend.GameLogic.csproj">
-      <Project>{d73a8a46-9e05-460c-ba6a-e85315bda311}</Project>
-      <Name>Frontend.GameLogic</Name>
+    <ProjectReference Include="..\Backend.GameLogic\Backend.GameLogic.csproj">
+      <Project>{a70b2016-1d1c-4e31-b887-3ecff4c27cf9}</Project>
+      <Name>Backend.GameLogic</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

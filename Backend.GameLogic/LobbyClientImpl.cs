@@ -1,4 +1,4 @@
-﻿namespace Frontend.GameLogic
+﻿namespace Backend.GameLogic
 {
     using System;
     using System.Net;
@@ -36,11 +36,10 @@
 
         }
 
-        public async Task JoinLobby()
+        public async Task JoinLobbyAsync(int clientId)
         {
             await LogAsync("try to join to lobby");
 
-            int clientId = 13;
             await client.Client.WriteAsync(clientId);
         }
     }

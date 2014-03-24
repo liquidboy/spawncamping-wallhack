@@ -12,13 +12,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{770A0430-C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.GameLogic", "Backend.GameLogic\Backend.GameLogic.csproj", "{A70B2016-1D1C-4E31-B887-3ECFF4C27CF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend.GameLogic", "Frontend.GameLogic\Frontend.GameLogic.csproj", "{D73A8A46-9E05-460C-BA6A-E85315BDA311}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.GameServer", "Backend.GameServer\Backend.GameServer.csproj", "{A1AE1509-03FE-4A32-8A2C-46A2D2EC966B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.LobbyServer", "Backend.LobbyServer\Backend.LobbyServer.csproj", "{0F7EAD82-5646-47DF-A7FB-F6E06DB435E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{30F81D4D-6B84-4DB4-94DA-4CB5D58EA509}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3D88DE21-1848-4CAE-A8D0-543C5E5813CF}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,10 +39,6 @@ Global
 		{A70B2016-1D1C-4E31-B887-3ECFF4C27CF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A70B2016-1D1C-4E31-B887-3ECFF4C27CF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A70B2016-1D1C-4E31-B887-3ECFF4C27CF9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D73A8A46-9E05-460C-BA6A-E85315BDA311}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D73A8A46-9E05-460C-BA6A-E85315BDA311}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D73A8A46-9E05-460C-BA6A-E85315BDA311}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D73A8A46-9E05-460C-BA6A-E85315BDA311}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A1AE1509-03FE-4A32-8A2C-46A2D2EC966B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A1AE1509-03FE-4A32-8A2C-46A2D2EC966B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1AE1509-03FE-4A32-8A2C-46A2D2EC966B}.Release|Any CPU.ActiveCfg = Release|Any CPU
