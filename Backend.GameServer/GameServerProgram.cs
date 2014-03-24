@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Backend.GameServer
 {
-    class Program
+    class GameServerProgram
     {
         static void Main(string[] args)
         {
