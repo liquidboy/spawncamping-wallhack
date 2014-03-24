@@ -1,4 +1,4 @@
 spawncamping-wallhack
 =====================
 
-Some gaming backend for Windows Azure
+A sample on how a gaming backend on Windows Azure cloud look like. 
