@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ILobbyServiceSettings.cs" />
     <Compile Include="Messages\GameServerMessage.cs" />
     <Compile Include="Messages\GameServerMessageBase.cs" />
     <Compile Include="Messages\Xtensions.cs" />

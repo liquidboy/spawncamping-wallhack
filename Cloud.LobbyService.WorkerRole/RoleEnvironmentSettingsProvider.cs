@@ -2,25 +2,15 @@
 {
     using Microsoft.WindowsAzure.ServiceRuntime;
     using System.ComponentModel.Composition;
+    using Backend.GameLogic;
 
-    public class RoleEnvironmentSettingsProvider
+    [Export(typeof(ILobbyServiceSettings))]
+    public class RoleEnvironmentSettingsProvider : ILobbyServiceSettings
     {
-        [Export("ServiceBusCredentials")]
-        public string ServiceBusCredentials
-        {
-            get
-            {
-                return RoleEnvironment.GetConfigurationSettingValue("ServiceBusCredentials");
-            }
-        }
+        private string S(string key) { return RoleEnvironment.GetConfigurationSettingValue(key); }
+        
+        public string ServiceBusCredentials { get { return S("ServiceBusCredentials"); } }
 
-        [Export("LobbyServiceInstanceId")]
-        public string LobbyServiceInstanceId
-        {
-            get
-            {
-                return RoleEnvironment.DeploymentId + "-" + RoleEnvironment.CurrentRoleInstance.Id;
-            }
-        }
+        public string LobbyServiceInstanceId { get { return RoleEnvironment.DeploymentId + "-" + RoleEnvironment.CurrentRoleInstance.Id; } }
     }
 }

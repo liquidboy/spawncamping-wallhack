@@ -1,31 +1,14 @@
 ﻿namespace DevelopmentSettings
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.Composition;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using Backend.GameLogic;
 
-
-    public class EnvironmentSettingsProvider
+    [Export(typeof(ILobbyServiceSettings))]
+    public class EnvironmentSettingsProvider : ILobbyServiceSettings
     {
-        [Export("ServiceBusCredentials")]
-        public string ServiceBusCredentials 
-        { 
-            get 
-            {
-                return Environment.GetEnvironmentVariable("ServiceBusCredentials");
-            } 
-        }
+        public string ServiceBusCredentials { get { return Environment.GetEnvironmentVariable("ServiceBusCredentials"); } }
 
-        [Export("LobbyServiceInstanceId")]
-        public string LobbyServiceInstanceId
-        {
-            get
-            {
-                return "dev-" + Guid.NewGuid();
-            }
-        }
+        public string LobbyServiceInstanceId { get { return "dev-" + Guid.NewGuid(); } }
     }
 }

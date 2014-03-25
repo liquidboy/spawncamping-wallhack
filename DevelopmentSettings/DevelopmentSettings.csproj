@@ -44,6 +44,12 @@
     <Compile Include="EnvironmentSettingsProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Backend.GameLogic\Backend.GameLogic.csproj">
+      <Project>{a70b2016-1d1c-4e31-b887-3ecff4c27cf9}</Project>
+      <Name>Backend.GameLogic</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

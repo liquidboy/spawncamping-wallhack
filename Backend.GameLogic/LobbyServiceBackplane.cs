@@ -12,17 +12,14 @@
     [Export(typeof(LobbyServiceBackplane))]
     public class LobbyServiceBackplane : IPartImportsSatisfiedNotification
     {
-        [Import("ServiceBusCredentials")]
-        public string ServiceBusCredentials { get; set; }
-
-        [Import("LobbyServiceInstanceId")]
-        public string LobbyServiceInstanceId { get; set; }
+        [Import(typeof(ILobbyServiceSettings))]
+        public ILobbyServiceSettings Settings { get; set; }
 
         public LobbyServiceBackplane() { }
 
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
         {
-            this._namespaceManager = NamespaceManager.CreateFromConnectionString(this.ServiceBusCredentials);
+            this._namespaceManager = NamespaceManager.CreateFromConnectionString(this.Settings.ServiceBusCredentials);
         }
 
         private NamespaceManager _namespaceManager;
@@ -38,7 +35,7 @@
 
             await _namespaceManager.CreateSubscriptionAsync(new SubscriptionDescription(
                 topicPath: LobbyServiceTopic, 
-                subscriptionName: this.LobbyServiceInstanceId)
+                subscriptionName: this.Settings.LobbyServiceInstanceId)
             {
                 AutoDeleteOnIdle = TimeSpan.FromMinutes(5)
             });
@@ -47,8 +44,8 @@
         public async Task DetachAsync()
         {
             await _namespaceManager.DeleteSubscriptionAsync(
-                topicPath: LobbyServiceTopic, 
-                name: this.LobbyServiceInstanceId);
+                topicPath: LobbyServiceTopic,
+                name: this.Settings.LobbyServiceInstanceId);
         }
     }
 }
