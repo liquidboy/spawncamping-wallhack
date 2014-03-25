@@ -22,10 +22,10 @@ namespace Cloud.LobbyService.WorkerRole
 
         public override bool OnStart()
         {
-            var compositionContainer = new CompositionContainer(new AggregateCatalog(
+            var cc = new CompositionContainer(new AggregateCatalog(
                 new AssemblyCatalog(typeof(RoleEnvironmentSettingsProvider).Assembly),
                 new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly)));
-            compositionContainer.SatisfyImportsOnce(this);
+            cc.SatisfyImportsOnce(this);
 
             ServicePointManager.DefaultConnectionLimit = 12;
 

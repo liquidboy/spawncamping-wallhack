@@ -16,15 +16,16 @@
             Console.Title = "Backend.LobbyServer";
 
             var cts = new CancellationTokenSource();
-            var server = new AsyncServerHost(ipAddress: IPAddress.Loopback, port: 3000);
 
             var compositionContainer = new CompositionContainer(new AggregateCatalog(
                 // new TypeCatalog(typeof(LobbyServiceBackplane), typeof(LobbyServerImpl), typeof(EnvironmentSettingsProvider))
                 new AssemblyCatalog(typeof(DevelopmentSettings.EnvironmentSettingsProvider).Assembly),
                 new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly)
                 ));
+            var settings = compositionContainer.GetExportedValue<ILobbyServiceSettings>();
 
             var lobbyServerImpl = compositionContainer.GetExportedValue<LobbyServerImpl>();
+            var server = new AsyncServerHost(ipAddress: settings.IPEndPoint.Address, port: settings.IPEndPoint.Port);
             Task t = server.Start(lobbyServerImpl.HandleClient, cts.Token);
 
             Console.WriteLine("Loby server launched");
