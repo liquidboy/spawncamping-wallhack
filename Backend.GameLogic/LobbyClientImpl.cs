@@ -51,5 +51,10 @@
 
             return gameServerConnection;
         }
+
+        public void Close()
+        {
+            this.client.Close();
+        }
     }
 }

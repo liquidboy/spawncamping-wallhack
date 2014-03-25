@@ -152,3 +152,4 @@ $RECYCLE.BIN/
 /README.html
 /packages
 /Cloud.LobbyService/ServiceConfiguration.chgeuer.cscfg
+*.dmp

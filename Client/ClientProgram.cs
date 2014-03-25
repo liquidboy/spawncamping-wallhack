@@ -48,6 +48,8 @@
 
             var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId);
 
+            lobbyClient.Close();
+
             Console.WriteLine("I should connect to {0} using credential {1}", gameServerInfo.GameServer.ToString(), gameServerInfo.Token.Credential);
         }
     }

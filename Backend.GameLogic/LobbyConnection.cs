@@ -34,11 +34,10 @@
                 return;
             }
 
-            Console.WriteLine("Connect from client {0}", joinMessage.ClientId);
-
             await client.WriteCommandAsync(new GameServerConnectionMessage { 
                 GameServer = new IPEndPoint(IPAddress.Loopback, 3001),
-                Token = new GameServerUserToken { Credential = "supersecret" }});
+                Token = new GameServerUserToken { Credential = "supersecret" }}
+                );
         }
     }
 }
