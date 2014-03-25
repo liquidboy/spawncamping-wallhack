@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 namespace Backend.GameLogic.Messages
 {
-    public class JoinGameMessage : GameServerMessage
+    public class JoinGameMessage : GameServerMessageBase
     {
         public int ClientId { get; set; }
 

@@ -6,7 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class ErrorMessage : GameServerMessage
+    public class ErrorMessage : GameServerMessageBase
     {
         public string Message { get; set; }
 
@@ -15,6 +15,7 @@
             this.Command = this.GetType().Name;
             this.Message = errorMessage;
         }
+        public ErrorMessage() { }
 
         public override void PostRead()
         {

@@ -1,21 +1,21 @@
-﻿namespace Backend.GameLogic
+﻿namespace Backend.GameLogic.Messages
 {
     using System.Collections.Generic;
     using System.Net;
 
-    public class GameServerMessage
+    public class GameServerMessageBase
     {
         public string Command { get; set; }
 
         public IList<string> Args { get; set; }
 
-        internal GameServerMessage() 
+        internal GameServerMessageBase() 
         {
             this.Command = this.GetType().Name;
             this.Args = new List<string>(); 
         }
 
-        public GameServerMessage(string command, params string[] args)
+        public GameServerMessageBase(string command, params string[] args)
         {
             this.Command = command;
             this.Args = new List<string>(args);

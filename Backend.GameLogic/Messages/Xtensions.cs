@@ -1,4 +1,4 @@
-﻿namespace Backend.GameLogic
+﻿namespace Backend.GameLogic.Messages
 {
     using System;
     using System.Collections.Generic;
@@ -8,13 +8,10 @@
     using System.Text;
     using System.Threading.Tasks;
     using Backend.Utils.Networking.Extensions;
-    using Backend.GameLogic.Messages;
 
-    public static class GameServerProtocolExtensions
+    public static class Xtensions
     {
-
-
-        public async static Task<T> ReadCommandAsync<T>(this Socket socket) where T : GameServerMessage, new()
+        public async static Task<GameServerMessage<T>> ReadCommandAsync<T>(this Socket socket) where T : GameServerMessageBase, new()
         {
             int len = await socket.ReadInt32Async();
 
@@ -26,15 +23,20 @@
                 args[i] = arg;
             }
 
+            if (command == typeof(ErrorMessage).Name)
+            {
+                return new GameServerMessage<T>(new ErrorMessage { Command = command, Args = args, Message = args[0] });
+            }
+
             T message = Activator.CreateInstance<T>();
             message.Command = command;
             message.Args = args.ToList();
             message.PostRead();
 
-            return message;
+            return new GameServerMessage<T>(message);
         }
 
-        public static async Task WriteCommandAsync(this Socket socket, GameServerMessage message)
+        public static async Task WriteCommandAsync(this Socket socket, GameServerMessageBase message)
         {
             message.PreWrite();
 

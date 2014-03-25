@@ -50,8 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameServerMessage.cs" />
-    <Compile Include="GameServerProtocolExtensions.cs" />
+    <Compile Include="Messages\GameServerMessage.cs" />
+    <Compile Include="Messages\GameServerMessageBase.cs" />
+    <Compile Include="Messages\Xtensions.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />
     <Compile Include="Messages\GameServerUserToken.cs" />
     <Compile Include="LobbyClientImpl.cs" />

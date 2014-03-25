@@ -47,7 +47,11 @@
 
             await LogAsync("sent join");
 
-            var gameServerConnection = await server.ReadCommandAsync<GameServerConnectionMessage>();
+
+            var gameServerConnectionResponse = await server.ReadCommandAsync<GameServerConnectionMessage>();
+
+            if (gameServerConnectionResponse.IsError) { throw new NotSupportedException("Could not join"); }
+            var gameServerConnection = gameServerConnectionResponse.Message;
 
             return gameServerConnection;
         }

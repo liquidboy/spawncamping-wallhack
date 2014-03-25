@@ -4,7 +4,7 @@
     using System.Linq;
     using System.Collections.Generic;
 
-    public class GameServerConnectionMessage : GameServerMessage
+    public class GameServerConnectionMessage : GameServerMessageBase
     {
         public IPEndPoint GameServer { get; set; }
 

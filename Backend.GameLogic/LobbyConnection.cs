@@ -1,10 +1,10 @@
 ﻿namespace Backend.GameLogic
 {
-    using Messages;
     using System;
     using System.Net;
     using System.Net.Sockets;
     using System.Threading.Tasks;
+    using Messages;
     
     public class LobbyConnection
     {
@@ -19,7 +19,13 @@
         {
             Socket client = tcpClient.Client;
 
-            var joinMessage = await client.ReadCommandAsync<JoinGameMessage>();
+            var joinMessageResponse = await client.ReadCommandAsync<JoinGameMessage>();
+            if (joinMessageResponse.IsError) 
+            {
+                await client.WriteCommandAsync(new ErrorMessage(string.Format("Sorry, was expecting a {0}", typeof(JoinGameMessage).Name)));
+                return;
+            }
+            var joinMessage = joinMessageResponse.Message;
 
             if (joinMessage.ClientId > 100)
             {
