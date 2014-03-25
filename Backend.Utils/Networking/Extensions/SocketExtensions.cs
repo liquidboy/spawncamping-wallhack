@@ -10,7 +10,7 @@
     {
         #region byte[] buffer
 
-        public static Task<int> ReceiveAsync(
+        public static Task<int> ReadAsync(
             this Socket socket, byte[] buffer, int offset, int size,
             SocketFlags socketFlags = SocketFlags.None)
         {
@@ -25,7 +25,7 @@
             return tcs.Task;
         }
     
-        public static Task<int> SendAsync(
+        public static Task<int> WriteAsync(
             this Socket socket, byte[] buffer, int offset, int size,
             SocketFlags socketFlags = SocketFlags.None)
         {
@@ -62,39 +62,39 @@
         public static async Task<T> ReadValueAsync<T>(this Socket socket, int length, Func<byte[], Task<T>> convertAsync)
         {
             byte[] buf = new byte[length];
-            var bytesRead = await socket.ReceiveAsync(buf, 0, buf.Length);
+            var bytesRead = await socket.ReadAsync(buf, 0, buf.Length);
             if (bytesRead != buf.Length) throw new Exception("Missing bytes");
             return await convertAsync(buf);
         }
         public static async Task<T> ReadValueAsync<T>(this Socket socket, int length, Func<byte[], T> convertAsync)
         {
             byte[] buf = new byte[length];
-            var bytesRead = await socket.ReceiveAsync(buf, 0, buf.Length);
+            var bytesRead = await socket.ReadAsync(buf, 0, buf.Length);
             if (bytesRead != buf.Length) throw new Exception("Missing bytes");
             return convertAsync(buf);
         }
 
         #region string
 
-        public static async Task<string> ReceiveStringAsync(this Socket socket)
+        public static async Task<string> ReadStringAsync(this Socket socket)
         {
             var length = await socket.ReadInt32Async();
             return await socket.ReadValueAsync<string>(length, _ => DEFAULT_ENCODING.GetString(_));
         }
 
-        public static async Task SendAsync(this Socket socket, string value)
+        public static async Task WriteAsync(this Socket socket, string value)
         {
             var bytes = DEFAULT_ENCODING.GetBytes(value);
 
             await socket.WriteAsync(bytes.Length);
 
-            var bytesWritten = await socket.SendAsync(bytes, 0, bytes.Length, SocketFlags.None);
+            var bytesWritten = await socket.WriteAsync(bytes, 0, bytes.Length);
         }
 
         public static async Task WriteAsync(this Socket socket, Int32 value)
         {
             var buf = BitConverter.GetBytes(value);
-            await socket.SendAsync(buf, 0, sizeof(Int32));
+            await socket.WriteAsync(buf, 0, sizeof(Int32));
         }
 
         #endregion

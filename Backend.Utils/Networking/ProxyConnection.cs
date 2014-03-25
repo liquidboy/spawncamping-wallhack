@@ -48,14 +48,14 @@
         {
             var ipBytes = serverIP.GetAddressBytes();
             await client.Client.WriteAsync((byte)ipBytes.Length);
-            await client.Client.SendAsync(ipBytes, 0, ipBytes.Length);
+            await client.Client.WriteAsync(ipBytes, 0, ipBytes.Length);
         }
 
         private static async Task<IPAddress> ReadIPAddress(TcpClient client)
         {
             var ipAddressLength = await client.Client.ReadByteAsync();
             var ipAddressBytes = new byte[ipAddressLength];
-            var ipAddressBytesRead = await client.Client.ReceiveAsync(ipAddressBytes, 0, ipAddressBytes.Length, SocketFlags.None);
+            var ipAddressBytesRead = await client.Client.ReadAsync(ipAddressBytes, 0, ipAddressBytes.Length);
             if (ipAddressBytesRead != ipAddressLength) { throw new ProtocolViolationException("Could not read IPAddress"); }
             var ipAddress = new IPAddress(ipAddressBytes);
             return ipAddress;
@@ -91,13 +91,13 @@
             byte[] buf = new byte[BUFSIZE];
             while (!this.CancellationTokenSource.Token.IsCancellationRequested)
             {
-                int receiveLen = await source.ReceiveAsync(buf, 0, buf.Length, SocketFlags.None);
+                int receiveLen = await source.ReadAsync(buf, 0, buf.Length);
                 if (receiveLen == 0)
                 {
                     break;
                 }
 
-                int sendLen = await dest.SendAsync(buf, 0, receiveLen, SocketFlags.None);
+                int sendLen = await dest.WriteAsync(buf, 0, receiveLen);
                 if (sendLen != receiveLen)
                 {
                     throw new NotSupportedException("sendLen != receiveLen");

@@ -27,12 +27,12 @@
             }
             var joinMessage = joinMessageResponse.Message;
 
-            if (joinMessage.ClientId > 10000)
-            {
-                await client.WriteCommandAsync(new ErrorMessage("Sorry, not permitted"));
+            //if (joinMessage.ClientId > 10000)
+            //{
+            //    await client.WriteCommandAsync(new ErrorMessage("Sorry, not permitted"));
 
-                return;
-            }
+            //    return;
+            //}
 
             await client.WriteCommandAsync(new GameServerConnectionMessage { 
                 GameServer = new IPEndPoint(IPAddress.Loopback, 3001),

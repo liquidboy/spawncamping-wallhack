@@ -27,11 +27,11 @@
             try
             {
                 int len = await socket.ReadInt32Async();
-                command = await socket.ReceiveStringAsync();
+                command = await socket.ReadStringAsync();
                 args = new string[len - 1];
                 for (var i = 0; i < len - 1; i++)
                 {
-                    string arg = await socket.ReceiveStringAsync();
+                    string arg = await socket.ReadStringAsync();
                     args[i] = arg;
                 }
                 if (command == typeof(ErrorMessage).Name)
@@ -57,10 +57,10 @@
             message.PreWrite();
 
             await socket.WriteAsync(message.Args.Count + 1);
-            await socket.SendAsync(message.Command);
+            await socket.WriteAsync(message.Command);
             foreach (var arg in message.Args)
             {
-                await socket.SendAsync(arg);
+                await socket.WriteAsync(arg);
             }
         }
     }

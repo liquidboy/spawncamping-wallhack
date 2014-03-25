@@ -17,7 +17,7 @@
             Console.Write("Press <return> to connect");
             Console.ReadLine();
 
-            var clientTasks = Enumerable.Range(10, 10000).Select(async (clientId) =>
+            var clientTasks = Enumerable.Range(10, 50000).Select(async (clientId) =>
             {
                 await Task.Delay(clientId * 5);
                 var p = new ClientProgram();
@@ -32,7 +32,7 @@
 
         private static async Task Log(string s)
         {
-            Console.WriteLine(s);
+            // Console.WriteLine(s);
         }
 
         public async Task RunAsync(int clientId)
@@ -44,13 +44,15 @@
 
             await lobbyClient.ConnectAsync();
 
-            Console.WriteLine("Connected");
+            // Console.WriteLine("Connected");
 
             var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId);
 
+            if (clientId % 10 == 0) Console.Write(".");
+
             lobbyClient.Close();
 
-            Console.WriteLine("I should connect to {0} using credential {1}", gameServerInfo.GameServer.ToString(), gameServerInfo.Token.Credential);
+            // Console.WriteLine("I should connect to {0} using credential {1}", gameServerInfo.GameServer.ToString(), gameServerInfo.Token.Credential);
         }
     }
 }

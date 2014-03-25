@@ -1,6 +1,7 @@
 ﻿namespace Backend.GameLogic
 {
     using System.ComponentModel.Composition;
+    using System.Diagnostics;
     using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
@@ -33,6 +34,8 @@
             var connection = new LobbyConnection(tcpClient);
 
             await connection.Handlerequest();
+
+            Trace.TraceInformation("Request from " + tcpClient.Client.RemoteEndPoint.ToString());
         }
     }
 }
