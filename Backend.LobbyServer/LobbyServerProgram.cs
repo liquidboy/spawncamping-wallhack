@@ -1,13 +1,13 @@
 ﻿namespace Backend.LobbyServer
 {
-    using Backend.GameLogic;
-    using Backend.Utils.Networking;
-    using DevelopmentSettings;
     using System;
     using System.ComponentModel.Composition.Hosting;
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+
+    using Backend.GameLogic;
+    using Backend.Utils.Networking;
 
     class LobbyServerProgram
     {
