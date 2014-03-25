@@ -27,7 +27,7 @@
             }
             var joinMessage = joinMessageResponse.Message;
 
-            if (joinMessage.ClientId > 100)
+            if (joinMessage.ClientId > 10000)
             {
                 await client.WriteCommandAsync(new ErrorMessage("Sorry, not permitted"));
 

@@ -17,8 +17,17 @@
             Console.Write("Press <return> to connect");
             Console.ReadLine();
 
-            var p = new ClientProgram();
-            p.RunAsync().Wait();
+            var clientTasks = Enumerable.Range(10, 1000).Select(async (clientId) =>
+            {
+                await Task.Delay(clientId * 5);
+                var p = new ClientProgram();
+                await p.RunAsync(clientId: clientId);
+            }).ToArray();
+
+            Task.WaitAll(clientTasks);
+
+            //var p = new ClientProgram();
+            //p.RunAsync().Wait();
         }
 
         private static async Task Log(string s)
@@ -26,7 +35,7 @@
             Console.WriteLine(s);
         }
 
-        public async Task RunAsync()
+        public async Task RunAsync(int clientId)
         {
             var lobbyClient = new LobbyClientImpl(ipAddress: IPAddress.Loopback, port: 3000)
             {
@@ -37,7 +46,7 @@
 
             Console.WriteLine("Connected");
 
-            var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId: 2000);
+            var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId);
 
             Console.WriteLine("I should connect to {0} using credential {1}", gameServerInfo.GameServer.ToString(), gameServerInfo.Token.Credential);
         }
