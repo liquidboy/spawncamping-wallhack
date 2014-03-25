@@ -12,7 +12,7 @@
 
         public static Task<int> ReceiveAsync(
             this Socket socket, byte[] buffer, int offset, int size,
-            SocketFlags socketFlags)
+            SocketFlags socketFlags = SocketFlags.None)
         {
             var tcs = new TaskCompletionSource<int>(socket);
             socket.BeginReceive(buffer, offset, size, socketFlags, iar =>
@@ -27,7 +27,7 @@
     
         public static Task<int> SendAsync(
             this Socket socket, byte[] buffer, int offset, int size,
-            SocketFlags socketFlags)
+            SocketFlags socketFlags = SocketFlags.None)
         {
             var tcs = new TaskCompletionSource<int>(socket);
             socket.BeginSend(buffer, offset, size, socketFlags, iar =>
@@ -50,13 +50,36 @@
 
         private static readonly Encoding DEFAULT_ENCODING = Encoding.UTF8;
 
+        public static async Task<Int32> ReadInt32Async(this Socket socket)
+        {
+            return await socket.ReadValueAsync<Int32>(sizeof(Int32), _ => BitConverter.ToInt32(_, 0));
+        }
+        public static async Task<byte> ReadByteAsync(this Socket socket)
+        {
+            return await socket.ReadValueAsync<byte>(sizeof(byte), _ => _[0]);
+        }
+
+        public static async Task<T> ReadValueAsync<T>(this Socket socket, int length, Func<byte[], Task<T>> convertAsync)
+        {
+            byte[] buf = new byte[length];
+            var bytesRead = await socket.ReceiveAsync(buf, 0, buf.Length);
+            if (bytesRead != buf.Length) throw new Exception("Missing bytes");
+            return await convertAsync(buf);
+        }
+        public static async Task<T> ReadValueAsync<T>(this Socket socket, int length, Func<byte[], T> convertAsync)
+        {
+            byte[] buf = new byte[length];
+            var bytesRead = await socket.ReceiveAsync(buf, 0, buf.Length);
+            if (bytesRead != buf.Length) throw new Exception("Missing bytes");
+            return convertAsync(buf);
+        }
+
         #region string
 
         public static async Task<string> ReceiveStringAsync(this Socket socket)
         {
             var length = await socket.ReadInt32Async();
-
-            return await socket.ReadValueAsync<string>(length, DEFAULT_ENCODING.GetString);
+            return await socket.ReadValueAsync<string>(length, _ => DEFAULT_ENCODING.GetString(_));
         }
 
         public static async Task SendAsync(this Socket socket, string value)
@@ -66,6 +89,12 @@
             await socket.WriteAsync(bytes.Length);
 
             var bytesWritten = await socket.SendAsync(bytes, 0, bytes.Length, SocketFlags.None);
+        }
+
+        public static async Task WriteAsync(this Socket socket, Int32 value)
+        {
+            var buf = BitConverter.GetBytes(value);
+            await socket.SendAsync(buf, 0, sizeof(Int32));
         }
 
         #endregion

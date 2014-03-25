@@ -48,7 +48,7 @@
         {
             var ipBytes = serverIP.GetAddressBytes();
             await client.Client.WriteAsync((byte)ipBytes.Length);
-            await client.Client.WriteValueAsync(ipBytes, x => x);
+            await client.Client.SendAsync(ipBytes, 0, ipBytes.Length);
         }
 
         private static async Task<IPAddress> ReadIPAddress(TcpClient client)
@@ -109,28 +109,28 @@
             }
         }
 
-        private async Task TransferSocketData_ImplementationWithSocketAwaitable(Socket source, Socket dest, Direction dir)
-        {
-            var awaitable = SocketAwaitable.NewInstance(BUFSIZE);
-            while (!this.CancellationTokenSource.Token.IsCancellationRequested)
-            {
-                awaitable.m_eventArgs.SetBuffer(0, BUFSIZE); // Allow whole internal buffer to be used for receiving
-                await source.ReceiveAsync(awaitable);
-                var receivedBytesCount = awaitable.m_eventArgs.BytesTransferred;
-                if (receivedBytesCount == 0)
-                {
-                    throw new NotSupportedException("sendLen == 0");
-                }
+        //private async Task TransferSocketData_ImplementationWithSocketAwaitable(Socket source, Socket dest, Direction dir)
+        //{
+        //    var awaitable = SocketAwaitable.NewInstance(BUFSIZE);
+        //    while (!this.CancellationTokenSource.Token.IsCancellationRequested)
+        //    {
+        //        awaitable.m_eventArgs.SetBuffer(0, BUFSIZE); // Allow whole internal buffer to be used for receiving
+        //        await source.ReceiveAsync(awaitable);
+        //        var receivedBytesCount = awaitable.m_eventArgs.BytesTransferred;
+        //        if (receivedBytesCount == 0)
+        //        {
+        //            throw new NotSupportedException("sendLen == 0");
+        //        }
 
-                awaitable.m_eventArgs.SetBuffer(0, receivedBytesCount); // Only send the previously received bytes
-                await dest.SendAsync(awaitable);
-                var sentBytesCount = awaitable.m_eventArgs.BytesTransferred;
-                if (receivedBytesCount != sentBytesCount)
-                {
-                    throw new NotSupportedException("sendLen != receiveLen");
-                }
-            }
-        }
+        //        awaitable.m_eventArgs.SetBuffer(0, receivedBytesCount); // Only send the previously received bytes
+        //        await dest.SendAsync(awaitable);
+        //        var sentBytesCount = awaitable.m_eventArgs.BytesTransferred;
+        //        if (receivedBytesCount != sentBytesCount)
+        //        {
+        //            throw new NotSupportedException("sendLen != receiveLen");
+        //        }
+        //    }
+        //}
     }
 
     internal enum Direction

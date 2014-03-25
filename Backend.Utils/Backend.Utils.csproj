@@ -40,11 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Networking\AsyncServerHost.cs" />
-    <Compile Include="Networking\Extensions\NetworkStreamExtensions.cs" />
     <Compile Include="Networking\ProxyConnection.cs" />
     <Compile Include="Networking\RandomAwaiter.cs" />
-    <Compile Include="Networking\SocketAwaitable.cs" />
-    <Compile Include="Networking\Extensions\SocketAwaitableExtensions.cs" />
     <Compile Include="Networking\Extensions\SocketExtensions.cs" />
     <Compile Include="Networking\Extensions\TaskExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

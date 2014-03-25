@@ -17,7 +17,7 @@
             Console.Write("Press <return> to connect");
             Console.ReadLine();
 
-            var clientTasks = Enumerable.Range(10, 1000).Select(async (clientId) =>
+            var clientTasks = Enumerable.Range(10, 10000).Select(async (clientId) =>
             {
                 await Task.Delay(clientId * 5);
                 var p = new ClientProgram();
