@@ -25,7 +25,7 @@
             var settings = compositionContainer.GetExportedValue<ILobbyServiceSettings>();
 
             var lobbyServerImpl = compositionContainer.GetExportedValue<LobbyServerImpl>();
-            var server = new AsyncServerHost(ipAddress: settings.IPEndPoint.Address, port: settings.IPEndPoint.Port);
+            var server = new AsyncServerHost(settings.IPEndPoint);
             Task t = server.Start(lobbyServerImpl.HandleClient, cts.Token);
 
             Console.WriteLine("Loby server launched");

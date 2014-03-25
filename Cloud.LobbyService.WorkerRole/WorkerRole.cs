@@ -12,6 +12,7 @@ namespace Cloud.LobbyService.WorkerRole
 
     using Backend.GameLogic;
     using DevelopmentSettings;
+    using Backend.Utils.Networking;
 
     public class WorkerRole : RoleEntryPoint
     {
@@ -19,6 +20,8 @@ namespace Cloud.LobbyService.WorkerRole
         private ILobbyServiceSettings Settings { get; set; }
 
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
+        private Task lobbyTask;
+        private LobbyServerImpl lobbyServerImpl;
 
         public override bool OnStart()
         {
@@ -31,9 +34,15 @@ namespace Cloud.LobbyService.WorkerRole
 
             Trace.TraceInformation("Use Service bus " + this.Settings.ServiceBusCredentials);
             Trace.TraceInformation("Lobby Instance " + this.Settings.LobbyServiceInstanceId);
+            Trace.TraceInformation("Lobby Port" + this.Settings.IPEndPoint.ToString());
+
+            this.lobbyServerImpl = cc.GetExportedValue<LobbyServerImpl>();
+            var server = new AsyncServerHost(this.Settings.IPEndPoint);
+            this.lobbyTask = server.Start(lobbyServerImpl.HandleClient, cts.Token);
 
             return base.OnStart();
         }
+
 
         private async Task RunAsync(CancellationToken ct)
         {
@@ -55,6 +64,7 @@ namespace Cloud.LobbyService.WorkerRole
         public override void OnStop()
         {
             this.cts.Cancel();
+            this.lobbyServerImpl.ShutDownAsync().Wait();
 
             base.OnStop();
         }

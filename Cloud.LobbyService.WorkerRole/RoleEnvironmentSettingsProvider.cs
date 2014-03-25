@@ -1,14 +1,25 @@
 ﻿namespace Cloud.LobbyService.WorkerRole
 {
-    using Microsoft.WindowsAzure.ServiceRuntime;
-    using System.ComponentModel.Composition;
-    using Backend.GameLogic;
     using System.Net;
+    using System.ComponentModel.Composition;
+    using Microsoft.WindowsAzure.ServiceRuntime;
+    using Backend.GameLogic;
 
     [Export(typeof(ILobbyServiceSettings))]
     public class RoleEnvironmentSettingsProvider : ILobbyServiceSettings
     {
-        string ILobbyServiceSettings.LobbyServiceInstanceId { get { return RoleEnvironment.DeploymentId + "-" + RoleEnvironment.CurrentRoleInstance.Id; } }
+        string ILobbyServiceSettings.LobbyServiceInstanceId 
+        { 
+            get 
+            { 
+                var r = RoleEnvironment.DeploymentId + "-" + RoleEnvironment.CurrentRoleInstance.Id;
+
+                r = r.Replace("deployment", "").Replace("(", "_").Replace(")", "_").Replace("Cloud.LobbyService.", ""); 
+                // deployment22(3)-deployment22(3).Cloud.LobbyService.Cloud.LobbyService.WorkerRole_IN_0
+
+                return r;
+            } 
+        }
 
         IPEndPoint ILobbyServiceSettings.IPEndPoint { get { return RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["LobbyService"].IPEndpoint; } }
 

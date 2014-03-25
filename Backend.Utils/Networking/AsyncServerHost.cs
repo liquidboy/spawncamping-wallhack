@@ -11,18 +11,16 @@
 
     public class AsyncServerHost
     {
-        private readonly IPAddress _ipAddress;
-        private readonly int _port;
+        private readonly IPEndPoint _endpoint;
 
-        public AsyncServerHost(IPAddress ipAddress, int port)
+        public AsyncServerHost(IPEndPoint endpoint)
         {
-            _ipAddress = ipAddress;
-            _port = port;
+            _endpoint = endpoint;
         }
 
         public async Task Start(Func<TcpClient, CancellationToken, Task> serverLogic, CancellationToken ct)
         {
-            TcpListener listener = new TcpListener(_ipAddress, _port);
+            TcpListener listener = new TcpListener(_endpoint);
             listener.Start(
                 // backlog: 1000
                 );
