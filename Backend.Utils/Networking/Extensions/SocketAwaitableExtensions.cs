@@ -64,6 +64,7 @@
         {
             await WriteValueAsync(socket, value, BitConverter.GetBytes);
         }
+
         public static async Task WriteAsync(this Socket socket, byte value)
         {
             await WriteValueAsync(socket, value, (x) => new byte[1] { x });

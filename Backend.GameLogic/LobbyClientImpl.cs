@@ -36,11 +36,15 @@
 
         }
 
-        public async Task JoinLobbyAsync(int clientId)
+        public async Task<GameServerConnectionInformation> JoinLobbyAsync(int clientId)
         {
             await LogAsync("try to join to lobby");
 
             await client.Client.WriteAsync(clientId);
+
+            var command = await client.Client.ReadCommand();
+
+            return command.AsGameServerConnectionInformation();
         }
     }
 }

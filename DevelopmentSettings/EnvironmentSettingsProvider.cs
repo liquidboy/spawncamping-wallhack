@@ -19,7 +19,6 @@
             } 
         }
 
-
         [Export("LobbyServiceInstanceId")]
         public string LobbyServiceInstanceId
         {

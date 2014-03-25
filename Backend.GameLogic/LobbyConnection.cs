@@ -24,8 +24,17 @@
             Socket socket = tcpClient.Client;
 
             var clientId = await JoinLobbyAsync(socket);
+
+            if (clientId > 100)
+            {
+                await socket.SendErrorAsync("Sorry, not permitted");
+                return;
+            }
+
             Console.WriteLine("Connect from client {0}", clientId);
         }
+
+
 
         public async Task<int> JoinLobbyAsync(Socket socket)
         {
