@@ -11,29 +11,45 @@
 
     public static class Xtensions
     {
-        public async static Task<GameServerMessage<T>> ReadCommandAsync<T>(this Socket socket) where T : GameServerMessageBase, new()
+        public async static Task<T> ReadExpectedCommandAsync<T>(this Socket socket) where T : GameServerMessageBase, new()
         {
-            int len = await socket.ReadInt32Async();
+            var x = await socket.ReadCommandOrErrorAsync<T>();
+            if (x.IsError) { throw new Exception(x.ErrorMessage.Message); }
+            return x.Message;
+        }
 
-            var args = new string[len - 1];
-            string command = await socket.ReceiveStringAsync();
-            for (var i = 0; i < len - 1; i++)
+
+        public async static Task<GameServerMessage<T>> ReadCommandOrErrorAsync<T>(this Socket socket) where T : GameServerMessageBase, new()
+        {
+            string command;
+            string[] args;
+
+            try
             {
-                string arg = await socket.ReceiveStringAsync();
-                args[i] = arg;
-            }
+                int len = await socket.ReadInt32Async();
+                command = await socket.ReceiveStringAsync();
+                args = new string[len - 1];
+                for (var i = 0; i < len - 1; i++)
+                {
+                    string arg = await socket.ReceiveStringAsync();
+                    args[i] = arg;
+                }
+                if (command == typeof(ErrorMessage).Name)
+                {
+                    return new GameServerMessage<T>(new ErrorMessage { Command = command, Args = args, Message = args[0] });
+                }
 
-            if (command == typeof(ErrorMessage).Name)
+                T message = Activator.CreateInstance<T>();
+                message.Command = command;
+                message.Args = args.ToList();
+                message.PostRead();
+
+                return new GameServerMessage<T>(message);
+            }
+            catch (Exception ex)
             {
-                return new GameServerMessage<T>(new ErrorMessage { Command = command, Args = args, Message = args[0] });
+                throw new Exception(string.Format("Could not read {0} command", typeof(T).Name), ex );
             }
-
-            T message = Activator.CreateInstance<T>();
-            message.Command = command;
-            message.Args = args.ToList();
-            message.PostRead();
-
-            return new GameServerMessage<T>(message);
         }
 
         public static async Task WriteCommandAsync(this Socket socket, GameServerMessageBase message)

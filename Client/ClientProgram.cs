@@ -37,7 +37,7 @@
 
             Console.WriteLine("Connected");
 
-            var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId: 10);
+            var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId: 2000);
 
             Console.WriteLine("I should connect to {0} using credential {1}", gameServerInfo.GameServer.ToString(), gameServerInfo.Token.Credential);
         }
