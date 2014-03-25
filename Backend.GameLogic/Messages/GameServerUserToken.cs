@@ -1,4 +1,4 @@
-﻿namespace Backend.GameLogic
+﻿namespace Backend.GameLogic.Messages
 {
     public class GameServerUserToken
     {

@@ -5,6 +5,7 @@
     using System.Net.Sockets;
     using System.Threading.Tasks;
     using Backend.Utils.Networking.Extensions;
+    using Messages;
 
     public class LobbyClientImpl
     {
@@ -32,19 +33,23 @@
         public async Task ConnectAsync()
         {
             await client.ConnectAsync(this._ipAddress, this._port);
-            await LogAsync("connected to lobby");
 
+            await LogAsync("connected to lobby");
         }
 
-        public async Task<GameServerConnectionInformation> JoinLobbyAsync(int clientId)
+        public async Task<GameServerConnectionMessage> JoinLobbyAsync(int clientId)
         {
+            var server = client.Client;
+
             await LogAsync("try to join to lobby");
 
-            await client.Client.WriteAsync(clientId);
+            await server.WriteCommandAsync(new JoinGameMessage { ClientId = clientId });
 
-            var command = await client.Client.ReadCommand();
+            await LogAsync("sent join");
 
-            return command.AsGameServerConnectionInformation();
+            var gameServerConnection = await server.ReadCommandAsync<GameServerConnectionMessage>();
+
+            return gameServerConnection;
         }
     }
 }

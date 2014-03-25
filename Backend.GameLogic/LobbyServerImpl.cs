@@ -23,15 +23,16 @@
             await this.LobbyConnector.EnsureSetupAsync();
         }
 
+        public async Task ShutDownAsync()
+        {
+            await this.LobbyConnector.DetachAsync();
+        }
+
         public async Task HandleClient(TcpClient tcpClient, CancellationToken ct)
         {
             var connection = new LobbyConnection(tcpClient);
 
             await connection.Handlerequest();
-        }
-        public async Task ShutDownAsync()
-        {
-            await this.LobbyConnector.DetachAsync();
         }
     }
 }

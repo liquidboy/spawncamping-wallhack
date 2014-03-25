@@ -7,22 +7,43 @@
     using System.Net.Sockets;
     using System.Text;
     using System.Threading.Tasks;
+    using Backend.Utils.Networking.Extensions;
+    using Backend.GameLogic.Messages;
 
     public static class GameServerProtocolExtensions
     {
-        public static async Task SendErrorAsync(this Socket socket, string message)
+
+
+        public async static Task<T> ReadCommandAsync<T>(this Socket socket) where T : GameServerMessage, new()
         {
-            await GameServerMessage.Error(message).WriteAsync(socket);
+            int len = await socket.ReadInt32Async();
+
+            var args = new string[len - 1];
+            string command = await socket.ReceiveStringAsync();
+            for (var i = 0; i < len - 1; i++)
+            {
+                string arg = await socket.ReceiveStringAsync();
+                args[i] = arg;
+            }
+
+            T message = Activator.CreateInstance<T>();
+            message.Command = command;
+            message.Args = args.ToList();
+            message.PostRead();
+
+            return message;
         }
 
-        public static async Task SendCommand(this Socket socket, GameServerMessage gameServerMessage)
+        public static async Task WriteCommandAsync(this Socket socket, GameServerMessage message)
         {
-            await gameServerMessage.WriteAsync(socket);
-        }
+            message.PreWrite();
 
-        public static async Task<GameServerMessage> ReadCommand(this Socket socket)
-        {
-            return await GameServerMessage.ReadAsync(socket);
+            await socket.WriteAsync(message.Args.Count + 1);
+            await socket.SendAsync(message.Command);
+            foreach (var arg in message.Args)
+            {
+                await socket.SendAsync(arg);
+            }
         }
     }
 }

@@ -27,6 +27,7 @@
             var lobbyServerImpl = compositionContainer.GetExportedValue<LobbyServerImpl>();
             Task t = server.Start(lobbyServerImpl.HandleClient, cts.Token);
 
+            Console.WriteLine("Loby server launched");
             Console.ReadLine();
             cts.Cancel();
 

@@ -1,14 +1,10 @@
 ﻿namespace Backend.GameLogic
 {
+    using Messages;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    using System.Net;
     using System.Net.Sockets;
-    using System.Text;
-    using System.Threading;
     using System.Threading.Tasks;
-    using Backend.Utils.Networking.Extensions;
-    using System.ComponentModel.Composition;
     
     public class LobbyConnection
     {
@@ -21,26 +17,22 @@
 
         public async Task Handlerequest()
         {
-            Socket socket = tcpClient.Client;
+            Socket client = tcpClient.Client;
 
-            var clientId = await JoinLobbyAsync(socket);
+            var joinMessage = await client.ReadCommandAsync<JoinGameMessage>();
 
-            if (clientId > 100)
+            if (joinMessage.ClientId > 100)
             {
-                await socket.SendErrorAsync("Sorry, not permitted");
+                await client.WriteCommandAsync(new ErrorMessage("Sorry, not permitted"));
+
                 return;
             }
 
-            Console.WriteLine("Connect from client {0}", clientId);
-        }
+            Console.WriteLine("Connect from client {0}", joinMessage.ClientId);
 
-
-
-        public async Task<int> JoinLobbyAsync(Socket socket)
-        {
-            var clientId = await socket.ReadInt32Async();
-
-            return clientId;
+            await client.WriteCommandAsync(new GameServerConnectionMessage { 
+                GameServer = new IPEndPoint(IPAddress.Loopback, 3001),
+                Token = new GameServerUserToken { Credential = "supersecret" }});
         }
     }
 }

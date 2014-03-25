@@ -50,15 +50,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConversionExtensions.cs" />
-    <Compile Include="GameServerConnectionInformation.cs" />
     <Compile Include="GameServerMessage.cs" />
     <Compile Include="GameServerProtocolExtensions.cs" />
-    <Compile Include="GameServerUserToken.cs" />
+    <Compile Include="Messages\ErrorMessage.cs" />
+    <Compile Include="Messages\GameServerUserToken.cs" />
     <Compile Include="LobbyClientImpl.cs" />
     <Compile Include="LobbyConnection.cs" />
     <Compile Include="LobbyServiceBackplane.cs" />
     <Compile Include="LobbyServerImpl.cs" />
+    <Compile Include="Messages\GameServerConnectionMessage.cs" />
+    <Compile Include="Messages\JoinGameMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

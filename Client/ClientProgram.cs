@@ -34,7 +34,12 @@
             };
 
             await lobbyClient.ConnectAsync();
-            await lobbyClient.JoinLobbyAsync(clientId: 13);
+
+            Console.WriteLine("Connected");
+
+            var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId: 13);
+
+            Console.WriteLine("I should connect to {0} using credential {1}", gameServerInfo.GameServer.ToString(), gameServerInfo.Token.Credential);
         }
     }
 }
