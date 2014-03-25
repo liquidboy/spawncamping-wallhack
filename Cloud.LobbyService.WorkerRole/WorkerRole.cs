@@ -1,10 +1,12 @@
 namespace Cloud.LobbyService.WorkerRole
 {
+    using System;
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
     using System.Diagnostics;
     using System.Net;
     using System.Threading;
+    using System.Threading.Tasks;
     
     using Microsoft.WindowsAzure.ServiceRuntime;
 
@@ -15,6 +17,8 @@ namespace Cloud.LobbyService.WorkerRole
     {
         [Import(typeof(ILobbyServiceSettings))]
         private ILobbyServiceSettings Settings { get; set; }
+
+        private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
         public override bool OnStart()
         {
@@ -31,16 +35,28 @@ namespace Cloud.LobbyService.WorkerRole
             return base.OnStart();
         }
 
-        public override void Run()
+        private async Task RunAsync(CancellationToken ct)
         {
-            // This is a sample worker implementation. Replace with your logic.
             Trace.TraceInformation("Cloud.LobbyService.WorkerRole entry point called", "Information");
 
-            while (true)
+            while (!ct.IsCancellationRequested)
             {
-                Thread.Sleep(10000);
+                await Task.Delay(TimeSpan.FromSeconds(10));
+
                 Trace.TraceInformation("Working", "Information");
             }
+        }
+
+        public override void Run()
+        {
+            RunAsync(this.cts.Token).Wait();
+        }
+
+        public override void OnStop()
+        {
+            this.cts.Cancel();
+
+            base.OnStop();
         }
     }
 }
