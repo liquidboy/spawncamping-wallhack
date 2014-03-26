@@ -26,6 +26,7 @@
         string ILobbyServiceSettings.ServiceBusCredentials { get { return S("Lobby.ServiceBusCredentials"); } }
 
         string ILobbyServiceSettings.LobbyStorageConnectionString { get { return S("Lobby.StorageConnectionString"); } }
+
         private string S(string key) { return RoleEnvironment.GetConfigurationSettingValue(key); }
     }
 }

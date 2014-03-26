@@ -10,9 +10,9 @@ namespace Cloud.LobbyService.WorkerRole
     
     using Microsoft.WindowsAzure.ServiceRuntime;
 
+    using Backend.Utils.Networking;
     using Backend.GameLogic;
     using DevelopmentSettings;
-    using Backend.Utils.Networking;
 
     public class WorkerRole : RoleEntryPoint
     {
@@ -20,7 +20,9 @@ namespace Cloud.LobbyService.WorkerRole
         private ILobbyServiceSettings Settings { get; set; }
 
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
+
         private Task lobbyTask;
+
         private LobbyServerImpl lobbyServerImpl;
 
         public override bool OnStart()
@@ -38,7 +40,7 @@ namespace Cloud.LobbyService.WorkerRole
 
             this.lobbyServerImpl = cc.GetExportedValue<LobbyServerImpl>();
             var server = new AsyncServerHost(this.Settings.IPEndPoint);
-            this.lobbyTask = server.Start(lobbyServerImpl.HandleClient, cts.Token);
+            this.lobbyTask = server.Start(lobbyServerImpl, cts.Token);
 
             return base.OnStart();
         }

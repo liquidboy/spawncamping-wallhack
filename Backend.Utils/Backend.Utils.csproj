@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ITcpServerHandler.cs" />
     <Compile Include="Networking\AsyncServerHost.cs" />
     <Compile Include="Networking\ProxyConnection.cs" />
     <Compile Include="Networking\RandomAwaiter.cs" />

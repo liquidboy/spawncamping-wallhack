@@ -18,7 +18,13 @@
             _endpoint = endpoint;
         }
 
-        public async Task Start(Func<TcpClient, CancellationToken, Task> serverLogic, CancellationToken ct)
+        public async Task Start(ITcpServerHandler handler, CancellationToken ct)
+        {
+            var task = this.StartFunctional((c, t) => handler.HandleRequest(c, t), ct);
+            await task;
+        }
+
+        private async Task StartFunctional(Func<TcpClient, CancellationToken, Task> serverLogic, CancellationToken ct)
         {
             TcpListener listener = new TcpListener(_endpoint);
             listener.Start(

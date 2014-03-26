@@ -9,13 +9,13 @@
 
         public IList<string> Args { get; set; }
 
-        internal GameServerMessageBase() 
+        protected GameServerMessageBase() 
         {
             this.Command = this.GetType().Name;
             this.Args = new List<string>(); 
         }
 
-        public GameServerMessageBase(string command, params string[] args)
+        protected GameServerMessageBase(string command, params string[] args)
         {
             this.Command = command;
             this.Args = new List<string>(args);

@@ -10,7 +10,8 @@
     using Microsoft.ServiceBus.Messaging;
 
     [Export(typeof(LobbyServiceBackplane))]
-    public class LobbyServiceBackplane : IPartImportsSatisfiedNotification
+    [PartCreationPolicy(CreationPolicy.Shared)]
+    public class LobbyServiceBackplane : IPartImportsSatisfiedNotification, IDisposable
     {
         [Import(typeof(ILobbyServiceSettings))]
         public ILobbyServiceSettings Settings { get; set; }
@@ -47,5 +48,35 @@
                 topicPath: LobbyServiceTopic,
                 name: this.Settings.LobbyServiceInstanceId);
         }
+
+        #region IDisposable
+
+        // Flag: Has Dispose already been called? 
+        bool m_disposed = false;
+
+        // Public implementation of Dispose pattern callable by consumers. 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern. 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (m_disposed)
+                return;
+
+            if (disposing)
+            {
+                DetachAsync().Wait();
+            }
+
+            // Free any unmanaged objects here. 
+            //
+            m_disposed = true;
+        }
+
+        #endregion
     }
 }

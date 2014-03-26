@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameServerProcess.cs" />
+    <Compile Include="GameServerVMAgent.cs" />
     <Compile Include="ILobbyServiceSettings.cs" />
     <Compile Include="Messages\GameServerMessage.cs" />
     <Compile Include="Messages\GameServerMessageBase.cs" />
@@ -57,7 +59,6 @@
     <Compile Include="Messages\ErrorMessage.cs" />
     <Compile Include="Messages\GameServerUserToken.cs" />
     <Compile Include="LobbyClientImpl.cs" />
-    <Compile Include="LobbyConnection.cs" />
     <Compile Include="LobbyServiceBackplane.cs" />
     <Compile Include="LobbyServerImpl.cs" />
     <Compile Include="Messages\GameServerConnectionMessage.cs" />
