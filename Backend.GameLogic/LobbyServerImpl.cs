@@ -20,13 +20,8 @@
 
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
         { 
-            InitAsync().Wait(); 
         }
 
-        public async Task InitAsync()
-        {
-            await this.LobbyConnector.EnsureSetupAsync();
-        }
 
         public async Task ShutDownAsync()
         {
