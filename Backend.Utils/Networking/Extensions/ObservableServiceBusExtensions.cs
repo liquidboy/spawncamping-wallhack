@@ -30,5 +30,33 @@
                 }
             });
         }
+
+        public static IObservable<BrokeredMessage> CreateObervableBatch(this SubscriptionClient client, int messageCount)
+        {
+            return Observable.Create<BrokeredMessage>(async (observer) =>
+            {
+                try
+                {
+                    while (!client.IsClosed)
+                    {
+                        var messages = await client.ReceiveBatchAsync(messageCount);
+                        if (messages == null)
+                        {
+                            observer.OnCompleted();
+                            break;
+                        }
+
+                        foreach (var message in messages)
+                        {
+                            observer.OnNext(message);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    observer.OnError(e);
+                }
+            });
+        }
     }
 }

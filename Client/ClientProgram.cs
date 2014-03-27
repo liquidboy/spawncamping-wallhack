@@ -37,7 +37,7 @@
 
         public async Task RunAsync(int clientId)
         {
-            var lobbyClient = new LobbyClientImpl(ipAddress: IPAddress.Loopback, port: 3000)
+            var lobbyClient = new LobbyClientImpl(ipAddress: IPAddress.Loopback, port: 3003)
             {
                 Logger = Log
             };

@@ -9,7 +9,7 @@
       <Setting name="Lobby.StorageConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
-      <InputEndpoint name="LobbyService" protocol="tcp" port="3000" />
+      <InputEndpoint name="LobbyService" protocol="tcp" port="3003" />
     </Endpoints>
   </WorkerRole>
 </ServiceDefinition>

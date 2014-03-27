@@ -12,7 +12,7 @@
 
         string ILobbyServiceSettings.LobbyServiceInstanceId { get { return "dev-" + Guid.NewGuid(); } }
 
-        IPEndPoint ILobbyServiceSettings.IPEndPoint { get { return new IPEndPoint(IPAddress.Loopback, 3000); } }
+        IPEndPoint ILobbyServiceSettings.IPEndPoint { get { return new IPEndPoint(IPAddress.Loopback, 3003); } }
 
         string ILobbyServiceSettings.LobbyStorageConnectionString { get { return S("Lobby.StorageConnectionString"); } }
         

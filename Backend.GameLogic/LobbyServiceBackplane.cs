@@ -10,9 +10,10 @@
     using Microsoft.ServiceBus;
     using Microsoft.ServiceBus.Messaging;
     using Backend.Utils.Networking.Extensions;
+    using System.Diagnostics;
 
     [Export(typeof(LobbyServiceBackplane))]
-    [PartCreationPolicy(CreationPolicy.Shared)]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class LobbyServiceBackplane : IPartImportsSatisfiedNotification, IDisposable
     {
         [Import(typeof(ILobbyServiceSettings))]
@@ -21,17 +22,25 @@
         public IObservable<BrokeredMessage> ObservableBackPlane { get; private set; }
 
         public string TopicPath { get { return "LobbyServiceTopic"; } }
+        
         public string SubscriptionName { get { return this.Settings.LobbyServiceInstanceId; } }
+        
         private NamespaceManager _namespaceManager;
-        private SubscriptionClient _SubscriptionClient;
+
         private TopicClient _TopicClient;
+
+        private readonly int messagesToFetchAtOnce = 10;
+
+        private SubscriptionClient _SubscriptionClient;
 
         public LobbyServiceBackplane() { }
 
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() { this.OnImportsSatisfiedAsync().Wait(); }
 
-        private async Task OnImportsSatisfiedAsync()    
+        private async Task OnImportsSatisfiedAsync()
         {
+            Trace.TraceInformation("Creating Service Bus backplane.");
+
             this._namespaceManager = NamespaceManager.CreateFromConnectionString(this.Settings.ServiceBusCredentials);
 
             if (!await _namespaceManager.TopicExistsAsync(this.TopicPath))
@@ -58,14 +67,33 @@
                 topicPath: this.TopicPath,
                 name: this.SubscriptionName);
 
-            this.ObservableBackPlane = this._SubscriptionClient.CreateObervable();
+            if (messagesToFetchAtOnce <= 1)
+            {
+                this.ObservableBackPlane = this._SubscriptionClient.CreateObervable();
+            }
+            else
+            {
+                this.ObservableBackPlane = this._SubscriptionClient.CreateObervableBatch(messageCount: messagesToFetchAtOnce);
+            }
+
+            Trace.TraceInformation("Service Bus backplane created.");
         }
 
-        public async Task DetachAsync()
+        private async Task DetachAsync()
         {
             await _namespaceManager.DeleteSubscriptionAsync(
                 topicPath: this.TopicPath,
                 name: this.SubscriptionName);
+        }
+
+        public async Task BroadcastLobbyMessageAsync(BrokeredMessage message)
+        {
+            await this._TopicClient.SendAsync(message);
+        }
+
+        public async Task BroadcastLobbyMessagebatchAsync(IEnumerable<BrokeredMessage> messages)
+        {
+            await this._TopicClient.SendBatchAsync(messages);
         }
 
         #region IDisposable

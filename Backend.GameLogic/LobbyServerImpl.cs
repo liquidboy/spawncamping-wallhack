@@ -3,30 +3,23 @@
     using System;
     using System.ComponentModel.Composition;
     using System.Diagnostics;
+    using System.Net;
     using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Net;
-    using Messages;
+
     using Backend.Utils;
+    using Messages;
 
     [Export]
-    public class LobbyServerImpl : IPartImportsSatisfiedNotification, ITcpServerHandler
+    public class LobbyServerImpl : IPartImportsSatisfiedNotification, ITcpServerHandler, IDisposable
     {
-        public LobbyServerImpl() { /* put constructor code into IPartImportsSatisfiedNotification.OnImportsSatisfied */ }
-
-        [Import(typeof(LobbyServiceBackplane))]
+        [Import(typeof(LobbyServiceBackplane), RequiredCreationPolicy = CreationPolicy.NonShared)]
         public LobbyServiceBackplane LobbyConnector { get; set; }
 
-        void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
-        { 
-        }
+        public LobbyServerImpl() { /* put constructor code into IPartImportsSatisfiedNotification.OnImportsSatisfied */ }
 
-
-        public async Task ShutDownAsync()
-        {
-            await this.LobbyConnector.DetachAsync();
-        }
+        void IPartImportsSatisfiedNotification.OnImportsSatisfied() {  }
 
         public async Task HandleRequest(TcpClient tcpClient, CancellationToken ct)
         {
@@ -53,7 +46,7 @@
 
                 await client.WriteCommandAsync(new GameServerConnectionMessage
                 {
-                    GameServer = new IPEndPoint(IPAddress.Loopback, 3001),
+                    GameServer = new IPEndPoint(IPAddress.Loopback, 4000),
                     Token = new GameServerUserToken { Credential = "supersecret" }
                 });
 
@@ -64,5 +57,35 @@
                 Trace.TraceError(string.Format("{0}: {1}", ex.GetType().Name, ex.Message));
             }
         }
+
+        #region IDisposable
+
+        // Flag: Has Dispose already been called? 
+        bool m_disposed = false;
+
+        // Public implementation of Dispose pattern callable by consumers. 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern. 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (m_disposed)
+                return;
+
+            if (disposing)
+            {
+                this.LobbyConnector.Dispose();
+            }
+
+            // Free any unmanaged objects here. 
+            //
+            m_disposed = true;
+        }
+
+        #endregion
     }
 }

@@ -34,9 +34,9 @@ namespace Cloud.LobbyService.WorkerRole
 
             ServicePointManager.DefaultConnectionLimit = 12;
 
-            Trace.TraceInformation("Use Service bus " + this.Settings.ServiceBusCredentials);
-            Trace.TraceInformation("Lobby Instance " + this.Settings.LobbyServiceInstanceId);
-            Trace.TraceInformation("Lobby Port" + this.Settings.IPEndPoint.ToString());
+            Trace.TraceInformation("ServiceBusCredentials  " + this.Settings.ServiceBusCredentials);
+            Trace.TraceInformation("LobbyServiceInstanceId " + this.Settings.LobbyServiceInstanceId);
+            Trace.TraceInformation("Settings.IPEndPoint    " + this.Settings.IPEndPoint.ToString());
 
             this.lobbyServerImpl = cc.GetExportedValue<LobbyServerImpl>();
             var server = new AsyncServerHost(this.Settings.IPEndPoint);
@@ -66,7 +66,7 @@ namespace Cloud.LobbyService.WorkerRole
         public override void OnStop()
         {
             this.cts.Cancel();
-            this.lobbyServerImpl.ShutDownAsync().Wait();
+            this.lobbyServerImpl.Dispose();
 
             base.OnStop();
         }
