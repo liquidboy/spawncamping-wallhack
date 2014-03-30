@@ -13,13 +13,13 @@
     using System.Diagnostics;
 
     [Export(typeof(LobbyServiceBackplane))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class LobbyServiceBackplane : IPartImportsSatisfiedNotification, IDisposable
     {
         [Import(typeof(ILobbyServiceSettings))]
         public ILobbyServiceSettings Settings { get; set; }
 
-        public IObservable<BrokeredMessage> ObservableBackPlane { get; private set; }
+        public IObservable<IBusMessage<string>> ObservableBackPlane { get; private set; }
 
         public string TopicPath { get { return "LobbyServiceTopic"; } }
         
@@ -65,15 +65,16 @@
             this._SubscriptionClient = SubscriptionClient.CreateFromConnectionString(
                 connectionString: this.Settings.ServiceBusCredentials,
                 topicPath: this.TopicPath,
-                name: this.SubscriptionName);
+                name: this.SubscriptionName, 
+                mode: ReceiveMode.ReceiveAndDelete);
 
             if (messagesToFetchAtOnce <= 1)
             {
-                this.ObservableBackPlane = this._SubscriptionClient.CreateObervable();
+                this.ObservableBackPlane = this._SubscriptionClient.CreateObervable<string>();
             }
             else
             {
-                this.ObservableBackPlane = this._SubscriptionClient.CreateObervableBatch(messageCount: messagesToFetchAtOnce);
+                this.ObservableBackPlane = this._SubscriptionClient.CreateObervableBatch<string>(messageCount: messagesToFetchAtOnce);
             }
 
             Trace.TraceInformation("Service Bus backplane created.");

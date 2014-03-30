@@ -4,22 +4,29 @@
     using System.ComponentModel.Composition;
     using System.Diagnostics;
     using System.Net;
+    using System.Reactive;
+    using System.Reactive.Linq;
     using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
 
     using Backend.Utils;
     using Messages;
+    using Microsoft.ServiceBus.Messaging;
 
     [Export]
     public class LobbyServerImpl : IPartImportsSatisfiedNotification, ITcpServerHandler, IDisposable
     {
-        [Import(typeof(LobbyServiceBackplane), RequiredCreationPolicy = CreationPolicy.NonShared)]
+        [Import(typeof(LobbyServiceBackplane), RequiredCreationPolicy = CreationPolicy.Shared)]
         public LobbyServiceBackplane LobbyConnector { get; set; }
 
         public LobbyServerImpl() { /* put constructor code into IPartImportsSatisfiedNotification.OnImportsSatisfied */ }
 
-        void IPartImportsSatisfiedNotification.OnImportsSatisfied() {  }
+        void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
+        {
+            LobbyConnector.ObservableBackPlane.Subscribe(
+                msg => Trace.TraceInformation(string.Format("Received msg: {0}", msg)));
+        }
 
         public async Task HandleRequest(TcpClient tcpClient, CancellationToken ct)
         {
@@ -34,6 +41,20 @@
                     return;
                 }
                 var joinMessage = joinMessageResponse.Message;
+
+                Func<JoinGameMessage, BrokeredMessage> createJoinNotification = _ =>
+                {
+                    var joinMessageUpdate = new BrokeredMessage(string.Format("Connect from {0} on instance {1}",
+                        _.ClientId, this.LobbyConnector.Settings.LobbyServiceInstanceId));
+                    joinMessageUpdate.Properties.Add("clientId", _.ClientId);
+                    return joinMessageUpdate;
+                };
+
+                await this.LobbyConnector.BroadcastLobbyMessageAsync(createJoinNotification(joinMessage));
+
+                var msgFromFour = await this.LobbyConnector.ObservableBackPlane.FirstAsync(msg => ((int)msg["clientId"]) == 1);
+
+                Trace.TraceInformation("Received msg from 1");
 
                 await Task.Delay(TimeSpan.FromSeconds(4));
 

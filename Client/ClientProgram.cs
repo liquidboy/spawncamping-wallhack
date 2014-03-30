@@ -14,17 +14,24 @@
         {
             Console.Title = "Client";
 
-            Console.Write("Press <return> to connect");
-            Console.ReadLine();
+            int clientCount = 10;
 
-            var clientTasks = Enumerable.Range(10, 50000).Select(async (clientId) =>
+            while (true)
             {
-                await Task.Delay(clientId * 5);
-                var p = new ClientProgram();
-                await p.RunAsync(clientId: clientId);
-            }).ToArray();
+                Console.Write("Enter number of clients to simulate (default is {0}): ", clientCount);
+                var s = Console.ReadLine();
+                var oldClientCount = clientCount;
+                if (!int.TryParse(s, out clientCount)) { clientCount = oldClientCount; }
 
-            Task.WaitAll(clientTasks);
+                var clientTasks = Enumerable.Range(1, clientCount).Select(async (clientId) =>
+                {
+                    await Task.Delay(clientId * 5);
+                    var p = new ClientProgram();
+                    await p.RunAsync(clientId: clientId);
+                }).ToArray();
+
+                Task.WaitAll(clientTasks);
+            }
 
             //var p = new ClientProgram();
             //p.RunAsync().Wait();
@@ -48,9 +55,10 @@
 
             var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId);
 
-            if (clientId % 10 == 0) Console.Write(".");
+            /*if (clientId % 10 == 0)*/ Console.Write("{0} ", clientId);
 
             lobbyClient.Close();
+            Console.WriteLine();
 
             // Console.WriteLine("I should connect to {0} using credential {1}", gameServerInfo.GameServer.ToString(), gameServerInfo.Token.Credential);
         }

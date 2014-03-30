@@ -3,37 +3,94 @@
     using System;
     using System.Reactive.Linq;
     using Microsoft.ServiceBus.Messaging;
+    using System.Threading.Tasks;
+
+
+    public interface IBusMessage<T>
+    {
+        T Content { get; }
+
+        object this[string key] { get; }
+    }
+
+    public class ServiceBusBusMessage<T> : IBusMessage<T>
+    {
+        public ServiceBusBusMessage(BrokeredMessage brokeredMessage)
+        {
+            this.BrokeredMessage = brokeredMessage;
+        }
+
+        public BrokeredMessage BrokeredMessage { get; private set; }
+
+        private readonly object m_lock = new object();
+        private T m_t;
+        T IBusMessage<T>.Content
+        {
+            get 
+            {
+                if (m_t == null)
+                {
+                    lock (m_lock)
+                    {
+                        if (m_t == null)
+                        {
+                            m_t = this.BrokeredMessage.GetBody<T>();
+                        }
+                    }
+                }
+
+                return m_t;
+            }
+        }
+
+        object IBusMessage<T>.this[string key]
+        {
+            get 
+            {
+                if (this.BrokeredMessage.Properties.Keys.Contains(key)) { return null; }
+                return this.BrokeredMessage.Properties[key];
+            }
+        }
+    }
 
     public static class ObservableServiceBusExtensions
     {
-        public static IObservable<BrokeredMessage> CreateObervable(this SubscriptionClient client)
+        public static IObservable<IBusMessage<T>> CreateObervable<T>(this SubscriptionClient client)
         {
-            return Observable.Create<BrokeredMessage>(async (observer) =>
+            Func<IObserver<ServiceBusBusMessage<T>>, Task> t = async (observer) =>
             {
                 try
                 {
                     while (!client.IsClosed)
                     {
-                        var message = await client.ReceiveAsync();
+                        var message = await client.ReceiveAsync(serverWaitTime: TimeSpan.FromSeconds(10));
                         if (message == null)
                         {
-                            observer.OnCompleted();
-                            break;
+                            continue;
                         }
 
-                        observer.OnNext(message);
+                        var body = new ServiceBusBusMessage<T>(message);
+
+                        observer.OnNext(body);
                     }
+
+                    observer.OnCompleted();
                 }
                 catch (Exception e)
                 {
                     observer.OnError(e);
                 }
-            });
+            };
+
+            return Observable
+                .Create<ServiceBusBusMessage<T>>(t)
+                .Publish()
+                .RefCount();
         }
 
-        public static IObservable<BrokeredMessage> CreateObervableBatch(this SubscriptionClient client, int messageCount)
+        public static IObservable<IBusMessage<T>> CreateObervableBatch<T>(this SubscriptionClient client, int messageCount)
         {
-            return Observable.Create<BrokeredMessage>(async (observer) =>
+            return Observable.Create<ServiceBusBusMessage<T>>(async (observer) =>
             {
                 try
                 {
@@ -48,7 +105,7 @@
 
                         foreach (var message in messages)
                         {
-                            observer.OnNext(message);
+                            observer.OnNext(new ServiceBusBusMessage<T>(message));
                         }
                     }
                 }
@@ -56,7 +113,7 @@
                 {
                     observer.OnError(e);
                 }
-            });
+            }).Publish().RefCount();
         }
     }
 }
