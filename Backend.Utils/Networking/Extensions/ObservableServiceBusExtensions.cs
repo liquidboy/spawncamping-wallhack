@@ -4,6 +4,7 @@
     using System.Reactive.Linq;
     using Microsoft.ServiceBus.Messaging;
     using System.Threading.Tasks;
+    using System.Threading;
 
 
     public interface IBusMessage<T>
@@ -47,7 +48,11 @@
         {
             get 
             {
-                if (this.BrokeredMessage.Properties.Keys.Contains(key)) { return null; }
+                if (!this.BrokeredMessage.Properties.Keys.Contains(key))
+                { 
+                    return null; 
+                }
+                
                 return this.BrokeredMessage.Properties[key];
             }
         }
@@ -57,12 +62,20 @@
     {
         public static IObservable<IBusMessage<T>> CreateObervable<T>(this SubscriptionClient client)
         {
+            return CreateObervable<T>(client, CancellationToken.None);
+
+        }
+
+        public static IObservable<IBusMessage<T>> CreateObervable<T>(this SubscriptionClient client, CancellationToken cancellationToken)
+        {
             Func<IObserver<ServiceBusBusMessage<T>>, Task> t = async (observer) =>
             {
                 try
                 {
                     while (!client.IsClosed)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
+
                         var message = await client.ReceiveAsync(serverWaitTime: TimeSpan.FromSeconds(10));
                         if (message == null)
                         {
@@ -88,14 +101,21 @@
                 .RefCount();
         }
 
+
         public static IObservable<IBusMessage<T>> CreateObervableBatch<T>(this SubscriptionClient client, int messageCount)
         {
-            return Observable.Create<ServiceBusBusMessage<T>>(async (observer) =>
-            {
+            return CreateObervableBatch<T>(client, messageCount, CancellationToken.None);
+        }
+
+        public static IObservable<IBusMessage<T>> CreateObervableBatch<T>(this SubscriptionClient client, int messageCount, CancellationToken cancellationToken)
+        {
+            Func<IObserver<ServiceBusBusMessage<T>>, Task> t = async (observer) =>  {
                 try
                 {
                     while (!client.IsClosed)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
+
                         var messages = await client.ReceiveBatchAsync(messageCount);
                         if (messages == null)
                         {
@@ -113,7 +133,12 @@
                 {
                     observer.OnError(e);
                 }
-            }).Publish().RefCount();
+            };
+
+            return Observable
+              .Create<ServiceBusBusMessage<T>>(t)
+              .Publish()
+              .RefCount();
         }
     }
 }

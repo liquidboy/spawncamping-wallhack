@@ -2,15 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Reactive.Linq;
     using System.ComponentModel.Composition;
+    using System.Diagnostics;
+    using System.Threading.Tasks;
     using Microsoft.ServiceBus;
     using Microsoft.ServiceBus.Messaging;
     using Backend.Utils.Networking.Extensions;
-    using System.Diagnostics;
 
     [Export(typeof(LobbyServiceBackplane))]
     [PartCreationPolicy(CreationPolicy.Shared)]
@@ -39,17 +36,21 @@
 
         private async Task OnImportsSatisfiedAsync()
         {
-            Trace.TraceInformation("Creating Service Bus backplane.");
+            Trace.TraceInformation(string.Format("{0} start initializing.", this.GetType().Name));
 
             this._namespaceManager = NamespaceManager.CreateFromConnectionString(this.Settings.ServiceBusCredentials);
 
             if (!await _namespaceManager.TopicExistsAsync(this.TopicPath))
             {
+                Trace.TraceInformation(string.Format("{0} create topic {1}.", this.GetType().Name, this.TopicPath));
+
                 await _namespaceManager.CreateTopicAsync(this.TopicPath);
             }
 
             if (!await _namespaceManager.SubscriptionExistsAsync(topicPath: this.TopicPath, name: this.SubscriptionName))
             {
+                Trace.TraceInformation(string.Format("{0} create subscription {1}.", this.GetType().Name, this.SubscriptionName));
+
                 await _namespaceManager.CreateSubscriptionAsync(new SubscriptionDescription(
                     topicPath: this.TopicPath,
                     subscriptionName: this.SubscriptionName)
@@ -77,7 +78,7 @@
                 this.ObservableBackPlane = this._SubscriptionClient.CreateObervableBatch<string>(messageCount: messagesToFetchAtOnce);
             }
 
-            Trace.TraceInformation("Service Bus backplane created.");
+            Trace.TraceInformation(string.Format("{0} Done initializing.", this.GetType().Name));
         }
 
         private async Task DetachAsync()

@@ -25,7 +25,7 @@
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
         {
             LobbyConnector.ObservableBackPlane.Subscribe(
-                msg => Trace.TraceInformation(string.Format("Received msg: {0}", msg)));
+                msg => Trace.TraceInformation(string.Format("Received msg: {0}", msg.Content)));
         }
 
         public async Task HandleRequest(TcpClient tcpClient, CancellationToken ct)
@@ -52,9 +52,13 @@
 
                 await this.LobbyConnector.BroadcastLobbyMessageAsync(createJoinNotification(joinMessage));
 
-                var msgFromFour = await this.LobbyConnector.ObservableBackPlane.FirstAsync(msg => ((int)msg["clientId"]) == 1);
+                var msgFromFour = await this.LobbyConnector.ObservableBackPlane.FirstAsync(msg => 
+                { 
+                    var clientIdO = msg["clientId"];
+                    return ((int)clientIdO) == 1; 
+                });
 
-                Trace.TraceInformation("Received msg from 1");
+                Trace.TraceInformation("Received msg from clientId {0}", msgFromFour["clientId"]);
 
                 await Task.Delay(TimeSpan.FromSeconds(4));
 
