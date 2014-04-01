@@ -93,7 +93,7 @@
             await this._TopicClient.SendAsync(message);
         }
 
-        public async Task BroadcastLobbyMessagebatchAsync(IEnumerable<BrokeredMessage> messages)
+        public async Task BroadcastLobbyMessageBatchAsync(IEnumerable<BrokeredMessage> messages)
         {
             await this._TopicClient.SendBatchAsync(messages);
         }

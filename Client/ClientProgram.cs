@@ -27,7 +27,7 @@
                 {
                     await Task.Delay(clientId * 5);
                     var p = new ClientProgram();
-                    await p.RunAsync(clientId: clientId);
+                    await p.RunAsync(new ClientID { ID = clientId });
                 }).ToArray();
 
                 Task.WaitAll(clientTasks);
@@ -42,7 +42,7 @@
             // Console.WriteLine(s);
         }
 
-        public async Task RunAsync(int clientId)
+        public async Task RunAsync(ClientID clientId)
         {
             var lobbyClient = new LobbyClientImpl(ipAddress: IPAddress.Loopback, port: 3003)
             {

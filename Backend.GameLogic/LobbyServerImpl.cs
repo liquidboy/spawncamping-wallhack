@@ -10,9 +10,10 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Microsoft.ServiceBus.Messaging;
     using Backend.Utils;
     using Messages;
-    using Microsoft.ServiceBus.Messaging;
+    using System.Collections.Concurrent;
 
     [Export]
     public class LobbyServerImpl : IPartImportsSatisfiedNotification, ITcpServerHandler, IDisposable
@@ -20,13 +21,29 @@
         [Import(typeof(LobbyServiceBackplane), RequiredCreationPolicy = CreationPolicy.Shared)]
         public LobbyServiceBackplane LobbyConnector { get; set; }
 
+        [Import(typeof(ILobbyServerDatabase))]
+        public ILobbyServerDatabase LobbyServerDatabase { get; set; }
+
         public LobbyServerImpl() { /* put constructor code into IPartImportsSatisfiedNotification.OnImportsSatisfied */ }
 
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
         {
-            LobbyConnector.ObservableBackPlane.Subscribe(
-                msg => Trace.TraceInformation(string.Format("Received msg: {0}", msg.Content)));
+            // Read current state from azure storage table 
+            this.LobbyServerDatabase.LoadAsync().Wait();
+
+            this.LobbyConnector.ObservableBackPlane.Subscribe(msg => 
+            {
+                    Trace.TraceInformation(string.Format("Received msg: {0}", msg.Content));
+            });
+            this.LobbyConnector.ObservableBackPlane.Subscribe(msg =>
+            {
+                var clientId = (int) msg["clientId"];
+
+                this.CurrentPlayers.Add(clientId);
+            });
         }
+
+        public readonly ConcurrentBag<int> CurrentPlayers = new ConcurrentBag<int>();
 
         public async Task HandleRequest(TcpClient tcpClient, CancellationToken ct)
         {
@@ -45,8 +62,8 @@
                 Func<JoinGameMessage, BrokeredMessage> createJoinNotification = _ =>
                 {
                     var joinMessageUpdate = new BrokeredMessage(string.Format("Connect from {0} on instance {1}",
-                        _.ClientId, this.LobbyConnector.Settings.LobbyServiceInstanceId));
-                    joinMessageUpdate.Properties.Add("clientId", _.ClientId);
+                        _.ClientID.ID, this.LobbyConnector.Settings.LobbyServiceInstanceId));
+                    joinMessageUpdate.Properties.Add("clientId", _.ClientID.ID);
                     return joinMessageUpdate;
                 };
 
