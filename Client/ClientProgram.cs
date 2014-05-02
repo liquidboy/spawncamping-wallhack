@@ -55,7 +55,8 @@
 
             var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId);
 
-            /*if (clientId % 10 == 0)*/ Console.Write("{0} ", clientId);
+            /*if (clientId % 10 == 0)*/
+            Console.WriteLine("{0}: {1}", clientId, gameServerInfo.Token.Credential);
 
             lobbyClient.Close();
             Console.WriteLine();

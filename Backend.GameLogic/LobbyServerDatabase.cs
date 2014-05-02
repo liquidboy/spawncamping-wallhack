@@ -27,7 +27,6 @@
 
         public LobbyServerDatabaseTableStorage() { }
 
-
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() { this.OnImportsSatisfiedAsync().Wait(); }
 
         private async Task OnImportsSatisfiedAsync()
@@ -41,11 +40,10 @@
             }
         }
 
-        Task ILobbyServerDatabase.LoadAsync()
+        async Task ILobbyServerDatabase.LoadAsync()
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
-
 
         //public static async Task Loopy() {}
 

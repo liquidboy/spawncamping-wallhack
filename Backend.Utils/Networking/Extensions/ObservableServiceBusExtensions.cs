@@ -63,7 +63,6 @@
         public static IObservable<IBusMessage<T>> CreateObervable<T>(this SubscriptionClient client)
         {
             return CreateObervable<T>(client, CancellationToken.None);
-
         }
 
         public static IObservable<IBusMessage<T>> CreateObervable<T>(this SubscriptionClient client, CancellationToken cancellationToken)

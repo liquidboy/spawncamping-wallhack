@@ -10,7 +10,9 @@
     {
         string ILobbyServiceSettings.ServiceBusCredentials { get { return S("ServiceBusCredentials"); } }
 
-        string ILobbyServiceSettings.LobbyServiceInstanceId { get { return "dev-" + Guid.NewGuid(); } }
+        private readonly string _LobbyServiceInstanceId = string.Format("dev-{0}", Guid.NewGuid());
+
+        string ILobbyServiceSettings.LobbyServiceInstanceId { get { return _LobbyServiceInstanceId; } }
 
         IPEndPoint ILobbyServiceSettings.IPEndPoint { get { return new IPEndPoint(IPAddress.Loopback, 3003); } }
 
