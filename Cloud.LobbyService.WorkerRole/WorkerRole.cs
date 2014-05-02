@@ -32,7 +32,9 @@ namespace Cloud.LobbyService.WorkerRole
                 new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly)));
             cc.SatisfyImportsOnce(this);
 
-            ServicePointManager.DefaultConnectionLimit = 12;
+            ServicePointManager.DefaultConnectionLimit = 64;
+            ServicePointManager.Expect100Continue = false;
+            ServicePointManager.UseNagleAlgorithm = false;
 
             Trace.TraceInformation("ServiceBusCredentials  " + this.Settings.ServiceBusCredentials);
             Trace.TraceInformation("LobbyServiceInstanceId " + this.Settings.LobbyServiceInstanceId);

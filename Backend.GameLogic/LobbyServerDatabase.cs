@@ -43,6 +43,22 @@
 
         Task ILobbyServerDatabase.LoadAsync()
         {
+            throw new NotImplementedException();
         }
+
+
+        //public static async Task Loopy() {}
+
+        //Task ILobbyServerDatabase.LoadAsync()
+        //{
+        //    Task.Factory.StartNew(async () => { Loopy(); }, TaskCreationOptions.LongRunning)
+        //        .ContinueWith(HandleError, TaskContinuationOptions.OnlyOnFaulted);
+        //}
+
+        //private static Task HandleError(Task t) {
+        //    if (t.IsFaulted) {
+        //        var e = t.Exception;
+        //    }
+        //}
     }
 }

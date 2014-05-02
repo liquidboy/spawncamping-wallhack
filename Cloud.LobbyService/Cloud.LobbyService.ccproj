@@ -39,6 +39,14 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Cloud.GameServerHost.WorkerRole\Cloud.GameServerHost.WorkerRole.csproj">
+      <Name>Cloud.GameServerHost.WorkerRole</Name>
+      <Project>{14fd85e8-d973-4935-8b87-440fa1b2ecd9}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Cloud.GameServerHost.WorkerRole</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\Cloud.LobbyService.WorkerRole\Cloud.LobbyService.WorkerRole.csproj">
       <Name>Cloud.LobbyService.WorkerRole</Name>
       <Project>{58abc7f0-ea51-41d7-8b76-6e5d930f6f77}</Project>
@@ -49,9 +57,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Cloud.GameServerHost.WorkerRoleContent\" />
     <Folder Include="Cloud.LobbyService.WorkerRoleContent\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Cloud.GameServerHost.WorkerRoleContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Cloud.LobbyService.WorkerRoleContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>

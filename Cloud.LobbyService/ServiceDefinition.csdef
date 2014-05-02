@@ -12,4 +12,16 @@
       <InputEndpoint name="LobbyService" protocol="tcp" port="3003" />
     </Endpoints>
   </WorkerRole>
+  <WorkerRole name="Cloud.GameServerHost.WorkerRole" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InstanceInputEndpoint name="gameServerInstanceEndpoint" protocol="tcp" localPort="10000">
+        <AllocatePublicPortFrom>
+          <FixedPortRange max="10100" min="10000" />
+        </AllocatePublicPortFrom>
+      </InstanceInputEndpoint>
+    </Endpoints>
+  </WorkerRole>
 </ServiceDefinition>
