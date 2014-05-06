@@ -13,8 +13,8 @@
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class LobbyServiceBackplane : IPartImportsSatisfiedNotification, IDisposable
     {
-        [Import(typeof(ILobbyServiceSettings))]
-        public ILobbyServiceSettings Settings { get; set; }
+        [Import(typeof(LobbyServiceSettings))]
+        public LobbyServiceSettings Settings { get; set; }
 
         public IObservable<IBusMessage<string>> ObservableBackPlane { get; private set; }
 

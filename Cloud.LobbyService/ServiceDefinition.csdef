@@ -5,8 +5,8 @@
       <Import moduleName="Diagnostics" />
     </Imports>
     <ConfigurationSettings>
-      <Setting name="Lobby.ServiceBusCredentials" />
-      <Setting name="Lobby.StorageConnectionString" />
+      <Setting name="ServiceBusCredentials" />
+      <Setting name="StorageConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="LobbyService" protocol="tcp" port="3003" />
@@ -23,5 +23,9 @@
         </AllocatePublicPortFrom>
       </InstanceInputEndpoint>
     </Endpoints>
+    <ConfigurationSettings>
+      <Setting name="StorageConnectionString" />
+      <Setting name="ServiceBusCredentials" />
+    </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

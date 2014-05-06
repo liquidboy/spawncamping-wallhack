@@ -91,11 +91,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AzureGameServerSettings.cs" />
     <Compile Include="ClientID.cs" />
     <Compile Include="ClientState.cs" />
+    <Compile Include="LobbyServiceSettings.cs" />
     <Compile Include="GameServerProcess.cs" />
     <Compile Include="GameServerVMAgent.cs" />
-    <Compile Include="ILobbyServiceSettings.cs" />
+    <Compile Include="ISettingsProvider.cs" />
     <Compile Include="LobbyServerDatabase.cs" />
     <Compile Include="Messages\GameServerMessage.cs" />
     <Compile Include="Messages\GameServerMessageBase.cs" />

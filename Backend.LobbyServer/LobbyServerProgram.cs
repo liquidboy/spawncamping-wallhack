@@ -8,6 +8,7 @@
 
     using Backend.GameLogic;
     using Backend.Utils.Networking;
+    using DevelopmentSettings;
 
     class LobbyServerProgram
     {
@@ -18,11 +19,10 @@
             var cts = new CancellationTokenSource();
 
             var compositionContainer = new CompositionContainer(new AggregateCatalog(
-                // new TypeCatalog(typeof(LobbyServiceBackplane), typeof(LobbyServerImpl), typeof(EnvironmentSettingsProvider))
-                new AssemblyCatalog(typeof(DevelopmentSettings.EnvironmentSettingsProvider).Assembly),
-                new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly)
+                new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly),
+                new AssemblyCatalog(typeof(DevelopmentSettingsProvider).Assembly)
                 ));
-            var settings = compositionContainer.GetExportedValue<ILobbyServiceSettings>();
+            var settings = compositionContainer.GetExportedValue<LobbyServiceSettings>();
 
             using (var lobbyServerImpl = compositionContainer.GetExportedValue<LobbyServerImpl>())
             {

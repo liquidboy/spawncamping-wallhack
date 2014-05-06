@@ -18,17 +18,13 @@
             return x.Message;
         }
 
-
         public async static Task<GameServerMessage<T>> ReadCommandOrErrorAsync<T>(this Socket socket) where T : GameServerMessageBase, new()
         {
-            string command;
-            string[] args;
-
             try
             {
-                int len = await socket.ReadInt32Async();
-                command = await socket.ReadStringAsync();
-                args = new string[len - 1];
+                var len = await socket.ReadInt32Async();
+                var command = await socket.ReadStringAsync();
+                var args = new string[len - 1];
                 for (var i = 0; i < len - 1; i++)
                 {
                     string arg = await socket.ReadStringAsync();
@@ -39,7 +35,7 @@
                     return new GameServerMessage<T>(new ErrorMessage { Command = command, Args = args, Message = args[0] });
                 }
 
-                T message = Activator.CreateInstance<T>();
+                GameServerMessageBase message = Activator.CreateInstance<T>();
                 message.Command = command;
                 message.Args = args.ToList();
                 message.PostRead();

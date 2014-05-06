@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevelopmentSettings", "Deve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cloud.GameServerHost.WorkerRole", "Cloud.GameServerHost.WorkerRole\Cloud.GameServerHost.WorkerRole.csproj", "{14FD85E8-D973-4935-8B87-440FA1B2ECD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureProductionSettings", "AzureProductionSettings\AzureProductionSettings.csproj", "{32DF24D5-BEE0-4A6C-B7E3-D3FF43158FC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{14FD85E8-D973-4935-8B87-440FA1B2ECD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14FD85E8-D973-4935-8B87-440FA1B2ECD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14FD85E8-D973-4935-8B87-440FA1B2ECD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32DF24D5-BEE0-4A6C-B7E3-D3FF43158FC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32DF24D5-BEE0-4A6C-B7E3-D3FF43158FC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32DF24D5-BEE0-4A6C-B7E3-D3FF43158FC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32DF24D5-BEE0-4A6C-B7E3-D3FF43158FC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

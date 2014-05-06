@@ -12,12 +12,12 @@ namespace Cloud.LobbyService.WorkerRole
 
     using Backend.Utils.Networking;
     using Backend.GameLogic;
-    using DevelopmentSettings;
+    using AzureProductionSettings;
 
     public class WorkerRole : RoleEntryPoint
     {
-        [Import(typeof(ILobbyServiceSettings))]
-        private ILobbyServiceSettings Settings { get; set; }
+        [Import(typeof(LobbyServiceSettings))]
+        private LobbyServiceSettings Settings { get; set; }
 
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -28,7 +28,7 @@ namespace Cloud.LobbyService.WorkerRole
         public override bool OnStart()
         {
             var cc = new CompositionContainer(new AggregateCatalog(
-                new AssemblyCatalog(typeof(RoleEnvironmentSettingsProvider).Assembly),
+                new AssemblyCatalog(typeof(AzureSettings).Assembly),
                 new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly)));
             cc.SatisfyImportsOnce(this);
 
@@ -46,7 +46,6 @@ namespace Cloud.LobbyService.WorkerRole
 
             return base.OnStart();
         }
-
 
         private async Task RunAsync(CancellationToken ct)
         {

@@ -18,8 +18,8 @@
     [Export(typeof(ILobbyServerDatabase))]
     public class LobbyServerDatabaseTableStorage : ILobbyServerDatabase, IPartImportsSatisfiedNotification
     {
-        [Import(typeof(ILobbyServiceSettings))]
-        public ILobbyServiceSettings LobbyServiceSettings { get; set; }
+        [Import(typeof(LobbyServiceSettings))]
+        public LobbyServiceSettings LobbyServiceSettings { get; set; }
 
         private const string lobbyServiceTableName = "lobbyservice";
         private CloudTableClient m_cloudTableClient;

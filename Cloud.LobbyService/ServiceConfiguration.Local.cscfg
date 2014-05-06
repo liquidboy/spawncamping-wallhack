@@ -4,14 +4,16 @@
     <Instances count="6" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
-      <Setting name="Lobby.ServiceBusCredentials" value="" />
-      <Setting name="Lobby.StorageConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="ServiceBusCredentials" value="" />
+      <Setting name="StorageConnectionString" value="" />
     </ConfigurationSettings>
   </Role>
   <Role name="Cloud.GameServerHost.WorkerRole">
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="StorageConnectionString" value="" />
+      <Setting name="ServiceBusCredentials" value="" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>
