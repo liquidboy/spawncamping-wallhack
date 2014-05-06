@@ -16,16 +16,12 @@
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
-    <Endpoints>
-      <InstanceInputEndpoint name="gameServerInstanceEndpoint" protocol="tcp" localPort="10000">
-        <AllocatePublicPortFrom>
-          <FixedPortRange max="10100" min="10000" />
-        </AllocatePublicPortFrom>
-      </InstanceInputEndpoint>
-    </Endpoints>
     <ConfigurationSettings>
       <Setting name="StorageConnectionString" />
       <Setting name="ServiceBusCredentials" />
     </ConfigurationSettings>
+    <Endpoints>
+      <InputEndpoint name="gameServerInstanceEndpoint" protocol="tcp" port="10100" localPort="10000" />
+    </Endpoints>
   </WorkerRole>
 </ServiceDefinition>

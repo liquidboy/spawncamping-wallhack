@@ -36,7 +36,11 @@
             m_table = m_cloudTableClient.GetTableReference(tableName: lobbyServiceTableName);
             if (!await m_table.ExistsAsync())
             {
-                await m_table.CreateAsync();
+                try
+                {
+                    await m_table.CreateAsync();
+                }
+                catch (StorageException) { }
             }
         }
 

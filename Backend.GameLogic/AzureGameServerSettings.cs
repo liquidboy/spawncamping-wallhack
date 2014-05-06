@@ -17,5 +17,7 @@
         public string GameServerStorageConnectionString { get { return this.SettingsProvider.GetSetting("StorageConnectionString"); } }
 
         public IPEndPoint IPEndPoint { get { return this.SettingsProvider.GetIPEndpoint("gameServerInstanceEndpoint"); } }
+
+        public int GameServerPort { get { return this.SettingsProvider.GetPublicPort("gameServerInstanceEndpoint"); } }
     }
 }

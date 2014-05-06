@@ -53,7 +53,7 @@ namespace Cloud.LobbyService.WorkerRole
 
             while (!ct.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromSeconds(10));
+                await Task.Delay(TimeSpan.FromSeconds(5));
 
                 Trace.TraceInformation("Working", "Information");
             }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel.Composition;
+    using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Net;
     using System.Reactive;
@@ -13,7 +14,6 @@
     using Microsoft.ServiceBus.Messaging;
     using Backend.Utils;
     using Messages;
-    using System.Collections.Concurrent;
 
     [Export]
     public class LobbyServerImpl : IPartImportsSatisfiedNotification, ITcpServerHandler, IDisposable

@@ -1,24 +1,25 @@
 namespace Cloud.GameServerHost.WorkerRole
 {
-    using System;
-    using System.Collections.Generic;
+    using System.ComponentModel.Composition;
+    using System.ComponentModel.Composition.Hosting;
     using System.Diagnostics;
-    using System.Linq;
     using System.Net;
     using System.Threading;
-    using Microsoft.WindowsAzure;
-    using Microsoft.WindowsAzure.Diagnostics;
     using Microsoft.WindowsAzure.ServiceRuntime;
-    using Microsoft.WindowsAzure.Storage;
-    using Backend.GameLogic;
-    using System.ComponentModel.Composition.Hosting;
-    using System.ComponentModel.Composition;
+
     using AzureProductionSettings;
+    using Backend.GameLogic;
+    using System.Threading.Tasks;
+    using System;
 
     public class GameServerWorkerRole : RoleEntryPoint
     {
         [Import]
         GameServerVMAgent agent;
+        
+        private Task agentTask;
+
+        private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
         public GameServerWorkerRole()
         {
@@ -28,27 +29,42 @@ namespace Cloud.GameServerHost.WorkerRole
                 ));
 
             compositionContainer.SatisfyImportsOnce(this);
+
+            var a = this.agent.Settings.IPEndPoint;
         }
 
         public override bool OnStart()
         {
-            ServicePointManager.DefaultConnectionLimit = 12;
+            ServicePointManager.DefaultConnectionLimit = 64;
+            ServicePointManager.Expect100Continue = false;
+            ServicePointManager.UseNagleAlgorithm = false;
+
+            this.agentTask = this.agent.Start(cts.Token);
 
             return base.OnStart();
         }
 
-        public override void Run()
+        private async Task RunAsync(CancellationToken ct)
         {
-            while (true)
+            Trace.TraceInformation("Cloud.GameServerHost.WorkerRole entry point called", "Information");
+
+            while (!ct.IsCancellationRequested)
             {
-                Thread.Sleep(10000);
+                await Task.Delay(TimeSpan.FromSeconds(10));
+
                 Trace.TraceInformation("Working", "Information");
             }
         }
 
+        public override void Run()
+        {
+            RunAsync(this.cts.Token).Wait();
+        }
+
         public override void OnStop()
         {
-            base.OnStop();
+            this.cts.Cancel();
+            this.agent.Dispose();
         }
     }
 }
