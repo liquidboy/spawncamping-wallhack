@@ -1,10 +1,13 @@
 ﻿namespace Backend.GameServer
 {
+    using Backend.GameLogic;
+    using Backend.Utils.Networking;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public class GameServerProgram
@@ -34,6 +37,14 @@
 
             Console.WriteLine("Listen on {0}", ipEndPoint);
 
+            var cts = new CancellationTokenSource();
+            var server = new AsyncServerHost(ipEndPoint);
+
+            GameServerImpl gameServerImpl = new GameServerImpl();
+            Task t = server.Start(gameServerImpl, cts.Token);
+
+            Console.WriteLine("Launched game server process on {0}", ipEndPoint);
+            t.Wait();
         }
     }
 }
