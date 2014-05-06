@@ -3,11 +3,9 @@
     using Backend.GameLogic;
     using Backend.GameLogic.Messages;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Net.Sockets;
-    using System.Text;
     using System.Threading.Tasks;
 
     class ClientProgram
@@ -16,21 +14,19 @@
         {
             Console.Title = "Client";
 
-            int clientCount = 10;
+            int clientCount = 1;
 
             while (true)
             {
-                Console.Write("Enter number of clients to simulate (default is {0}): ", clientCount);
+                Console.Write("Enter client ID: ");
                 var s = Console.ReadLine();
-                var oldClientCount = clientCount;
-                if (!int.TryParse(s, out clientCount)) { clientCount = oldClientCount; }
+                var clientId = int.Parse(s);
 
-                var clientTasks = Enumerable.Range(1, clientCount).Select(async (clientId) =>
+                var clientTasks = Task.Factory.StartNew(async () => 
                 {
-                    await Task.Delay(clientId * 5);
                     var p = new ClientProgram();
                     await p.RunGameClientAsync(new ClientID { ID = clientId });
-                }).ToArray();
+                }).Unwrap();
 
                 Task.WaitAll(clientTasks);
             }
@@ -76,6 +72,26 @@
 
             await server.WriteCommandAsync(new JoinGameMessage { ClientID = clientId });
 
+            var receiveTask = Task.Factory.StartNew(async () =>
+            {
+                while (true)
+                {
+                    var someGameMessage = await server.ReadExpectedCommandAsync<SomeGameMessage>();
+                    Console.WriteLine("Received " + someGameMessage.Stuff);
+                }
+            }).Unwrap();
+
+            var senderTask = Task.Factory.StartNew(async () =>
+            {
+                while (true)
+                {
+                    var content = Console.ReadLine();
+                    await server.WriteCommandAsync(new SomeGameMessage { Stuff = content });
+                    Console.WriteLine("Sent message");
+                }
+            }).Unwrap();
+
+            await Task.WhenAll(receiveTask, senderTask);
 
 
 

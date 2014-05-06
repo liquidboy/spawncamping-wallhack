@@ -33,7 +33,9 @@
                 {
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        GameServerMessageBase someGameMessage = await client.ReadExpectedCommandAsync<SomeGameMessage>();
+                        SomeGameMessage someGameMessage = await client.ReadExpectedCommandAsync<SomeGameMessage>();
+                        Console.WriteLine("Received message {0} from {1}", someGameMessage.Stuff, joinMessage.ClientID.ID);
+
                         foreach (var queue in this.queues.Values)
                         {
                             if (queue != myQueue)
@@ -52,6 +54,7 @@
                         {
                             var messageToSent = myQueue.Dequeue();
                             await client.WriteCommandAsync(messageToSent);
+                            Console.WriteLine("Sent message {0} to client {1}", ((SomeGameMessage)messageToSent).Stuff, joinMessage.ClientID.ID);
                         }
                     }
                 }).Unwrap();

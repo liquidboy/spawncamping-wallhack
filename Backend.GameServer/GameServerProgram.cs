@@ -40,7 +40,7 @@
             var cts = new CancellationTokenSource();
             var server = new AsyncServerHost(ipEndPoint);
 
-            GameServerImpl gameServerImpl = new GameServerImpl();
+            var gameServerImpl = new GameServerImpl();
             Task t = server.Start(gameServerImpl, cts.Token);
 
             Console.WriteLine("Launched game server process on {0}", ipEndPoint);
