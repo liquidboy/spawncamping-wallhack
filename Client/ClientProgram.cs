@@ -1,10 +1,12 @@
 ﻿namespace Client
 {
     using Backend.GameLogic;
+    using Backend.GameLogic.Messages;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Net.Sockets;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -27,7 +29,7 @@
                 {
                     await Task.Delay(clientId * 5);
                     var p = new ClientProgram();
-                    await p.RunAsync(new ClientID { ID = clientId });
+                    await p.RunGameClientAsync(new ClientID { ID = clientId });
                 }).ToArray();
 
                 Task.WaitAll(clientTasks);
@@ -42,7 +44,7 @@
             // Console.WriteLine(s);
         }
 
-        public async Task RunAsync(ClientID clientId)
+        public async Task RunLobbyclientAsync(ClientID clientId)
         {
             var lobbyClient = new LobbyClientImpl(ipAddress: IPAddress.Loopback, port: 3003)
             {
@@ -62,6 +64,22 @@
             Console.WriteLine();
 
             // Console.WriteLine("I should connect to {0} using credential {1}", gameServerInfo.GameServer.ToString(), gameServerInfo.Token.Credential);
+        }
+
+        public async Task RunGameClientAsync(ClientID clientId)
+        {
+            var client = new TcpClient();
+
+            await client.ConnectAsync(address: IPAddress.Parse("127.0.0.1"), port: 4000);
+
+            var server = client.Client;
+
+            await server.WriteCommandAsync(new JoinGameMessage { ClientID = clientId });
+
+
+
+
+            client.Close();
         }
     }
 }
