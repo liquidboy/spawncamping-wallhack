@@ -46,6 +46,7 @@
 
         async Task ILobbyServerDatabase.LoadAsync()
         {
+            await Task.Yield();
             // throw new NotImplementedException();
         }
 
