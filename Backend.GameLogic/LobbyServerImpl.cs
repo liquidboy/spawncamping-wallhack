@@ -55,15 +55,21 @@
             {
                 Socket client = tcpClient.Client;
 
-                var joinMessageResponse = await client.ReadCommandOrErrorAsync<JoinGameMessage>();
+                var joinMessageResponse = await client.ReadCommandOrErrorAsync<LoginToLobbyRequestMessage>();
                 if (joinMessageResponse.IsError)
                 {
-                    await client.WriteCommandAsync(new ErrorMessage(string.Format("Sorry, was expecting a {0}", typeof(JoinGameMessage).Name)));
+                    await client.WriteCommandAsync(new ErrorMessage(string.Format("Sorry, was expecting a {0}", typeof(LoginToLobbyRequestMessage).Name)));
                     return;
                 }
-                var joinMessage = joinMessageResponse.Message;
+                var loginToLobbyRequest = joinMessageResponse.Message;
+                if (!CompletelyInsecureLobbyAuthentication.AuthenticatePlayer(loginToLobbyRequest.ClientID, loginToLobbyRequest.Password))
+                {
+                    await client.WriteCommandAsync(new ErrorMessage("Unauthenticated"));
+                    return;
+                }
+                var clientId = loginToLobbyRequest.ClientID;
 
-                Func<JoinGameMessage, BrokeredMessage> createJoinNotification = _ =>
+                Func<LoginToLobbyRequestMessage, BrokeredMessage> createJoinNotification = _ =>
                 {
                     var joinMessageUpdate = new BrokeredMessage(string.Format("Connect from {0} on instance {1}",
                         _.ClientID.ID, this.LobbyConnector.BackplaneSettings.InstanceId));
@@ -71,7 +77,7 @@
                     return joinMessageUpdate;
                 };
 
-                await this.LobbyConnector.BroadcastLobbyMessageAsync(createJoinNotification(joinMessage));
+                await this.LobbyConnector.BroadcastLobbyMessageAsync(createJoinNotification(loginToLobbyRequest));
 
                 var msgFromFour = await this.LobbyConnector.ObservableBackPlane.FirstAsync(msg => 
                 { 
@@ -81,22 +87,11 @@
 
                 Trace.TraceInformation("Received msg from clientId {0}", msgFromFour["clientId"]);
 
-                await Task.Delay(TimeSpan.FromSeconds(4));
+                var gameserverId = "gameserver123";
+                var usertoken = this.GameAuthenticationHandler.CreatePlayerToken(clientId, gameserverId);
 
-                //if (joinMessage.ClientId > 10000)
-                //{
-                //    await client.WriteCommandAsync(new ErrorMessage("Sorry, not permitted"));
-
-                //    return;
-                //}
-
-                await client.WriteCommandAsync(new GameServerConnectionMessage
-                {
-                    GameServer = new IPEndPoint(IPAddress.Loopback, 4000),
-                    Token = new GameServerUserToken { Credential = "supersecret" }
-                });
-
-                // Trace.TraceInformation("Request from " + tcpClient.Client.RemoteEndPoint.ToString());
+                await client.WriteCommandAsync(new LoginToLobbyResponseMessage(
+                    new IPEndPoint(IPAddress.Loopback, 4000), usertoken));
             }
             catch (Exception ex)
             {

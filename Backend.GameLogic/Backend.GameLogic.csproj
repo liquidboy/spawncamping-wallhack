@@ -99,6 +99,7 @@
     <Compile Include="BackplaneSettings.cs" />
     <Compile Include="ClientID.cs" />
     <Compile Include="ClientState.cs" />
+    <Compile Include="CompletelyInsecureLobbyAuthentication.cs" />
     <Compile Include="GameAuthenticationHandler.cs" />
     <Compile Include="GameServerImpl.cs" />
     <Compile Include="LobbyServiceSettings.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="LobbyServerDatabase.cs" />
     <Compile Include="Messages\GameServerMessage.cs" />
     <Compile Include="Messages\GameServerMessageBase.cs" />
+    <Compile Include="Messages\LoginToGameServerRequest.cs" />
     <Compile Include="Messages\SomeGameMessage.cs" />
     <Compile Include="Messages\Xtensions.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />
@@ -115,8 +117,8 @@
     <Compile Include="LobbyClientImpl.cs" />
     <Compile Include="LobbyServiceBackplane.cs" />
     <Compile Include="LobbyServerImpl.cs" />
-    <Compile Include="Messages\GameServerConnectionMessage.cs" />
-    <Compile Include="Messages\JoinGameMessage.cs" />
+    <Compile Include="Messages\LoginToLobbyResponseMessage.cs" />
+    <Compile Include="Messages\LoginToLobbyRequestMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

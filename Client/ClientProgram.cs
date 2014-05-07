@@ -14,25 +14,22 @@
         {
             Console.Title = "Client";
 
-            int clientCount = 1;
+            Console.Write("Enter client count: ");
+            var clientCount = int.Parse(Console.ReadLine());
 
-            while (true)
-            {
-                Console.Write("Enter client ID: ");
-                var s = Console.ReadLine();
-                var clientId = int.Parse(s);
+            var clientTasks = Enumerable
+                .Range(1, clientCount + 1)
+                .Select(_ => new ClientID { ID = _ })
+                .Select(clientID => new { ClientID = clientID, Password = CompletelyInsecureLobbyAuthentication.CreatePassword(clientID) }) 
+                .Select(_ => Task.Factory.StartNew(async () => 
+                    {
+                        var gameserver = await GetGameServerAsync(_.ClientID, _.Password);
 
-                var clientTasks = Task.Factory.StartNew(async () => 
-                {
-                    var p = new ClientProgram();
-                    await p.RunGameClientAsync(new ClientID { ID = clientId }, "password");
-                }).Unwrap();
+                        await PlayGameAsync(gameserver);
+                    }).Unwrap())
+                .ToArray();
 
-                Task.WaitAll(clientTasks);
-            }
-
-            //var p = new ClientProgram();
-            //p.RunAsync().Wait();
+            Task.WaitAll(clientTasks);
         }
 
         private static async Task Log(string s)
@@ -40,7 +37,7 @@
             // Console.WriteLine(s);
         }
 
-        public async Task<GameServerConnectionMessage> RunLobbyclientAsync(ClientID clientId)
+        public static async Task<LoginToLobbyResponseMessage> GetGameServerAsync(ClientID clientId, string password)
         {
             var lobbyClient = new LobbyClientImpl(ipAddress: IPAddress.Loopback, port: 3003)
             {
@@ -49,9 +46,7 @@
 
             await lobbyClient.ConnectAsync();
 
-            // Console.WriteLine("Connected");
-
-            var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId, "password");
+            var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId, password);
 
             /*if (clientId % 10 == 0)*/
             Console.WriteLine("{0}: {1}", clientId, gameServerInfo.Token.Credential);
@@ -63,15 +58,17 @@
             return gameServerInfo;
         }
 
-        public async Task RunGameClientAsync(ClientID clientId, string password)
+        public static async Task PlayGameAsync(LoginToLobbyResponseMessage gameserver)
         {
-            var client = new TcpClient();
 
-            await client.ConnectAsync(address: IPAddress.Parse("127.0.0.1"), port: 4000);
+            var client = new TcpClient();
+            await client.ConnectAsync(
+                address: gameserver.GameServer.Address, 
+                port: gameserver.GameServer.Port);
 
             var server = client.Client;
 
-            await server.WriteCommandAsync(new JoinGameMessage(clientId, password));
+            await server.WriteCommandAsync(new LoginToGameServerRequest(gameserver.Token));
 
             var receiveTask = Task.Factory.StartNew(async () =>
             {

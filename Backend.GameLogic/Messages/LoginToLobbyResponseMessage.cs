@@ -4,13 +4,19 @@
     using System.Linq;
     using System.Collections.Generic;
 
-    public class GameServerConnectionMessage : GameServerMessageBase
+    public class LoginToLobbyResponseMessage : GameServerMessageBase
     {
-        public IPEndPoint GameServer { get; set; }
+        public IPEndPoint GameServer { get; private set; }
 
-        public GameServerUserToken Token { get; set; }
+        public GameServerUserToken Token { get; private set; }
 
-        public GameServerConnectionMessage() { }
+        public LoginToLobbyResponseMessage() { }
+
+        public LoginToLobbyResponseMessage(IPEndPoint gameServer, GameServerUserToken token) 
+        {
+            this.GameServer = gameServer;
+            this.Token = token;
+        }
 
         public override void PostRead()
         {

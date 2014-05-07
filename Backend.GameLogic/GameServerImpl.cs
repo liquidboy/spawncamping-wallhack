@@ -20,10 +20,10 @@
             {
                 Socket client = tcpClient.Client;
 
-                var joinMessageResponse = await client.ReadCommandOrErrorAsync<JoinGameMessage>();
+                var joinMessageResponse = await client.ReadCommandOrErrorAsync<LoginToLobbyRequestMessage>();
                 if (joinMessageResponse.IsError)
                 {
-                    await client.WriteCommandAsync(new ErrorMessage(string.Format("Sorry, was expecting a {0}", typeof(JoinGameMessage).Name)));
+                    await client.WriteCommandAsync(new ErrorMessage(string.Format("Sorry, was expecting a {0}", typeof(LoginToLobbyRequestMessage).Name)));
                     return;
                 }
                 var joinMessage = joinMessageResponse.Message;

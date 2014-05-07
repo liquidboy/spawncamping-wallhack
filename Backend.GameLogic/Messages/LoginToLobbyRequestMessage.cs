@@ -2,15 +2,15 @@
 {
     using System.Collections.Generic;
 
-    public class JoinGameMessage : GameServerMessageBase
+    public class LoginToLobbyRequestMessage : GameServerMessageBase
     {
         public ClientID ClientID { get; private set; }
 
         public string Password { get; private set; }
 
-        public JoinGameMessage() { }
+        public LoginToLobbyRequestMessage() { }
 
-        public JoinGameMessage(ClientID clientID, string password) 
+        public LoginToLobbyRequestMessage(ClientID clientID, string password) 
         {
             this.ClientID = clientID;
             this.Password = password;
