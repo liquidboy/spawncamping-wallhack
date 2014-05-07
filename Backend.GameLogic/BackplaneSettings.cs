@@ -8,6 +8,7 @@
     using System.Threading.Tasks;
 
     [Export(typeof(BackplaneSettings))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class BackplaneSettings
     {
         [Import(typeof(ISettingsProvider))]
