@@ -18,10 +18,10 @@ namespace Cloud.GameServerHost.WorkerRole
     public class GameServerWorkerRole : RoleEntryPoint
     {
         [Import(typeof(GameServerVMAgent))]
-        GameServerVMAgent agent;
+        public GameServerVMAgent agent;
 
         [Import(typeof(GameServerSettings))]
-        GameServerSettings Settings;
+        public GameServerSettings Settings;
 
         private Task agentTask;
 

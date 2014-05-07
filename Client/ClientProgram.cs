@@ -120,8 +120,15 @@
             {
                 while (true)
                 {
-                    var someGameMessage = await server.ReadExpectedCommandAsync<SomeGameMessage>();
-                    Console.WriteLine("Received \"{0}\" from {1}", someGameMessage.Stuff, someGameMessage.From.ID);
+                    var someGameMessage = await server.ReadCommandOrErrorAsync<SomeGameMessage>();
+                    if (someGameMessage.IsError)
+                    {
+                        Console.WriteLine("Error {0}", someGameMessage.ErrorMessage);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Received \"{0}\" from {1}", someGameMessage.Message.Stuff, someGameMessage.Message.From.ID);
+                    }
                 }
             }).Unwrap();
 
@@ -129,9 +136,16 @@
             {
                 while (true)
                 {
-                    var content = await GetChatMessage();
-                    await server.WriteCommandAsync(new SomeGameMessage { Stuff = content, From = new ClientID { ID = -1 } });
-                    Console.WriteLine("Client {0} sending message {1}", clientId.ID, content);
+                    try
+                    {
+                        var content = await GetChatMessage();
+                        await server.WriteCommandAsync(new SomeGameMessage { Stuff = content, From = new ClientID { ID = -1 } });
+                        Console.WriteLine("Client {0} sending message {1}", clientId.ID, content);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine(ex.Message);
+                    }
                 }
             }).Unwrap();
 

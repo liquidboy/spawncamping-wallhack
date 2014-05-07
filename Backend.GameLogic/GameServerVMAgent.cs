@@ -70,18 +70,18 @@ using System.Text;
                         WorkingDirectory = ".",
                         FileName = @".\Backend.GameServer.exe",
                         Arguments = arguments,
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true
+                        // UseShellExecute = false,
+                        //RedirectStandardOutput = true,
+                        //RedirectStandardError = true
                     },
                     EnableRaisingEvents = true
                 };
 
-                Action<DataReceivedEventArgs> outputDataReceived = args => Trace.WriteLine(args.Data, "stdout");
-                Action<DataReceivedEventArgs> errorDataReceived = args => Trace.WriteLine(args.Data, "stderr");
+                //Action<DataReceivedEventArgs> outputDataReceived = args => Trace.WriteLine(args.Data, "stdout");
+                //Action<DataReceivedEventArgs> errorDataReceived = args => Trace.WriteLine(args.Data, "stderr");
 
-                process.OutputDataReceived += (s, a) => outputDataReceived(a);
-                process.ErrorDataReceived += (s, a) => errorDataReceived(a);
+                //process.OutputDataReceived += (s, a) => outputDataReceived(a);
+                //process.ErrorDataReceived += (s, a) => errorDataReceived(a);
 
                 return process;
             };
@@ -89,12 +89,14 @@ using System.Text;
 
         public Task Start(CancellationTokenSource cts)
         {
+            Trace.TraceInformation("Launching message pump");
             var agentTask = Task.Factory.StartNew(
                 async () => await RunAsync(cts.Token),
                 cts.Token, 
                 TaskCreationOptions.LongRunning, 
                 TaskScheduler.Current).Unwrap();
 
+            Trace.TraceInformation("Launching game server process from agent");
             var innerGameServerPort = 4002;
             var host = new RestartingProcessHost(CreateGameServerRecipy(innerGameServerPort), cts, 
                 RestartingProcessHost.RestartPolicy.MaximumLaunchTimes(1));
@@ -108,9 +110,9 @@ using System.Text;
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                Trace.TraceInformation("Agent loops", "Information");
+                Trace.TraceInformation("Agent loops, checking for new game server orders", "Information");
 
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await Task.Delay(TimeSpan.FromSeconds(10));
             }
         } 
 
