@@ -11,8 +11,8 @@
     [Export(typeof(GameServerVMAgent))]
     public class GameServerVMAgent : IPartImportsSatisfiedNotification, IDisposable
     {
-        [Import(typeof(AzureGameServerSettings))]
-        public AzureGameServerSettings Settings { get; set; }
+        [Import(typeof(GameServerSettings))]
+        public GameServerSettings Settings { get; set; }
         
         [Import(typeof(BackplaneSettings))]
         public BackplaneSettings BackplaneSettings { get; set; }

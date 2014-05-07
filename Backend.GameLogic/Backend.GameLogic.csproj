@@ -95,7 +95,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AzureGameServerSettings.cs" />
+    <Compile Include="GameServerSettings.cs" />
     <Compile Include="BackplaneSettings.cs" />
     <Compile Include="ClientID.cs" />
     <Compile Include="ClientState.cs" />

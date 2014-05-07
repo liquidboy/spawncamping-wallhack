@@ -19,8 +19,8 @@ namespace Cloud.GameServerHost.WorkerRole
         [Import(typeof(GameServerVMAgent))]
         GameServerVMAgent agent;
 
-        [Import(typeof(AzureGameServerSettings))]
-        AzureGameServerSettings Settings;
+        [Import(typeof(GameServerSettings))]
+        GameServerSettings Settings;
 
         private Task agentTask;
 

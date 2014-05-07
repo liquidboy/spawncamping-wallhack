@@ -4,8 +4,8 @@
     using System.ComponentModel.Composition;
     using System.Net;
 
-    [Export(typeof(AzureGameServerSettings))]
-    public class AzureGameServerSettings
+    [Export(typeof(GameServerSettings))]
+    public class GameServerSettings
     {
         [Import(typeof(ISettingsProvider))]
         public ISettingsProvider SettingsProvider { get; set; }
