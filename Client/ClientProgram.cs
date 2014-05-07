@@ -3,6 +3,7 @@
     using Backend.GameLogic;
     using Backend.GameLogic.Messages;
     using Backend.GameLogic.Security;
+    using Backend.Utils.Networking.Extensions;
     using System;
     using System.Linq;
     using System.Net;
@@ -62,12 +63,27 @@
         public static async Task PlayGameAsync(LoginToLobbyResponseMessage gameserver)
         {
 
+            #region Establish TCP connection
+
             var client = new TcpClient();
             await client.ConnectAsync(
                 address: gameserver.GameServer.Address, 
                 port: gameserver.GameServer.Port);
 
             var server = client.Client;
+
+            #endregion
+
+            #region Send the port number to the proxy. 
+
+            await server.WriteAsync(gameserver.InnergameServerPort);
+
+            //// The proxy extects an Int32 and the length and byte[] of an IPAddress to connect to. IPAdress must be ignored
+            //var ipBytes = IPAddress.Loopback.GetAddressBytes();
+            //await server.WriteAsync((byte)ipBytes.Length);
+            //await server.WriteAsync(ipBytes, 0, ipBytes.Length);
+
+            #endregion
 
             await server.WriteCommandAsync(new LoginToGameServerRequest(gameserver.Token));
 

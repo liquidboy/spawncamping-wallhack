@@ -93,10 +93,11 @@
                 Trace.TraceInformation("Received msg from clientId {0}", msgFromFour["clientId"]);
 
                 var gameserverId = "gameserver123";
+                var innerGameServerPort = 4001;
                 var usertoken = this._playerAuthenticator.CreatePlayerToken(clientId, gameserverId);
 
                 await client.WriteCommandAsync(new LoginToLobbyResponseMessage(
-                    new IPEndPoint(IPAddress.Loopback, 4000), usertoken));
+                    new IPEndPoint(IPAddress.Loopback, 4000), innerGameServerPort, usertoken));
             }
             catch (Exception ex)
             {

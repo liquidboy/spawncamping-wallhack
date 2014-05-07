@@ -9,9 +9,9 @@
 
     public class ProxyConnection
     {
-        public static async Task ProxyLogic(TcpClient serverSocket, CancellationTokenSource cts)
+        public static async Task ProxyLogic(TcpClient serverSocket, CancellationTokenSource cts, IPAddress defaultForwarderAddress)
         {
-            var proxyConnection = new ProxyConnection(serverSocket, cts);
+            var proxyConnection = new ProxyConnection(serverSocket, cts, defaultForwarderAddress);
          
             await proxyConnection.BridgeConnectionAsync();
         }
@@ -25,7 +25,7 @@
             // if (serverPort > (1 << 15) || serverPort < 1) throw new ArgumentException("Illegal port"); 
 
             await client.Client.WriteAsync(serverPort);
-            await SendIPAddress(client, serverIP);
+            // await SendIPAddress(client, serverIP);
 
             await innerImplementation(client, ct);
         }
@@ -34,38 +34,41 @@
 
         public readonly CancellationTokenSource CancellationTokenSource;
         public readonly TcpClient ClientSocket;
+        public readonly IPAddress DefaultForwarderAddress;
 
-        public ProxyConnection(TcpClient clientSocket, CancellationTokenSource cts)
+        public ProxyConnection(TcpClient clientSocket, CancellationTokenSource cts, IPAddress defaultForwarderAddress)
         {
             if (clientSocket == null) throw new ArgumentNullException("clientSocket");
             if (cts == null) throw new ArgumentNullException("cts");
 
             this.ClientSocket = clientSocket;
             this.CancellationTokenSource = cts;
+            this.DefaultForwarderAddress = defaultForwarderAddress;
         }
 
-        private static async Task SendIPAddress(TcpClient client, IPAddress serverIP)
-        {
-            var ipBytes = serverIP.GetAddressBytes();
-            await client.Client.WriteAsync((byte)ipBytes.Length);
-            await client.Client.WriteAsync(ipBytes, 0, ipBytes.Length);
-        }
+        //private static async Task SendIPAddress(TcpClient client, IPAddress serverIP)
+        //{
+        //    var ipBytes = serverIP.GetAddressBytes();
+        //    await client.Client.WriteAsync((byte)ipBytes.Length);
+        //    await client.Client.WriteAsync(ipBytes, 0, ipBytes.Length);
+        //}
 
-        private static async Task<IPAddress> ReadIPAddress(TcpClient client)
-        {
-            var ipAddressLength = await client.Client.ReadByteAsync();
-            var ipAddressBytes = new byte[ipAddressLength];
-            var ipAddressBytesRead = await client.Client.ReadAsync(ipAddressBytes, 0, ipAddressBytes.Length);
-            if (ipAddressBytesRead != ipAddressLength) { throw new ProtocolViolationException("Could not read IPAddress"); }
-            var ipAddress = new IPAddress(ipAddressBytes);
-            return ipAddress;
-        }
+        //private static async Task<IPAddress> ReadIPAddress(TcpClient client)
+        //{
+        //    var ipAddressLength = await client.Client.ReadByteAsync();
+        //    var ipAddressBytes = new byte[ipAddressLength];
+        //    var ipAddressBytesRead = await client.Client.ReadAsync(ipAddressBytes, 0, ipAddressBytes.Length);
+        //    if (ipAddressBytesRead != ipAddressLength) { throw new ProtocolViolationException("Could not read IPAddress"); }
+        //    var ipAddress = new IPAddress(ipAddressBytes);
+        //    return ipAddress;
+        //}
 
         public async Task BridgeConnectionAsync()
         {
             var port = await this.ClientSocket.Client.ReadInt32Async();
-            var ipAddress = await ReadIPAddress(this.ClientSocket);
+            // var ipAddress = await ReadIPAddress(this.ClientSocket);
 
+            var ipAddress = this.DefaultForwarderAddress;
             var ServerSocket = new TcpClient();
             await ServerSocket.ConnectAsync(ipAddress, port);
 

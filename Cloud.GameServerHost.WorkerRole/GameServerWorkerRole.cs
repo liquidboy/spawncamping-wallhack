@@ -45,8 +45,13 @@ namespace Cloud.GameServerHost.WorkerRole
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.UseNagleAlgorithm = false;
 
+            #region Start TCP proxy
+
             var proxyServerHost = new AsyncServerHost(this.Settings.ProxyIPEndPoint);
-            this.proxyTask = proxyServerHost.StartFunctional(async (client, ct) => await ProxyConnection.ProxyLogic(client, cts), cts.Token);
+            var defaultForwarderAddress = this.Settings.ProxyIPEndPoint.Address;
+            this.proxyTask = proxyServerHost.StartFunctional(async (client, ct) => await ProxyConnection.ProxyLogic(client, cts, defaultForwarderAddress), cts.Token);
+
+            #endregion
 
             this.agentTask = this.agent.Start(cts.Token);
 

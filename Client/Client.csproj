@@ -52,6 +52,10 @@
       <Project>{a70b2016-1d1c-4e31-b887-3ecff4c27cf9}</Project>
       <Name>Backend.GameLogic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Backend.Utils\Backend.Utils.csproj">
+      <Project>{0593f317-d7ce-4e7c-816a-f895505366d7}</Project>
+      <Name>Backend.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
