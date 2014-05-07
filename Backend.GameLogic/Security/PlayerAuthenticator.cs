@@ -1,4 +1,4 @@
-﻿namespace Backend.GameLogic
+﻿namespace Backend.GameLogic.Security
 {
     using System;
     using System.ComponentModel.Composition;
@@ -12,72 +12,16 @@
 
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
-using Backend.GameLogic.Messages;
 
-    [Export(typeof(GameAuthenticationHandler))]
-    [PartCreationPolicy(CreationPolicy.Shared)]
-    public class GameAuthenticationHandler : IPartImportsSatisfiedNotification
+    using Backend.GameLogic.Messages;
+
+    public class PlayerAuthenticator
     {
-        // requires NuGet package System.IdentityModel.Tokens.Jwt
-
-        [Import(typeof(BackplaneSettings))]
-        public BackplaneSettings BackplaneSettings { get; set; }
-
-        void IPartImportsSatisfiedNotification.OnImportsSatisfied()
-        {
-            _synchroniedKey = this.EstablishAndRetrieveSyncronizedKey();
-        }
-
         private byte[] _synchroniedKey;
 
-        private CloudBlockBlob GetKeyBlobReference()
+        public PlayerAuthenticator(byte[] secretKey)
         {
-            var storageAccount = CloudStorageAccount.Parse(this.BackplaneSettings.StorageConnectionString);
-            var blobClient = storageAccount.CreateCloudBlobClient();
-            var gamebackplaneContainer = blobClient.GetContainerReference("gamebackplane");
-            gamebackplaneContainer.CreateIfNotExists();
-            return  gamebackplaneContainer.GetBlockBlobReference("jwt.key");
-        }
-
-        private byte[] GetBlobContents(CloudBlockBlob keyBlob)
-        {
-            var base64 = keyBlob.DownloadText(encoding: Encoding.UTF8);
-            return Convert.FromBase64String(base64);
-        }
-
-        private byte[] EstablishAndRetrieveSyncronizedKey()
-        {
-            var keyBlob = GetKeyBlobReference();
-            if (keyBlob.Exists())
-            {
-                return GetBlobContents(keyBlob);
-            } 
-            else 
-            {
-                var newKey = CreateNewKey();
-                try
-                {
-                    var base64 = Convert.ToBase64String(newKey);
-                    keyBlob.UploadText(base64, encoding: Encoding.UTF8,  
-                        accessCondition: AccessCondition.GenerateIfNoneMatchCondition("*"));
-                }
-                catch (StorageException) 
-                {
-                    return GetBlobContents(keyBlob);
-                }
-
-                return newKey;
-            }
-        }
-
-        private byte[] CreateNewKey()
-        {
-            using (var rng = RNGCryptoServiceProvider.Create())
-            {
-                var key = new byte[1000];
-                rng.GetBytes(key);
-                return key;
-            }
+            this._synchroniedKey = secretKey;
         }
 
         private string ComposeAudienceUrl(string gameserverId)
@@ -87,7 +31,7 @@ using Backend.GameLogic.Messages;
 
         private readonly string _validIssuer = "lobbyservice";
 
-        private string CreatePlayerTokenString(ClientID clientID, string gameserverId)
+        private string CreatePlayerTokenImpl(ClientID clientID, string gameserverId)
         {
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -114,7 +58,7 @@ using Backend.GameLogic.Messages;
             return tokenString;
         }
 
-        public ClientID ValidateClientID(string tokenString, string gameserverId)
+        private ClientID ValidateClientIdImpl(string tokenString, string gameserverId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var validationParameters = new TokenValidationParameters()
@@ -140,7 +84,13 @@ using Backend.GameLogic.Messages;
 
         public GameServerUserToken CreatePlayerToken(ClientID clientID, string gameserverId)
         {
-            return new GameServerUserToken { Credential = CreatePlayerTokenString(clientID, gameserverId) };
+            return new GameServerUserToken { Credential = CreatePlayerTokenImpl(clientID, gameserverId) };
         }
+
+        public ClientID ValidateClientID(GameServerUserToken token, string gameserverId)
+        {
+            return ValidateClientIdImpl(token.Credential, gameserverId);
+        }
+
     }
 }

@@ -100,7 +100,8 @@
     <Compile Include="ClientID.cs" />
     <Compile Include="ClientState.cs" />
     <Compile Include="CompletelyInsecureLobbyAuthentication.cs" />
-    <Compile Include="GameAuthenticationHandler.cs" />
+    <Compile Include="Security\PlayerAuthenticator.cs" />
+    <Compile Include="Security\SymmetricKeyGenerator.cs" />
     <Compile Include="GameServerImpl.cs" />
     <Compile Include="LobbyServiceSettings.cs" />
     <Compile Include="GameServerProcess.cs" />

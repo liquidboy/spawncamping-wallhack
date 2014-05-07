@@ -1,22 +1,23 @@
 ﻿namespace Backend.GameLogic
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.Collections.Concurrent;
+    using System.ComponentModel.Composition;
     using System.Diagnostics;
     using System.Net;
+    using System.Net.Sockets;
     using System.Reactive;
     using System.Reactive.Linq;
-    using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
-
     using Microsoft.ServiceBus.Messaging;
+
     using Backend.Utils;
     using Messages;
+    using Security;
 
-    [Export]
-    public class LobbyServerImpl : IPartImportsSatisfiedNotification, ITcpServerHandler, IDisposable
+    [Export(typeof(LobbyServerImpl))]
+    public class LobbyServerImpl : ITcpServerHandler, IPartImportsSatisfiedNotification, IDisposable
     {
         [Import(typeof(LobbyServiceBackplane), RequiredCreationPolicy = CreationPolicy.Shared)]
         public LobbyServiceBackplane LobbyConnector { get; set; }
@@ -24,8 +25,10 @@
         [Import(typeof(ILobbyServerDatabase))]
         public ILobbyServerDatabase LobbyServerDatabase { get; set; }
 
-        [Import(typeof(GameAuthenticationHandler))]
-        public GameAuthenticationHandler GameAuthenticationHandler { get; set; }
+        [Import(typeof(SymmetricKeyGenerator))]
+        public SymmetricKeyGenerator GameAuthenticationHandler { get; set; }
+
+        private PlayerAuthenticator _playerAuthenticator;
 
         public LobbyServerImpl() { /* put constructor code into IPartImportsSatisfiedNotification.OnImportsSatisfied */ }
 
@@ -45,6 +48,8 @@
 
                 this.CurrentPlayers.Add(clientId);
             });
+
+            _playerAuthenticator = this.GameAuthenticationHandler.CreateAuthenticator();
         }
 
         public readonly ConcurrentBag<int> CurrentPlayers = new ConcurrentBag<int>();
@@ -88,7 +93,7 @@
                 Trace.TraceInformation("Received msg from clientId {0}", msgFromFour["clientId"]);
 
                 var gameserverId = "gameserver123";
-                var usertoken = this.GameAuthenticationHandler.CreatePlayerToken(clientId, gameserverId);
+                var usertoken = this._playerAuthenticator.CreatePlayerToken(clientId, gameserverId);
 
                 await client.WriteCommandAsync(new LoginToLobbyResponseMessage(
                     new IPEndPoint(IPAddress.Loopback, 4000), usertoken));

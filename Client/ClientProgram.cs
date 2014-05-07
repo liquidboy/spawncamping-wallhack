@@ -18,7 +18,7 @@
             var clientCount = int.Parse(Console.ReadLine());
 
             var clientTasks = Enumerable
-                .Range(1, clientCount + 1)
+                .Range(1, clientCount)
                 .Select(_ => new ClientID { ID = _ })
                 .Select(clientID => new { ClientID = clientID, Password = CompletelyInsecureLobbyAuthentication.CreatePassword(clientID) }) 
                 .Select(_ => Task.Factory.StartNew(async () => 
@@ -39,7 +39,7 @@
 
         public static async Task<LoginToLobbyResponseMessage> GetGameServerAsync(ClientID clientId, string password)
         {
-            var lobbyClient = new LobbyClientImpl(ipAddress: IPAddress.Loopback, port: 3003)
+            var lobbyClient = new LobbyClientImpl(ipAddress: IPAddress.Loopback, port: 3000)
             {
                 Logger = Log
             };

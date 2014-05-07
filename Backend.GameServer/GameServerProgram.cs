@@ -3,10 +3,7 @@
     using Backend.GameLogic;
     using Backend.Utils.Networking;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Net;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -16,9 +13,9 @@
         {
             Console.Title = "Backend.GameServer";
 
-            if (args.Length != 2)
+            if (args.Length != 3)
             {
-                Console.Error.WriteLine("Provide ip address (such as 127.0.0.1) and TCP port as command line args");
+                Console.Error.WriteLine("Provide ip address (such as 127.0.0.1), TCP port and secret key (base64) as command line args");
                 return;
             }
 
@@ -32,15 +29,16 @@
                 Console.Error.WriteLine("\"{0}\" is not a valid TCP port", args[1]);
                 return;
             }
-
             var ipEndPoint = new IPEndPoint(address, port);
+
+            byte[] secretKey = Convert.FromBase64String(args[2]);
 
             Console.WriteLine("Listen on {0}", ipEndPoint);
 
             var cts = new CancellationTokenSource();
             var server = new AsyncServerHost(ipEndPoint);
 
-            var gameServerImpl = new GameServerImpl();
+            var gameServerImpl = new GameServerImpl(secretKey);
             Task t = server.Start(gameServerImpl, cts.Token);
 
             Console.WriteLine("Launched game server process on {0}", ipEndPoint);
