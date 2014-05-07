@@ -10,6 +10,7 @@
     using System.ServiceModel.Security.Tokens;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
+    using System.Text;
 
     [Export(typeof(GameAuthenticationHandler))]
     [PartCreationPolicy(CreationPolicy.Shared)]
@@ -78,11 +79,8 @@
 
         private byte[] GetBlobContents(CloudBlockBlob keyBlob)
         {
-            keyBlob.FetchAttributes();
-            var k = new byte[keyBlob.Properties.Length];
-            keyBlob.DownloadToByteArray(k, 0);
-
-            return k;
+            var base64 = keyBlob.DownloadText(encoding: Encoding.UTF8);
+            return Convert.FromBase64String(base64);
         }
 
         private byte[] EstablishAndRetrieveSyncronizedKey()
@@ -97,7 +95,8 @@
                 var newKey = CreateNewKey();
                 try
                 {
-                    keyBlob.UploadFromByteArray(newKey, 0, newKey.Length, 
+                    var base64 = Convert.ToBase64String(newKey);
+                    keyBlob.UploadText(base64, encoding: Encoding.UTF8,  
                         accessCondition: AccessCondition.GenerateIfNoneMatchCondition("*"));
                 }
                 catch (StorageException) 

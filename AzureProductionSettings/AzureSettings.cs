@@ -1,21 +1,22 @@
 ﻿namespace AzureProductionSettings
 {
-    using Backend.GameLogic;
-    using Microsoft.WindowsAzure.ServiceRuntime;
     using System.ComponentModel.Composition;
     using System.Net;
+    using Microsoft.WindowsAzure.ServiceRuntime;
+
+    using Backend.GameLogic;
 
     [Export(typeof(ISettingsProvider))]
     public class AzureSettings : ISettingsProvider
     {
         string ISettingsProvider.GetInstanceId()
         { 
-                var r = RoleEnvironment.DeploymentId + "-" + RoleEnvironment.CurrentRoleInstance.Id;
-
-                r = r.Replace("deployment", "").Replace("(", "_").Replace(")", "_").Replace("Cloud.LobbyService.", ""); 
-                // deployment22(3)-deployment22(3).Cloud.LobbyService.Cloud.LobbyService.WorkerRole_IN_0
-
-                return r;
+            return string.Format("{0}-{1}", RoleEnvironment.DeploymentId, RoleEnvironment.CurrentRoleInstance.Id)
+                    .Replace("(", "_").Replace(")", "_")
+                    .Replace("deployment", "")
+                    .Replace("Cloud.LobbyService.", "")
+                    .Replace("Worker", "")
+                    ;
         }
 
         string ISettingsProvider.GetSetting(string key) { return RoleEnvironment.GetConfigurationSettingValue(key); }

@@ -25,7 +25,7 @@
                 var clientTasks = Task.Factory.StartNew(async () => 
                 {
                     var p = new ClientProgram();
-                    await p.RunGameClientAsync(new ClientID { ID = clientId });
+                    await p.RunGameClientAsync(new ClientID { ID = clientId }, "password");
                 }).Unwrap();
 
                 Task.WaitAll(clientTasks);
@@ -51,7 +51,7 @@
 
             // Console.WriteLine("Connected");
 
-            var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId);
+            var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId, "password");
 
             /*if (clientId % 10 == 0)*/
             Console.WriteLine("{0}: {1}", clientId, gameServerInfo.Token.Credential);
@@ -63,7 +63,7 @@
             return gameServerInfo;
         }
 
-        public async Task RunGameClientAsync(ClientID clientId)
+        public async Task RunGameClientAsync(ClientID clientId, string password)
         {
             var client = new TcpClient();
 
@@ -71,7 +71,7 @@
 
             var server = client.Client;
 
-            await server.WriteCommandAsync(new JoinGameMessage { ClientID = clientId });
+            await server.WriteCommandAsync(new JoinGameMessage(clientId, password));
 
             var receiveTask = Task.Factory.StartNew(async () =>
             {

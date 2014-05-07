@@ -37,13 +37,13 @@
             await LogAsync("connected to lobby");
         }
 
-        public async Task<GameServerConnectionMessage> JoinLobbyAsync(ClientID clientId)
+        public async Task<GameServerConnectionMessage> JoinLobbyAsync(ClientID clientId, string password)
         {
             var server = client.Client;
 
             await LogAsync("try to join to lobby");
 
-            await server.WriteCommandAsync(new JoinGameMessage { ClientID = clientId });
+            await server.WriteCommandAsync(new JoinGameMessage (clientId, password));
 
             await LogAsync("sent join");
 
