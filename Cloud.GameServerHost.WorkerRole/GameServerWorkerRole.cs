@@ -53,7 +53,7 @@ namespace Cloud.GameServerHost.WorkerRole
 
             #endregion
 
-            this.agentTask = this.agent.Start(cts.Token);
+            this.agentTask = this.agent.Start(cts);
 
             return base.OnStart();
         }

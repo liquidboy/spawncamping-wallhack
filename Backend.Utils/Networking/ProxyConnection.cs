@@ -110,6 +110,8 @@
                     throw new NotSupportedException("sendLen == 0");
                 }
             }
+
+            ;
         }
 
         //private async Task TransferSocketData_ImplementationWithSocketAwaitable(Socket source, Socket dest, Direction dir)

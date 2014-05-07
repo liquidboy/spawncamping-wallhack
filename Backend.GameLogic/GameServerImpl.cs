@@ -37,7 +37,7 @@
                 }
                 var joinMessage = joinMessageResponse.Message;
 
-                var gameserverId = "game123";
+                var gameserverId = "gameserver123";
                 var clientId = this.PlayerAuthenticator.ValidateClientID(joinMessage.Token, gameserverId);
 
                 var myQueue = new ConcurrentQueue<GameServerMessageBase>();

@@ -2,10 +2,9 @@
 {
     using System;
     using System.Reactive.Linq;
-    using Microsoft.ServiceBus.Messaging;
     using System.Threading.Tasks;
     using System.Threading;
-
+    using Microsoft.ServiceBus.Messaging;
 
     public interface IBusMessage<T>
     {

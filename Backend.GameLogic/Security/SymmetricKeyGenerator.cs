@@ -81,6 +81,11 @@
             }
         }
 
+        public string GetKeyForGameServer()
+        {
+            return Convert.ToBase64String(_synchronizedKey);
+        }
+
         public PlayerAuthenticator CreateAuthenticator()
         {
             return new PlayerAuthenticator(this._synchronizedKey);

@@ -94,6 +94,10 @@
       <Project>{a70b2016-1d1c-4e31-b887-3ecff4c27cf9}</Project>
       <Name>Backend.GameLogic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Backend.GameServer\Backend.GameServer.csproj">
+      <Project>{a1ae1509-03fe-4a32-8a2c-46a2d2ec966b}</Project>
+      <Name>Backend.GameServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Backend.Utils\Backend.Utils.csproj">
       <Project>{0593f317-d7ce-4e7c-816a-f895505366d7}</Project>
       <Name>Backend.Utils</Name>
