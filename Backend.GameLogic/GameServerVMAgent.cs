@@ -7,7 +7,11 @@
     using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
+    using Configuration;
 
+    /// <summary>
+    /// Manages the game server processes on a virtual machine. 
+    /// </summary>
     [Export(typeof(GameServerVMAgent))]
     public class GameServerVMAgent : IPartImportsSatisfiedNotification, IDisposable
     {

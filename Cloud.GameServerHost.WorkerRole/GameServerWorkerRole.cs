@@ -13,6 +13,7 @@ namespace Cloud.GameServerHost.WorkerRole
     using AzureProductionSettings;
     using Backend.GameLogic;
     using Backend.Utils.Networking;
+    using Backend.GameLogic.Configuration;
 
     public class GameServerWorkerRole : RoleEntryPoint
     {

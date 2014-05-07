@@ -1,6 +1,7 @@
-﻿using System.Net;
-namespace Backend.GameLogic
+﻿namespace Backend.GameLogic.Configuration
 {
+    using System.Net;
+
     public interface ISettingsProvider
     {
         string GetSetting(string key);

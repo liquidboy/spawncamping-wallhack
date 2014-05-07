@@ -5,6 +5,7 @@
     using Microsoft.WindowsAzure.ServiceRuntime;
 
     using Backend.GameLogic;
+    using Backend.GameLogic.Configuration;
 
     [Export(typeof(ISettingsProvider))]
     public class AzureSettings : ISettingsProvider

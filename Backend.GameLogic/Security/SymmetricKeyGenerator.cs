@@ -14,6 +14,7 @@
     using Microsoft.WindowsAzure.Storage.Blob;
 
     using Messages;
+    using Configuration;
 
 
     [Export(typeof(SymmetricKeyGenerator))]

@@ -9,6 +9,7 @@
     using Backend.GameLogic;
     using Backend.Utils.Networking;
     using DevelopmentSettings;
+    using Backend.GameLogic.Configuration;
 
     class LobbyServerProgram
     {

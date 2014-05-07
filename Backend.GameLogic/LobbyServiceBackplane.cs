@@ -8,6 +8,7 @@
     using Microsoft.ServiceBus;
     using Microsoft.ServiceBus.Messaging;
     using Backend.Utils.Networking.Extensions;
+    using Configuration;
 
     [Export(typeof(LobbyServiceBackplane))]
     [PartCreationPolicy(CreationPolicy.Shared)]

@@ -13,6 +13,7 @@ namespace Cloud.LobbyService.WorkerRole
     using Backend.Utils.Networking;
     using Backend.GameLogic;
     using AzureProductionSettings;
+    using Backend.GameLogic.Configuration;
 
     public class WorkerRole : RoleEntryPoint
     {

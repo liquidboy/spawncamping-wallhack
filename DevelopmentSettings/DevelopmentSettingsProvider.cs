@@ -4,6 +4,7 @@
     using System.ComponentModel.Composition;
     using System.Net;
     using Backend.GameLogic;
+    using Backend.GameLogic.Configuration;
 
     [Export(typeof(ISettingsProvider))]
     public class DevelopmentSettingsProvider : ISettingsProvider
