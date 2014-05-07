@@ -12,6 +12,10 @@
         [Import(typeof(BackplaneSettings))]
         public BackplaneSettings BackplaneSettings { get; set; }
 
-        public IPEndPoint IPEndPoint { get { return this.SettingsProvider.GetIPEndpoint("LobbyService"); } }
+        public IPEndPoint IPEndPoint { get { return this.SettingsProvider.LobbyServerInternalEndpoint; } }
+
+        public IPEndPoint GameServerEndpoint { get { return new IPEndPoint(
+            this.SettingsProvider.GameServerPublicAddress,
+            this.SettingsProvider.GameServerPublicProxyPort); } }
     }
 }

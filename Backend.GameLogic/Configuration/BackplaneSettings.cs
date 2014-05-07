@@ -9,7 +9,7 @@
         [Import(typeof(ISettingsProvider))]
         public ISettingsProvider SettingsProvider { get; set; }
 
-        public string InstanceId { get { return this.SettingsProvider.GetInstanceId(); } }
+        public string InstanceId { get { return this.SettingsProvider.InstanceId; } }
 
         public string StorageConnectionString { get { return this.SettingsProvider.GetSetting("StorageConnectionString"); } }
 

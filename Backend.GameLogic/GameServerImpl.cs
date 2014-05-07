@@ -1,16 +1,16 @@
 ﻿namespace Backend.GameLogic
 {
-    using Backend.GameLogic.Security;
-    using Backend.Utils;
-    using Messages;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.Diagnostics;
     using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
+
+    using Backend.GameLogic.Security;
+    using Backend.Utils;
+    using Messages;
 
     public class GameServerImpl : ITcpServerHandler
     {

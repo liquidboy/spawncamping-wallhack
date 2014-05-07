@@ -60,13 +60,13 @@
             {
                 Socket client = tcpClient.Client;
 
-                var joinMessageResponse = await client.ReadCommandOrErrorAsync<LoginToLobbyRequestMessage>();
-                if (joinMessageResponse.IsError)
+                var loginToLobbyRequestOrError = await client.ReadCommandOrErrorAsync<LoginToLobbyRequestMessage>();
+                if (loginToLobbyRequestOrError.IsError)
                 {
                     await client.WriteCommandAsync(new ErrorMessage(string.Format("Sorry, was expecting a {0}", typeof(LoginToLobbyRequestMessage).Name)));
                     return;
                 }
-                var loginToLobbyRequest = joinMessageResponse.Message;
+                var loginToLobbyRequest = loginToLobbyRequestOrError.Message;
                 if (!CompletelyInsecureLobbyAuthentication.AuthenticatePlayer(loginToLobbyRequest.ClientID, loginToLobbyRequest.Password))
                 {
                     await client.WriteCommandAsync(new ErrorMessage("Unauthenticated"));
@@ -74,23 +74,23 @@
                 }
                 var clientId = loginToLobbyRequest.ClientID;
 
-                Func<LoginToLobbyRequestMessage, BrokeredMessage> createJoinNotification = _ =>
-                {
-                    var joinMessageUpdate = new BrokeredMessage(string.Format("Connect from {0} on instance {1}",
-                        _.ClientID.ID, this.LobbyConnector.BackplaneSettings.InstanceId));
-                    joinMessageUpdate.Properties.Add("clientId", _.ClientID.ID);
-                    return joinMessageUpdate;
-                };
+                //Func<LoginToLobbyRequestMessage, BrokeredMessage> createJoinNotification = _ =>
+                //{
+                //    var joinMessageUpdate = new BrokeredMessage(string.Format("Connect from {0} on instance {1}",
+                //        _.ClientID.ID, this.LobbyConnector.BackplaneSettings.InstanceId));
+                //    joinMessageUpdate.Properties.Add("clientId", _.ClientID.ID);
+                //    return joinMessageUpdate;
+                //};
 
-                await this.LobbyConnector.BroadcastLobbyMessageAsync(createJoinNotification(loginToLobbyRequest));
+                //await this.LobbyConnector.BroadcastLobbyMessageAsync(createJoinNotification(loginToLobbyRequest));
 
-                var msgFromFour = await this.LobbyConnector.ObservableBackPlane.FirstAsync(msg => 
-                { 
-                    var clientIdO = msg["clientId"];
-                    return ((int)clientIdO) == 1; 
-                });
+                //var msgFromFour = await this.LobbyConnector.ObservableBackPlane.FirstAsync(msg => 
+                //{ 
+                //    var clientIdO = msg["clientId"];
+                //    return ((int)clientIdO) == 1; 
+                //});
 
-                Trace.TraceInformation("Received msg from clientId {0}", msgFromFour["clientId"]);
+                //Trace.TraceInformation("Received msg from clientId {0}", msgFromFour["clientId"]);
 
                 var gameserverId = "gameserver123";
                 var innerGameServerPort = 4002;

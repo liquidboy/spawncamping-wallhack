@@ -19,19 +19,47 @@
             Console.Write("Enter client count: ");
             var clientCount = int.Parse(Console.ReadLine());
 
-            var clientTasks = Enumerable
-                .Range(1, clientCount)
-                .Select(_ => new ClientID { ID = _ })
-                .Select(clientID => new { ClientID = clientID, Password = CompletelyInsecureLobbyAuthentication.CreatePassword(clientID) }) 
-                .Select(_ => Task.Factory.StartNew(async () => 
-                    {
-                        var gameserver = await GetGameServerAsync(_.ClientID, _.Password);
+            if (clientCount == 1)
+            {
+                Console.Write("Enter client ID: ");
 
-                        await PlayGameAsync(gameserver);
-                    }).Unwrap())
-                .ToArray();
+                var clientId = new ClientID { ID = int.Parse(Console.ReadLine()) };
 
-            Task.WaitAll(clientTasks);
+                var gameserver = GetGameServerAsync(clientId, CompletelyInsecureLobbyAuthentication.CreatePassword(clientId)).Result;
+
+                Func<Task<string>> readline = () => 
+                { 
+                    Console.Write("Enter message: "); 
+                    return Task.FromResult<string>(Console.ReadLine()); 
+                };
+
+                PlayGameAsync(clientId, gameserver, readline).Wait();
+            }
+            else if (clientCount > 1)
+            {
+
+                var clientTasks = Enumerable
+                    .Range(1, clientCount)
+                    .Select(_ => new ClientID { ID = _ })
+                    .Select(clientId => new { ClientID = clientId, Password = CompletelyInsecureLobbyAuthentication.CreatePassword(clientId) })
+                    .Select(_ => Task.Factory.StartNew(async () =>
+                        {
+                            var gameserver = await GetGameServerAsync(_.ClientID, _.Password);
+
+                            int ctr = 1;
+                            Func<Task<string>> iterate = async () =>
+                            {
+                                await Task.Delay(TimeSpan.FromSeconds(2));
+
+                                return (ctr++).ToString();
+                            };
+
+                            await PlayGameAsync(_.ClientID, gameserver, iterate);
+                        }).Unwrap())
+                    .ToArray();
+
+                Task.WaitAll(clientTasks);
+            }
         }
 
         private static async Task Log(string s)
@@ -41,6 +69,8 @@
 
         public static async Task<LoginToLobbyResponseMessage> GetGameServerAsync(ClientID clientId, string password)
         {
+            Console.WriteLine("Connect to lobby");
+
             var lobbyClient = new LobbyClientImpl(ipAddress: IPAddress.Loopback, port: 3000)
             {
                 Logger = Log
@@ -48,7 +78,11 @@
 
             await lobbyClient.ConnectAsync();
 
+            Console.WriteLine("Connected to lobby");
+
             var gameServerInfo = await lobbyClient.JoinLobbyAsync(clientId, password);
+
+            Console.WriteLine("Lobby interaction done");
 
             /*if (clientId % 10 == 0)*/
             Console.WriteLine("{0}: {1}", clientId, gameServerInfo.Token.Credential);
@@ -60,7 +94,7 @@
             return gameServerInfo;
         }
 
-        public static async Task PlayGameAsync(LoginToLobbyResponseMessage gameserver)
+        public static async Task PlayGameAsync(ClientID clientId, LoginToLobbyResponseMessage gameserver, Func<Task<string>> GetChatMessage)
         {
 
             #region Establish TCP connection
@@ -77,11 +111,6 @@
             #region Send the port number to the proxy. 
 
             await server.WriteAsync(gameserver.InnergameServerPort);
-
-            //// The proxy extects an Int32 and the length and byte[] of an IPAddress to connect to. IPAdress must be ignored
-            //var ipBytes = IPAddress.Loopback.GetAddressBytes();
-            //await server.WriteAsync((byte)ipBytes.Length);
-            //await server.WriteAsync(ipBytes, 0, ipBytes.Length);
 
             #endregion
 
@@ -100,9 +129,9 @@
             {
                 while (true)
                 {
-                    var content = Console.ReadLine();
+                    var content = await GetChatMessage();
                     await server.WriteCommandAsync(new SomeGameMessage { Stuff = content, From = new ClientID { ID = -1 } });
-                    Console.WriteLine("Sent message");
+                    Console.WriteLine("Client {0} sending message {1}", clientId.ID, content);
                 }
             }).Unwrap();
 

@@ -6,10 +6,14 @@
     {
         string GetSetting(string key);
 
-        IPEndPoint GetIPEndpoint(string key);
+        IPEndPoint LobbyServerInternalEndpoint { get; }
 
-        int GetPublicPort(string key);
+        IPEndPoint GameServerInternalProxyEndpoint { get; }
 
-        string GetInstanceId();
+        int GameServerPublicProxyPort { get; }
+
+        IPAddress GameServerPublicAddress { get; }
+
+        string InstanceId { get; }
     }
 }

@@ -9,13 +9,29 @@
     [Export(typeof(ISettingsProvider))]
     public class DevelopmentSettingsProvider : ISettingsProvider
     {
-        private readonly string _LobbyServiceInstanceId = string.Format("dev-{0}", Guid.NewGuid());
-        string ISettingsProvider.GetInstanceId() { return _LobbyServiceInstanceId; }
-
         string ISettingsProvider.GetSetting(string key) { return Environment.GetEnvironmentVariable(key); }
 
-        IPEndPoint ISettingsProvider.GetIPEndpoint(string key) { return new IPEndPoint(IPAddress.Loopback, 3003); }
+        IPEndPoint ISettingsProvider.LobbyServerInternalEndpoint
+        {
+            get { return new IPEndPoint(IPAddress.Loopback, 3000); }
+        }
 
-        int ISettingsProvider.GetPublicPort(string key) { return ((ISettingsProvider)this).GetIPEndpoint(key).Port; }
+        IPEndPoint ISettingsProvider.GameServerInternalProxyEndpoint
+        {
+            get { return new IPEndPoint(IPAddress.Loopback, 4000); }
+        }
+
+        int ISettingsProvider.GameServerPublicProxyPort
+        {
+            get { return 4000; }
+        }
+
+        IPAddress ISettingsProvider.GameServerPublicAddress
+        {
+            get { return IPAddress.Loopback; }
+        }
+
+        private readonly string _LobbyServiceInstanceId = string.Format("dev-{0}", Guid.NewGuid());
+        string ISettingsProvider.InstanceId { get { return _LobbyServiceInstanceId; } }
     }
 }
