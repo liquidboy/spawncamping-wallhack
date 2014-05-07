@@ -1,11 +1,6 @@
 ﻿namespace Backend.GameLogic.Configuration
 {
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel.Composition;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     [Export(typeof(BackplaneSettings))]
     [PartCreationPolicy(CreationPolicy.Shared)]

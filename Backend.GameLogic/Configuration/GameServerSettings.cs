@@ -1,6 +1,5 @@
 ﻿namespace Backend.GameLogic.Configuration
 {
-    using System;
     using System.ComponentModel.Composition;
     using System.Net;
 
