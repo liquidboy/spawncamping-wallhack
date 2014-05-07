@@ -2,6 +2,7 @@
 {
     using Backend.GameLogic;
     using Backend.GameLogic.Messages;
+    using Backend.GameLogic.Security;
     using System;
     using System.Linq;
     using System.Net;
