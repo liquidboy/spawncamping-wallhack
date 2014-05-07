@@ -104,7 +104,6 @@
     <Compile Include="Security\SymmetricKeyGenerator.cs" />
     <Compile Include="GameServerImpl.cs" />
     <Compile Include="LobbyServiceSettings.cs" />
-    <Compile Include="GameServerProcess.cs" />
     <Compile Include="GameServerVMAgent.cs" />
     <Compile Include="ISettingsProvider.cs" />
     <Compile Include="LobbyServerDatabase.cs" />
