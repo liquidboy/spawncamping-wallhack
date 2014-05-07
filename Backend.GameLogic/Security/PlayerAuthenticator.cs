@@ -2,7 +2,7 @@
 {
     using System;
     using System.ComponentModel.Composition;
-    using System.IdentityModel.Protocols.WSTrust;
+    using System.IdentityModel.Protocols.WSTrust; // requires NuGet package "System.IdentityModel.Tokens.Jwt"
     using System.IdentityModel.Tokens;
     using System.Linq;
     using System.Security.Claims;
@@ -13,16 +13,35 @@
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
 
-    using Backend.GameLogic.Messages;
+    using Messages;
 
+    /// <summary>
+    /// Authenticates JSON Web Tokens in the scope of the game. The LobbyServer issues these tokens, and the GameServer instances consume them. 
+    /// </summary>
     public class PlayerAuthenticator
     {
-        private byte[] _synchroniedKey;
-
         public PlayerAuthenticator(byte[] secretKey)
         {
             this._synchroniedKey = secretKey;
         }
+
+        public GameServerUserToken CreatePlayerToken(ClientID clientID, string gameserverId)
+        {
+            var name = clientID.ID.ToString();
+
+            return new GameServerUserToken { Credential = CreatePlayerTokenImpl(name, gameserverId) };
+        }
+
+        public ClientID ValidateClientID(GameServerUserToken token, string gameserverId)
+        {
+            var name = ValidateAndGetNameImpl(token.Credential, gameserverId);
+
+            return new ClientID { ID = int.Parse(name) };
+        }
+
+        #region JWT Stuff
+
+        private byte[] _synchroniedKey;
 
         private string ComposeAudienceUrl(string gameserverId)
         {
@@ -31,13 +50,13 @@
 
         private readonly string _validIssuer = "lobbyservice";
 
-        private string CreatePlayerTokenImpl(ClientID clientID, string gameserverId)
+        private string CreatePlayerTokenImpl(string name, string gameserverId)
         {
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                         {
-                            new Claim(ClaimTypes.NameIdentifier, clientID.ID.ToString()),
+                            new Claim(ClaimTypes.NameIdentifier, name),
                             new Claim(ClaimTypes.Role, "Player"), 
                         }),
                 TokenIssuerName = _validIssuer,
@@ -52,13 +71,10 @@
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            var tokenString = tokenHandler.WriteToken(token);
-
-            return tokenString;
+            return tokenHandler.WriteToken(token);
         }
 
-        private ClientID ValidateClientIdImpl(string tokenString, string gameserverId)
+        private string ValidateAndGetNameImpl(string tokenString, string gameserverId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var validationParameters = new TokenValidationParameters()
@@ -72,9 +88,7 @@
             {
                 ClaimsPrincipal principal = tokenHandler.ValidateToken(tokenString, validationParameters);
 
-                var clientIdValue = principal.Claims.First(_ => _.Type == ClaimTypes.NameIdentifier).Value;
-
-                return new ClientID { ID = int.Parse(clientIdValue) };
+                return principal.Claims.First(_ => _.Type == ClaimTypes.NameIdentifier).Value;
             }
             catch (Exception)
             {
@@ -82,15 +96,6 @@
             }
         }
 
-        public GameServerUserToken CreatePlayerToken(ClientID clientID, string gameserverId)
-        {
-            return new GameServerUserToken { Credential = CreatePlayerTokenImpl(clientID, gameserverId) };
-        }
-
-        public ClientID ValidateClientID(GameServerUserToken token, string gameserverId)
-        {
-            return ValidateClientIdImpl(token.Credential, gameserverId);
-        }
-
+        #endregion
     }
 }

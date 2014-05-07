@@ -13,23 +13,22 @@
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
 
-    using Backend.GameLogic.Messages;
+    using Messages;
+
 
     [Export(typeof(SymmetricKeyGenerator))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class SymmetricKeyGenerator : IPartImportsSatisfiedNotification
     {
-        // requires NuGet package System.IdentityModel.Tokens.Jwt
-
         [Import(typeof(BackplaneSettings))]
         public BackplaneSettings BackplaneSettings { get; set; }
 
         void IPartImportsSatisfiedNotification.OnImportsSatisfied()
         {
-            _synchroniedKey = this.EstablishAndRetrieveSyncronizedKey();
+            _synchronizedKey = this.EstablishAndRetrieveSyncronizedKey();
         }
 
-        private byte[] _synchroniedKey;
+        private byte[] _synchronizedKey;
 
         private CloudBlockBlob GetKeyBlobReference()
         {
@@ -83,7 +82,7 @@
 
         public PlayerAuthenticator CreateAuthenticator()
         {
-            return new PlayerAuthenticator(this._synchroniedKey);
+            return new PlayerAuthenticator(this._synchronizedKey);
         }
     }
 }
