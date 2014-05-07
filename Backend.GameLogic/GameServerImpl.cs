@@ -8,9 +8,9 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Backend.GameLogic.Security;
     using Backend.Utils;
     using Messages;
+    using Security;
 
     public class GameServerImpl : ITcpServerHandler
     {
@@ -21,18 +21,21 @@
             this.PlayerAuthenticator = new PlayerAuthenticator(secretKey);
         }
 
-
         private ConcurrentDictionary<int, ConcurrentQueue<GameServerMessageBase>> queues = 
             new ConcurrentDictionary<int, ConcurrentQueue<GameServerMessageBase>>();
 
         async Task ITcpServerHandler.HandleRequest(TcpClient tcpClient, CancellationToken cancellationToken)
         {
+            CancellationToken replacementToken;
+            CancellationTokenSource cancellationTokenSource = cancellationToken.DerivedToken(out replacementToken);
+            cancellationToken = replacementToken;
+
             Socket client = tcpClient.Client;
             ClientID clientId = null;
 
             try
             {
-                Console.WriteLine("New client connection coming in...");
+                Trace.TraceInformation("New client connection coming in...");
 
                 var joinMessageResponse = await client.ReadCommandOrErrorAsync<LoginToGameServerRequest>();
                 if (joinMessageResponse.IsError)
@@ -46,7 +49,13 @@
                 clientId = this.PlayerAuthenticator.ValidateClientID(joinMessage.Token, gameserverId);
 
                 var myQueue = new ConcurrentQueue<GameServerMessageBase>();
-                this.queues.AddOrUpdate(clientId.ID, myQueue, (k,v) => myQueue);
+                bool clientExistsAlready = false;
+                this.queues.AddOrUpdate(clientId.ID, myQueue, (k, v) => { clientExistsAlready = true; return v; });
+                if (clientExistsAlready)
+                {
+                    await client.WriteCommandAsync(new ErrorMessage(string.Format("Sorry, you already have some other connection going")));
+                    return;
+                }
 
                 Task receiveTask = Task.Factory.StartNew(async () =>
                 {
@@ -55,7 +64,7 @@
                         SomeGameMessage someGameMessage = await client.ReadExpectedCommandAsync<SomeGameMessage>();
                         someGameMessage.From = clientId;
 
-                        Console.WriteLine("Received message {0} from {1}", someGameMessage.Stuff, someGameMessage.From.ID);
+                        Trace.TraceInformation(string.Format("Received message {0} from {1}", someGameMessage.Stuff, someGameMessage.From.ID));
 
                         foreach (var queue in this.queues)
                         {
@@ -82,21 +91,17 @@
                         {
                             await client.WriteCommandAsync(messageToSent);
 
-                            Console.WriteLine("Sent message {0} to client {1}", ((SomeGameMessage)messageToSent).Stuff, clientId.ID);
+                            Trace.TraceInformation(string.Format("Sent message {0} to client {1}", ((SomeGameMessage)messageToSent).Stuff, clientId.ID));
                         }
                     }
                 }).Unwrap();
 
                 await Task.WhenAny(receiveTask, senderTask);
 
-                Console.WriteLine("Task ended...");
-                Console.WriteLine("receiveTask: {0}", receiveTask.Status);
-                Console.WriteLine("senderTask: {0}", senderTask.Status);
-
                 ConcurrentQueue<GameServerMessageBase> q;
                 this.queues.TryRemove(clientId.ID, out q);
 
-                Console.WriteLine("queues.Count: {0}", this.queues.Count);
+                Trace.TraceInformation(string.Format("queues.Count: {0}", this.queues.Count));
             }
             catch (Exception ex)
             {
@@ -104,14 +109,7 @@
             }
             finally
             {
-                if (clientId != null)
-                {
-                    Console.WriteLine("Closing connection on client {0}", clientId.ID);
-                }
-                else
-                {
-                    Console.WriteLine("Closing connection on unknown client");
-                }
+                cancellationTokenSource.Cancel();
                 client.Close();
             }
         }

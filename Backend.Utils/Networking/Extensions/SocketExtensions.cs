@@ -99,10 +99,12 @@
         #endregion
 
         #region utils
+
         private static async Task<T> ReadValueAsync<T>(this Socket socket, int length, Func<byte[], T> convertAsync)
         {
             return await ReadValueAsync(socket, length, async (_) => convertAsync(_));
         }
+        
         private static async Task<T> ReadValueAsync<T>(this Socket socket, int length, Func<byte[], Task<T>> convertAsync)
         {
             byte[] buf = new byte[length];

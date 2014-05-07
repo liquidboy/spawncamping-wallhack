@@ -1,18 +1,18 @@
 ﻿namespace Backend.GameLogic
 {
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Table;
     using System;
-    using System.Linq;
+    using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
+
+    using Microsoft.WindowsAzure.Storage;
+    using Microsoft.WindowsAzure.Storage.Table;
+
+    using Security;
     using Configuration;
-    using System.Collections.Generic;
     using Microsoft.DPE.Samples.ChGeuer;
-using System.Text;
-    using Backend.GameLogic.Security;
 
     /// <summary>
     /// Manages the game server processes on a virtual machine. 
@@ -26,30 +26,20 @@ using System.Text;
         [Import(typeof(BackplaneSettings))]
         public BackplaneSettings BackplaneSettings { get; set; }
 
-
-         [Import(typeof(SymmetricKeyGenerator))]
+        [Import(typeof(SymmetricKeyGenerator))]
         public SymmetricKeyGenerator SymmetricKeyGenerator { get; set; }
 
-
         private List<Task> runningHosts = new List<Task>();
-        private const string lobbyServiceTableName = "gameserveragents";
         private CloudTableClient m_cloudTableClient;
         private CloudTable m_table;
+        private const string lobbyServiceTableName = "gameserveragents";
 
-        void IPartImportsSatisfiedNotification.OnImportsSatisfied() { this.OnImportsSatisfiedAsync().Wait(); }
-
-        private async Task OnImportsSatisfiedAsync()
+        void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
         {
             var storageAccount = CloudStorageAccount.Parse(this.BackplaneSettings.StorageConnectionString);
-            m_cloudTableClient = storageAccount.CreateCloudTableClient();
-            m_table = m_cloudTableClient.GetTableReference(tableName: lobbyServiceTableName);
-            if (!await m_table.ExistsAsync())
-            {
-                try
-                {
-                    await m_table.CreateAsync();
-                } catch (StorageException) { }
-            }
+            this.m_cloudTableClient = storageAccount.CreateCloudTableClient();
+            this.m_table = m_cloudTableClient.GetTableReference(tableName: lobbyServiceTableName);
+            this.m_table.CreateIfNotExists();
         }
 
         private Func<Process> CreateGameServerRecipy(int internalServerPort)
@@ -70,18 +60,18 @@ using System.Text;
                         WorkingDirectory = ".",
                         FileName = @".\Backend.GameServer.exe",
                         Arguments = arguments,
-                        // UseShellExecute = false,
-                        //RedirectStandardOutput = true,
-                        //RedirectStandardError = true
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
                     },
                     EnableRaisingEvents = true
                 };
 
-                //Action<DataReceivedEventArgs> outputDataReceived = args => Trace.WriteLine(args.Data, "stdout");
-                //Action<DataReceivedEventArgs> errorDataReceived = args => Trace.WriteLine(args.Data, "stderr");
+                Action<DataReceivedEventArgs> outputDataReceived = args => Trace.WriteLine(args.Data, "stdout");
+                Action<DataReceivedEventArgs> errorDataReceived = args => Trace.WriteLine(args.Data, "stderr");
 
-                //process.OutputDataReceived += (s, a) => outputDataReceived(a);
-                //process.ErrorDataReceived += (s, a) => errorDataReceived(a);
+                process.OutputDataReceived += (s, a) => outputDataReceived(a);
+                process.ErrorDataReceived += (s, a) => errorDataReceived(a);
 
                 return process;
             };
