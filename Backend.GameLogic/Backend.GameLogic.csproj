@@ -62,6 +62,10 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IdentityModel.Tokens.Jwt">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.4.0.0-beta1\lib\net45\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
     <Reference Include="System.Reactive.Core, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rx-Core.2.2.4\lib\net45\System.Reactive.Core.dll</HintPath>
@@ -92,8 +96,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AzureGameServerSettings.cs" />
+    <Compile Include="BackplaneSettings.cs" />
     <Compile Include="ClientID.cs" />
     <Compile Include="ClientState.cs" />
+    <Compile Include="GameAuthenticationHandler.cs" />
     <Compile Include="GameServerImpl.cs" />
     <Compile Include="LobbyServiceSettings.cs" />
     <Compile Include="GameServerProcess.cs" />

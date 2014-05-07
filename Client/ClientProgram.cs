@@ -40,7 +40,7 @@
             // Console.WriteLine(s);
         }
 
-        public async Task RunLobbyclientAsync(ClientID clientId)
+        public async Task<GameServerConnectionMessage> RunLobbyclientAsync(ClientID clientId)
         {
             var lobbyClient = new LobbyClientImpl(ipAddress: IPAddress.Loopback, port: 3003)
             {
@@ -57,9 +57,10 @@
             Console.WriteLine("{0}: {1}", clientId, gameServerInfo.Token.Credential);
 
             lobbyClient.Close();
-            Console.WriteLine();
 
             // Console.WriteLine("I should connect to {0} using credential {1}", gameServerInfo.GameServer.ToString(), gameServerInfo.Token.Credential);
+
+            return gameServerInfo;
         }
 
         public async Task RunGameClientAsync(ClientID clientId)
@@ -77,7 +78,7 @@
                 while (true)
                 {
                     var someGameMessage = await server.ReadExpectedCommandAsync<SomeGameMessage>();
-                    Console.WriteLine("Received " + someGameMessage.Stuff);
+                    Console.WriteLine("Received \"{0}\" from {1}", someGameMessage.Stuff, someGameMessage.From.ID);
                 }
             }).Unwrap();
 
@@ -86,14 +87,12 @@
                 while (true)
                 {
                     var content = Console.ReadLine();
-                    await server.WriteCommandAsync(new SomeGameMessage { Stuff = content });
+                    await server.WriteCommandAsync(new SomeGameMessage { Stuff = content, From = new ClientID { ID = -1 } });
                     Console.WriteLine("Sent message");
                 }
             }).Unwrap();
 
             await Task.WhenAll(receiveTask, senderTask);
-
-
 
             client.Close();
         }

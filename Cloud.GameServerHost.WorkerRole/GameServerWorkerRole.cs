@@ -1,23 +1,30 @@
 namespace Cloud.GameServerHost.WorkerRole
 {
+    using System;
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
     using System.Diagnostics;
     using System.Net;
     using System.Threading;
+    using System.Threading.Tasks;
+
     using Microsoft.WindowsAzure.ServiceRuntime;
 
     using AzureProductionSettings;
     using Backend.GameLogic;
-    using System.Threading.Tasks;
-    using System;
+    using Backend.Utils.Networking;
 
     public class GameServerWorkerRole : RoleEntryPoint
     {
-        [Import]
+        [Import(typeof(GameServerVMAgent))]
         GameServerVMAgent agent;
-        
+
+        [Import(typeof(AzureGameServerSettings))]
+        AzureGameServerSettings Settings;
+
         private Task agentTask;
+
+        private Task proxyTask;
 
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -29,8 +36,6 @@ namespace Cloud.GameServerHost.WorkerRole
                 ));
 
             compositionContainer.SatisfyImportsOnce(this);
-
-            var a = this.agent.Settings.IPEndPoint;
         }
 
         public override bool OnStart()
@@ -38,6 +43,9 @@ namespace Cloud.GameServerHost.WorkerRole
             ServicePointManager.DefaultConnectionLimit = 64;
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.UseNagleAlgorithm = false;
+
+            var proxyServerHost = new AsyncServerHost(this.Settings.ProxyIPEndPoint);
+            this.proxyTask = proxyServerHost.StartFunctional(async (client, ct) => await ProxyConnection.ProxyLogic(client, cts), cts.Token);
 
             this.agentTask = this.agent.Start(cts.Token);
 

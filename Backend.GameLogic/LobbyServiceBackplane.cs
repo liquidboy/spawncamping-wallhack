@@ -16,11 +16,14 @@
         [Import(typeof(LobbyServiceSettings))]
         public LobbyServiceSettings Settings { get; set; }
 
+        [Import(typeof(BackplaneSettings))]
+        public BackplaneSettings BackplaneSettings { get; set; }
+
         public IObservable<IBusMessage<string>> ObservableBackPlane { get; private set; }
 
         public string TopicPath { get { return "LobbyServiceTopic"; } }
-        
-        public string SubscriptionName { get { return this.Settings.LobbyServiceInstanceId; } }
+
+        public string SubscriptionName { get { return this.BackplaneSettings.InstanceId; } }
         
         private NamespaceManager _namespaceManager;
 
@@ -38,7 +41,7 @@
         {
             Trace.TraceInformation(string.Format("{0} start initializing.", this.GetType().Name));
 
-            this._namespaceManager = NamespaceManager.CreateFromConnectionString(this.Settings.ServiceBusCredentials);
+            this._namespaceManager = NamespaceManager.CreateFromConnectionString(this.BackplaneSettings.ServiceBusCredentials);
 
             if (!await _namespaceManager.TopicExistsAsync(this.TopicPath))
             {
@@ -60,11 +63,11 @@
             }
 
             this._TopicClient = TopicClient.CreateFromConnectionString(
-                connectionString: this.Settings.ServiceBusCredentials,
+                connectionString: this.BackplaneSettings.ServiceBusCredentials,
                 path: this.TopicPath);
 
             this._SubscriptionClient = SubscriptionClient.CreateFromConnectionString(
-                connectionString: this.Settings.ServiceBusCredentials,
+                connectionString: this.BackplaneSettings.ServiceBusCredentials,
                 topicPath: this.TopicPath,
                 name: this.SubscriptionName, 
                 mode: ReceiveMode.ReceiveAndDelete);

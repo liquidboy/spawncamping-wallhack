@@ -24,7 +24,7 @@
             await task;
         }
 
-        private async Task StartFunctional(Func<TcpClient, CancellationToken, Task> serverLogic, CancellationToken ct)
+        public async Task StartFunctional(Func<TcpClient, CancellationToken, Task> serverLogic, CancellationToken ct)
         {
             TcpListener listener = new TcpListener(_endpoint);
             listener.Start(

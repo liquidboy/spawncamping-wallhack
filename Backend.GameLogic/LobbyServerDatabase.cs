@@ -21,6 +21,9 @@
         [Import(typeof(LobbyServiceSettings))]
         public LobbyServiceSettings LobbyServiceSettings { get; set; }
 
+        [Import(typeof(BackplaneSettings))]
+        public BackplaneSettings BackplaneSettings { get; set; }
+
         private const string lobbyServiceTableName = "lobbyservice";
         private CloudTableClient m_cloudTableClient;
         private CloudTable m_table;
@@ -31,7 +34,7 @@
 
         private async Task OnImportsSatisfiedAsync()
         {
-            var storageAccount = CloudStorageAccount.Parse(this.LobbyServiceSettings.LobbyStorageConnectionString);
+            var storageAccount = CloudStorageAccount.Parse(this.BackplaneSettings.StorageConnectionString);
             m_cloudTableClient = storageAccount.CreateCloudTableClient();
             m_table = m_cloudTableClient.GetTableReference(tableName: lobbyServiceTableName);
             if (!await m_table.ExistsAsync())

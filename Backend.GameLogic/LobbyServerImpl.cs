@@ -24,6 +24,9 @@
         [Import(typeof(ILobbyServerDatabase))]
         public ILobbyServerDatabase LobbyServerDatabase { get; set; }
 
+        [Import(typeof(GameAuthenticationHandler))]
+        public GameAuthenticationHandler GameAuthenticationHandler { get; set; }
+
         public LobbyServerImpl() { /* put constructor code into IPartImportsSatisfiedNotification.OnImportsSatisfied */ }
 
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
@@ -35,6 +38,7 @@
             {
                     Trace.TraceInformation(string.Format("Received msg: {0}", msg.Content));
             });
+
             this.LobbyConnector.ObservableBackPlane.Subscribe(msg =>
             {
                 var clientId = (int) msg["clientId"];
@@ -62,7 +66,7 @@
                 Func<JoinGameMessage, BrokeredMessage> createJoinNotification = _ =>
                 {
                     var joinMessageUpdate = new BrokeredMessage(string.Format("Connect from {0} on instance {1}",
-                        _.ClientID.ID, this.LobbyConnector.Settings.LobbyServiceInstanceId));
+                        _.ClientID.ID, this.LobbyConnector.BackplaneSettings.InstanceId));
                     joinMessageUpdate.Properties.Add("clientId", _.ClientID.ID);
                     return joinMessageUpdate;
                 };

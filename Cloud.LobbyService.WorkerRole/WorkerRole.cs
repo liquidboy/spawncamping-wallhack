@@ -17,7 +17,10 @@ namespace Cloud.LobbyService.WorkerRole
     public class WorkerRole : RoleEntryPoint
     {
         [Import(typeof(LobbyServiceSettings))]
-        private LobbyServiceSettings Settings { get; set; }
+        private LobbyServiceSettings LobbyServiceSettings { get; set; }
+        
+        [Import(typeof(BackplaneSettings))]
+        public BackplaneSettings BackplaneSettings { get; set; }
 
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -36,12 +39,12 @@ namespace Cloud.LobbyService.WorkerRole
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.UseNagleAlgorithm = false;
 
-            Trace.TraceInformation("ServiceBusCredentials  " + this.Settings.ServiceBusCredentials);
-            Trace.TraceInformation("LobbyServiceInstanceId " + this.Settings.LobbyServiceInstanceId);
-            Trace.TraceInformation("Settings.IPEndPoint    " + this.Settings.IPEndPoint.ToString());
+            Trace.TraceInformation("ServiceBusCredentials  " + this.BackplaneSettings.ServiceBusCredentials);
+            Trace.TraceInformation("LobbyServiceInstanceId " + this.BackplaneSettings.InstanceId);
+            Trace.TraceInformation("Settings.IPEndPoint    " + this.LobbyServiceSettings.IPEndPoint.ToString());
 
             this.lobbyServerImpl = cc.GetExportedValue<LobbyServerImpl>();
-            var server = new AsyncServerHost(this.Settings.IPEndPoint);
+            var server = new AsyncServerHost(this.LobbyServiceSettings.IPEndPoint);
             this.lobbyTask = server.Start(lobbyServerImpl, cts.Token);
 
             return base.OnStart();

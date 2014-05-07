@@ -13,6 +13,9 @@
     {
         [Import(typeof(AzureGameServerSettings))]
         public AzureGameServerSettings Settings { get; set; }
+        
+        [Import(typeof(BackplaneSettings))]
+        public BackplaneSettings BackplaneSettings { get; set; }
 
         private const string lobbyServiceTableName = "gameserveragents";
         private CloudTableClient m_cloudTableClient;
@@ -22,7 +25,7 @@
 
         private async Task OnImportsSatisfiedAsync()
         {
-            var storageAccount = CloudStorageAccount.Parse(this.Settings.GameServerStorageConnectionString);
+            var storageAccount = CloudStorageAccount.Parse(this.BackplaneSettings.StorageConnectionString);
             m_cloudTableClient = storageAccount.CreateCloudTableClient();
             m_table = m_cloudTableClient.GetTableReference(tableName: lobbyServiceTableName);
             if (!await m_table.ExistsAsync())

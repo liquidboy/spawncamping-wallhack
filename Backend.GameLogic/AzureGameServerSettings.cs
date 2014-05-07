@@ -10,14 +10,11 @@
         [Import(typeof(ISettingsProvider))]
         public ISettingsProvider SettingsProvider { get; set; }
 
-        public string GameServerInstanceId { get { return this.SettingsProvider.GetInstanceId(); } }
+        [Import(typeof(BackplaneSettings))]
+        public BackplaneSettings BackplaneSettings { get; set; }
 
-        public string ServiceBusCredentials { get { return this.SettingsProvider.GetSetting("ServiceBusCredentials"); } }
+        public IPEndPoint ProxyIPEndPoint { get { return this.SettingsProvider.GetIPEndpoint("gameServerInstanceEndpoint"); } }
 
-        public string GameServerStorageConnectionString { get { return this.SettingsProvider.GetSetting("StorageConnectionString"); } }
-
-        public IPEndPoint IPEndPoint { get { return this.SettingsProvider.GetIPEndpoint("gameServerInstanceEndpoint"); } }
-
-        public int GameServerPort { get { return this.SettingsProvider.GetPublicPort("gameServerInstanceEndpoint"); } }
+        public int PublicGameServerPort { get { return this.SettingsProvider.GetPublicPort("gameServerInstanceEndpoint"); } }
     }
 }
