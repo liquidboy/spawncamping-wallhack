@@ -23,8 +23,8 @@
         [Import(typeof(GameServerSettings))]
         public GameServerSettings Settings { get; set; }
         
-        [Import(typeof(BackplaneSettings))]
-        public BackplaneSettings BackplaneSettings { get; set; }
+        [Import(typeof(SharedSettings))]
+        public SharedSettings SharedSettings { get; set; }
 
         [Import(typeof(SymmetricKeyGenerator))]
         public SymmetricKeyGenerator SymmetricKeyGenerator { get; set; }
@@ -36,7 +36,7 @@
 
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
         {
-            var storageAccount = CloudStorageAccount.Parse(this.BackplaneSettings.StorageConnectionString);
+            var storageAccount = CloudStorageAccount.Parse(this.SharedSettings.StorageConnectionString);
             this.m_cloudTableClient = storageAccount.CreateCloudTableClient();
             this.m_table = m_cloudTableClient.GetTableReference(tableName: lobbyServiceTableName);
             this.m_table.CreateIfNotExists();

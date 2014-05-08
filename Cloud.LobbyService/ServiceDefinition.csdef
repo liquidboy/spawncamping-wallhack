@@ -7,6 +7,7 @@
     <ConfigurationSettings>
       <Setting name="ServiceBusCredentials" />
       <Setting name="StorageConnectionString" />
+      <Setting name="DNSName" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="LobbyService" protocol="tcp" port="3000" />
@@ -19,6 +20,7 @@
     <ConfigurationSettings>
       <Setting name="StorageConnectionString" />
       <Setting name="ServiceBusCredentials" />
+      <Setting name="DNSName" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="gameServerInstanceEndpoint" protocol="tcp" port="4000" localPort="4000" />

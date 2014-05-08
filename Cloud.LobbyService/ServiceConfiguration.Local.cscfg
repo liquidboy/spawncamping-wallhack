@@ -6,6 +6,7 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="ServiceBusCredentials" value="" />
       <Setting name="StorageConnectionString" value="" />
+      <Setting name="DNSName" value="127.0.0.1" />
     </ConfigurationSettings>
   </Role>
   <Role name="Cloud.GameServerHost.WorkerRole">
@@ -14,6 +15,7 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="StorageConnectionString" value="" />
       <Setting name="ServiceBusCredentials" value="" />
+      <Setting name="DNSName" value="127.0.0.1" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

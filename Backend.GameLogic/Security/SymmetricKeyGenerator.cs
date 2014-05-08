@@ -16,13 +16,12 @@
     using Messages;
     using Configuration;
 
-
     [Export(typeof(SymmetricKeyGenerator))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class SymmetricKeyGenerator : IPartImportsSatisfiedNotification
     {
-        [Import(typeof(BackplaneSettings))]
-        public BackplaneSettings BackplaneSettings { get; set; }
+        [Import(typeof(SharedSettings))]
+        public SharedSettings SharedSettings { get; set; }
 
         void IPartImportsSatisfiedNotification.OnImportsSatisfied()
         {
@@ -33,7 +32,7 @@
 
         private CloudBlockBlob GetKeyBlobReference()
         {
-            var storageAccount = CloudStorageAccount.Parse(this.BackplaneSettings.StorageConnectionString);
+            var storageAccount = CloudStorageAccount.Parse(this.SharedSettings.StorageConnectionString);
             var blobClient = storageAccount.CreateCloudBlobClient();
             var gamebackplaneContainer = blobClient.GetContainerReference("gamebackplane");
             gamebackplaneContainer.CreateIfNotExists();

@@ -9,8 +9,8 @@
         [Import(typeof(ISettingsProvider))]
         public ISettingsProvider SettingsProvider { get; set; }
 
-        [Import(typeof(BackplaneSettings))]
-        public BackplaneSettings BackplaneSettings { get; set; }
+        [Import(typeof(SharedSettings))]
+        public SharedSettings SharedSettings { get; set; }
 
         public IPEndPoint IPEndPoint { get { return this.SettingsProvider.LobbyServerInternalEndpoint; } }
 

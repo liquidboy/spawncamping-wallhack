@@ -20,8 +20,8 @@ namespace Cloud.LobbyService.WorkerRole
         [Import(typeof(LobbyServiceSettings))]
         private LobbyServiceSettings LobbyServiceSettings { get; set; }
         
-        [Import(typeof(BackplaneSettings))]
-        public BackplaneSettings BackplaneSettings { get; set; }
+        [Import(typeof(SharedSettings))]
+        public SharedSettings SharedSettings { get; set; }
 
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -40,8 +40,8 @@ namespace Cloud.LobbyService.WorkerRole
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.UseNagleAlgorithm = false;
 
-            Trace.TraceInformation("ServiceBusCredentials  " + this.BackplaneSettings.ServiceBusCredentials);
-            Trace.TraceInformation("LobbyServiceInstanceId " + this.BackplaneSettings.InstanceId);
+            Trace.TraceInformation("ServiceBusCredentials  " + this.SharedSettings.ServiceBusCredentials);
+            Trace.TraceInformation("LobbyServiceInstanceId " + this.SharedSettings.InstanceId);
             Trace.TraceInformation("Settings.IPEndPoint    " + this.LobbyServiceSettings.IPEndPoint.ToString());
 
             this.lobbyServerImpl = cc.GetExportedValue<LobbyServerImpl>();
