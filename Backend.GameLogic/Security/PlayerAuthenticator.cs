@@ -14,6 +14,7 @@
     using Microsoft.WindowsAzure.Storage.Blob;
 
     using Messages;
+    using Models;
 
     /// <summary>
     /// Authenticates JSON Web Tokens in the scope of the game. The LobbyServer issues these tokens, and the GameServer instances consume them. 

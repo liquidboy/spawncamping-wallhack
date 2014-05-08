@@ -97,8 +97,8 @@
   <ItemGroup>
     <Compile Include="Configuration\GameServerSettings.cs" />
     <Compile Include="Configuration\SharedSettings.cs" />
-    <Compile Include="ClientID.cs" />
-    <Compile Include="ClientState.cs" />
+    <Compile Include="Models\ClientID.cs" />
+    <Compile Include="Models\ClientState.cs" />
     <Compile Include="Security\CompletelyInsecureLobbyAuthentication.cs" />
     <Compile Include="Security\PlayerAuthenticator.cs" />
     <Compile Include="Security\SymmetricKeyGenerator.cs" />

@@ -3,6 +3,7 @@
     using Backend.GameLogic;
     using Backend.GameLogic.Messages;
     using Backend.GameLogic.Security;
+    using Backend.GameLogic.Models;
     using Backend.Utils.Networking.Extensions;
     using System;
     using System.Linq;

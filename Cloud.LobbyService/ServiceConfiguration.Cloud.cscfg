@@ -6,8 +6,12 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="ServiceBusCredentials" value="" />
       <Setting name="StorageConnectionString" value="UseDevelopmentStorage=true" />
-      <Setting name="DNSName" value="127.0.0.1" />
+      <Setting name="DNSName" value="thegaminglobby.cloudapp.net" />
+      <Setting name="SubscriptionID" value="5cc34a74-cb29-467a-93d4-1ddfb4ffffff" />
     </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="SubscriptionManagementCertificate" thumbprint="A2EC421423B7B251D6A0118A70B8E3B944793D1F" thumbprintAlgorithm="sha1" />
+    </Certificates>
   </Role>
   <Role name="Cloud.GameServerHost.WorkerRole">
     <Instances count="1" />
@@ -15,7 +19,7 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="StorageConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="ServiceBusCredentials" value="" />
-      <Setting name="DNSName" value="127.0.0.1" />
+      <Setting name="DNSName" value="gameserverclustereurope.cloudapp.net" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

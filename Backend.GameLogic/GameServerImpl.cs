@@ -11,6 +11,7 @@
     using Backend.Utils;
     using Messages;
     using Security;
+    using Models;
 
     public class GameServerImpl : ITcpServerHandler
     {

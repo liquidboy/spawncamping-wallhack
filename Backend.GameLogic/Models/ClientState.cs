@@ -1,7 +1,8 @@
-﻿namespace Backend.GameLogic
+﻿namespace Backend.GameLogic.Models
 {
     using System;
     using System.Net;
+    using Models;
 
     public class ClientState
     {

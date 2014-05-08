@@ -1,5 +1,7 @@
 ﻿namespace Backend.GameLogic.Security
 {
+    using Models;
+    
     public static class CompletelyInsecureLobbyAuthentication
     {
         private static readonly string _staticPassword = "password from CompletelyInsecureLobbyAuthentication 123";

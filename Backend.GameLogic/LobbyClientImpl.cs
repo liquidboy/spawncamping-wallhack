@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Backend.Utils.Networking.Extensions;
     using Messages;
+    using Models;
 
     public class LobbyClientImpl
     {

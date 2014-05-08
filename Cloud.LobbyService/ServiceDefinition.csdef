@@ -8,10 +8,14 @@
       <Setting name="ServiceBusCredentials" />
       <Setting name="StorageConnectionString" />
       <Setting name="DNSName" />
+      <Setting name="SubscriptionID" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="LobbyService" protocol="tcp" port="3000" />
     </Endpoints>
+    <Certificates>
+      <Certificate name="SubscriptionManagementCertificate" storeLocation="LocalMachine" storeName="My" />
+    </Certificates>
   </WorkerRole>
   <WorkerRole name="Cloud.GameServerHost.WorkerRole" vmsize="Small">
     <Imports>

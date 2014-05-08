@@ -1,4 +1,4 @@
-﻿namespace Backend.GameLogic
+﻿namespace Backend.GameLogic.Models
 {
     public class ClientID
     {
