@@ -2,6 +2,7 @@
 {
     using System.ComponentModel.Composition;
     using System.Net;
+    using System.Security.Cryptography.X509Certificates;
 
     [Export(typeof(GameServerSettings))]
     public class GameServerSettings

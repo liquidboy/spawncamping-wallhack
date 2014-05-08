@@ -17,5 +17,11 @@
         public IPEndPoint GameServerEndpoint { get { return new IPEndPoint(
             this.SettingsProvider.GameServerPublicAddress,
             this.SettingsProvider.GameServerPublicProxyPort); } }
+
+        public string SubscriptionID { get { return this.SettingsProvider.GetSetting("SubscriptionID"); } }
+
+        public string SubscriptionManagementCertificateThumbprint { get { return this.SettingsProvider.GetSetting("SubscriptionManagementCertificateThumbprint"); } }
+
+        public string GameServerCloudServiceName { get { return this.SettingsProvider.GetSetting("GameServerCloudServiceName"); } }
     }
 }

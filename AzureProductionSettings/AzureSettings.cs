@@ -8,25 +8,7 @@
     [Export(typeof(ISettingsProvider))]
     public class AzureSettings : ISettingsProvider
     {
-        internal static class N
-        {
-            internal static class LobbyRole
-            {
-                internal static readonly string Name = "Cloud.LobbyService.WorkerRole";
-                internal static class Endpoints
-                {
-                    internal static readonly string LobbyService = "LobbyService";
-                }
-            }
-            internal static class GameRole
-            {
-                internal static readonly string Name = "Cloud.GameServerHost.WorkerRole";
-                internal static class Endpoints
-                {
-                    internal static readonly string gameServerInstanceEndpoint = "gameServerInstanceEndpoint";
-                }
-            }
-        }
+
 
         string ISettingsProvider.GetSetting(string key)
         {
@@ -35,22 +17,22 @@
 
         IPEndPoint ISettingsProvider.LobbyServerInternalEndpoint
         {
-            get { return RoleEnvironment.Roles[N.LobbyRole.Name].Instances[0].InstanceEndpoints[N.LobbyRole.Endpoints.LobbyService].IPEndpoint; }
+            get { return RoleEnvironment.Roles[Names.LobbyRole.Name].Instances[0].InstanceEndpoints[Names.LobbyRole.Endpoints.LobbyService].IPEndpoint; }
         }
 
         IPEndPoint ISettingsProvider.GameServerInternalProxyEndpoint
         {
-            get { return RoleEnvironment.Roles[N.GameRole.Name].Instances[0].InstanceEndpoints[N.GameRole.Endpoints.gameServerInstanceEndpoint].IPEndpoint; }
+            get { return RoleEnvironment.Roles[Names.GameRole.Name].Instances[0].InstanceEndpoints[Names.GameRole.Endpoints.gameServerInstanceEndpoint].IPEndpoint; }
         }
 
         int ISettingsProvider.GameServerPublicProxyPort
         {
-            get { return RoleEnvironment.Roles[N.GameRole.Name].Instances[0].InstanceEndpoints[N.GameRole.Endpoints.gameServerInstanceEndpoint].PublicIPEndpoint.Port; }
+            get { return RoleEnvironment.Roles[Names.GameRole.Name].Instances[0].InstanceEndpoints[Names.GameRole.Endpoints.gameServerInstanceEndpoint].PublicIPEndpoint.Port; }
         }
 
         IPAddress ISettingsProvider.GameServerPublicAddress
         {
-            get { return RoleEnvironment.Roles[N.GameRole.Name].Instances[0].InstanceEndpoints[N.GameRole.Endpoints.gameServerInstanceEndpoint].PublicIPEndpoint.Address; }
+            get { return RoleEnvironment.Roles[Names.GameRole.Name].Instances[0].InstanceEndpoints[Names.GameRole.Endpoints.gameServerInstanceEndpoint].PublicIPEndpoint.Address; }
         }
 
         string ISettingsProvider.InstanceId
