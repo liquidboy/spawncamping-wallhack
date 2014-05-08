@@ -125,6 +125,7 @@
     <Compile Include="GameServerScaling.cs" />
     <Compile Include="Models\ClientID.cs" />
     <Compile Include="Models\ClientState.cs" />
+    <Compile Include="Scaling\ScalingAgent.cs" />
     <Compile Include="Security\CompletelyInsecureLobbyAuthentication.cs" />
     <Compile Include="Security\PlayerAuthenticator.cs" />
     <Compile Include="Security\SymmetricKeyGenerator.cs" />
