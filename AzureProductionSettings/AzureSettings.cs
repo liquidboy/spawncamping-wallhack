@@ -8,8 +8,6 @@
     [Export(typeof(ISettingsProvider))]
     public class AzureSettings : ISettingsProvider
     {
-
-
         string ISettingsProvider.GetSetting(string key)
         {
             return RoleEnvironment.GetConfigurationSettingValue(key);
