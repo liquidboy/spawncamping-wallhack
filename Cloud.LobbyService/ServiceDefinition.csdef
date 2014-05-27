@@ -11,9 +11,12 @@
       <Setting name="SubscriptionID" />
       <Setting name="SubscriptionManagementCertificateThumbprint" />
       <Setting name="GameServerCloudServiceName" />
+      <Setting name="DataConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="LobbyService" protocol="tcp" port="3000" />
+      <InternalEndpoint name="OrleansSiloEndpoint" protocol="tcp" port="11111" />
+      <InternalEndpoint name="OrleansProxyEndpoint" protocol="tcp" port="30000" />
     </Endpoints>
     <Certificates>
       <Certificate name="SubscriptionManagementCertificate" storeLocation="LocalMachine" storeName="My" />

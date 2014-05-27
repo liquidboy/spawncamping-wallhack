@@ -10,6 +10,7 @@
       <Setting name="SubscriptionID" value="5cc34a74-cb29-467a-93d4-1ddfb4ffffff" />
       <Setting name="SubscriptionManagementCertificateThumbprint" value="" />
       <Setting name="GameServerCloudServiceName" value="" />
+      <Setting name="DataConnectionString" value="UseDevelopmentStorage=true" />
     </ConfigurationSettings>
     <Certificates>
       <Certificate name="SubscriptionManagementCertificate" thumbprint="A2EC421423B7B251D6A0118A70B8E3B944793D1F" thumbprintAlgorithm="sha1" />

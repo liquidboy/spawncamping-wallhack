@@ -63,6 +63,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Orleans">
+      <HintPath>..\..\..\..\..\..\Microsoft Codename Orleans SDK v0.9\SDK\Binaries\OrleansServer\Orleans.dll</HintPath>
+    </Reference>
+    <Reference Include="OrleansAzureUtils">
+      <HintPath>..\..\..\..\..\..\Microsoft Codename Orleans SDK v0.9\SDK\Binaries\OrleansServer\OrleansAzureUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="OrleansProviders">
+      <HintPath>..\..\..\..\..\..\Microsoft Codename Orleans SDK v0.9\SDK\Binaries\OrleansServer\OrleansProviders.dll</HintPath>
+    </Reference>
+    <Reference Include="OrleansRuntime">
+      <HintPath>..\..\..\..\..\..\Microsoft Codename Orleans SDK v0.9\SDK\Binaries\OrleansServer\OrleansRuntime.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.Composition.Registration" />
