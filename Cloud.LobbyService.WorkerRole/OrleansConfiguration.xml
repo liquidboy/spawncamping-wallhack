@@ -1,0 +1,34 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<!-- OrleansConfiguration.xml -->
+<OrleansConfiguration xmlns='urn:orleans'>
+  <Globals>
+    <Liveness LivenessType='AzureTable' />
+
+    <!-- 
+    <ReminderService ReminderServiceType="None"/>
+    <ReminderService ReminderServiceType="ReminderTableGrain"/>
+    <ReminderService ReminderServiceType="AzureTable"/>
+    -->
+
+    <StorageProviders>
+      <Provider Name='AzureTableStorage'
+                Type='Orleans.Storage.AzureTableStorage'
+                DataConnectionString='XXXDataConnectionStringValueXXX'
+                TableName='grainstate' DeleteStateOnClear='false' />
+
+      <Provider Name='BlobStorageProvider' Type='OrleansBlobStorageProvider.BlobStorageProvider'
+                DataConnectionString='XXXDataConnectionStringValueXXX' ContainerName='grainstate'/>
+
+      <Provider Name='PlayerState' Type='OrleansBlobStorageProvider.BlobStorageProvider'
+                DataConnectionString='XXXDataConnectionStringValueXXX' ContainerName='playerstate'/>
+
+      <Provider Name='GameServerState' Type='OrleansBlobStorageProvider.BlobStorageProvider'
+                DataConnectionString='XXXDataConnectionStringValueXXX' ContainerName='gameserverstate'/>
+
+      <Provider Name='MemoryStore' Type='Orleans.Storage.MemoryStorage'  />
+    </StorageProviders>
+  </Globals>
+  <Defaults>
+    <Tracing DefaultTraceLevel='Info' TraceToConsole='true' TraceToFile='{0}-{1}.log'></Tracing>
+  </Defaults>
+</OrleansConfiguration>

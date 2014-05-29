@@ -30,6 +30,8 @@
             catch (Exception ex)
             {
                 Log.Error(0, ex.ToString());
+
+                throw;
             }
         }
 

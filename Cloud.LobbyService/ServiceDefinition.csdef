@@ -21,6 +21,9 @@
     <Certificates>
       <Certificate name="SubscriptionManagementCertificate" storeLocation="LocalMachine" storeName="My" />
     </Certificates>
+    <LocalResources>
+      <LocalStorage name="LocalStoreDirectory" cleanOnRoleRecycle="false" />
+    </LocalResources>
   </WorkerRole>
   <WorkerRole name="Cloud.GameServerHost.WorkerRole" vmsize="Small">
     <Imports>

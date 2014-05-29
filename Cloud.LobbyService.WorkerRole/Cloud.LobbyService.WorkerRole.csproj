@@ -55,9 +55,9 @@
     <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Storage, Version=3.1.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WindowsAzure.Storage.3.1.0.1\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+      <HintPath>..\packages\WindowsAzure.Storage.4.0.1\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -123,10 +123,30 @@
       <Project>{a70b2016-1d1c-4e31-b887-3ecff4c27cf9}</Project>
       <Name>Backend.GameLogic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Backend.GrainImplementations\Backend.GrainImplementations.csproj">
+      <Project>{bbab96c0-b679-4ccb-ad78-8cccfc86e252}</Project>
+      <Name>Backend.GrainImplementations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Backend.GrainInterfaces\Backend.GrainInterfaces.csproj">
+      <Project>{5768fde9-a337-4b74-bd79-7b704f5d2ae4}</Project>
+      <Name>Backend.GrainInterfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Backend.Utils\Backend.Utils.csproj">
       <Project>{0593f317-d7ce-4e7c-816a-f895505366d7}</Project>
       <Name>Backend.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OrleansBlobStorageProvider\OrleansBlobStorageProvider.csproj">
+      <Project>{944568ea-bc0b-49bc-af0f-b4a4a62858ac}</Project>
+      <Name>OrleansBlobStorageProvider</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ClientConfiguration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OrleansConfiguration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
