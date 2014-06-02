@@ -1,8 +1,8 @@
 ﻿namespace Backend.GrainInterfaces
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Orleans;
-    using System.Collections.Generic;
 
     public class GameServerStartParams
     {

@@ -19,9 +19,6 @@
     [Export(typeof(LobbyServerImpl))]
     public class LobbyServerImpl : ITcpServerHandler, IPartImportsSatisfiedNotification, IDisposable
     {
-        [Import(typeof(LobbyServiceBackplane), RequiredCreationPolicy = CreationPolicy.Shared)]
-        public LobbyServiceBackplane LobbyConnector { get; set; }
-
         [Import(typeof(ILobbyServerDatabase))]
         public ILobbyServerDatabase LobbyServerDatabase { get; set; }
 
@@ -36,18 +33,6 @@
         {
             // Read current state from azure storage table 
             this.LobbyServerDatabase.LoadAsync().Wait();
-
-            this.LobbyConnector.ObservableBackPlane.Subscribe(msg => 
-            {
-                    Trace.TraceInformation(string.Format("Received msg: {0}", msg.Content));
-            });
-
-            this.LobbyConnector.ObservableBackPlane.Subscribe(msg =>
-            {
-                var clientId = (int) msg["clientId"];
-
-                this.CurrentPlayers.Add(clientId);
-            });
 
             _playerAuthenticator = this.GameAuthenticationHandler.CreateAuthenticator();
         }
@@ -125,7 +110,7 @@
 
             if (disposing)
             {
-                this.LobbyConnector.Dispose();
+                // this.LobbyConnector.Dispose();
             }
 
             // Free any unmanaged objects here. 

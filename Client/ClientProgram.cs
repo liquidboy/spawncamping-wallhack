@@ -66,6 +66,8 @@
         private static async Task Log(string s)
         {
             // Console.WriteLine(s);
+
+            await Task.Yield();
         }
 
         public static async Task<LoginToLobbyResponseMessage> GetGameServerAsync(ClientID clientId, string password)

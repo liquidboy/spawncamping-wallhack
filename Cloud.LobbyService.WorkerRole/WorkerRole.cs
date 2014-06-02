@@ -1,5 +1,6 @@
 namespace Cloud.LobbyService.WorkerRole
 {
+    using System;
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
     using System.Diagnostics;
@@ -19,7 +20,6 @@ namespace Cloud.LobbyService.WorkerRole
     using Backend.GameLogic.Configuration;
     using Backend.Utils.Networking;
     using Backend.GrainInterfaces;
-    using System;
     using Backend.GrainImplementations;
 
     public class WorkerRole : RoleEntryPoint
@@ -41,8 +41,7 @@ namespace Cloud.LobbyService.WorkerRole
         private void ComposeLobbyServiceEndpoints()
         {
             var cc = new CompositionContainer(new AggregateCatalog(
-                new AssemblyCatalog(typeof(AzureSettings).Assembly),
-                new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly)));
+                new AssemblyCatalog(typeof(AzureSettings).Assembly)));
             cc.SatisfyImportsOnce(this);
 
             Trace.TraceInformation("ServiceBusCredentials  " + this.SharedSettings.ServiceBusCredentials);

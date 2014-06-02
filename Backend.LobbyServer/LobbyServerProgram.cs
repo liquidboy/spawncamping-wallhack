@@ -20,7 +20,6 @@
             var cts = new CancellationTokenSource();
 
             var compositionContainer = new CompositionContainer(new AggregateCatalog(
-                new AssemblyCatalog(typeof(LobbyServiceBackplane).Assembly),
                 new AssemblyCatalog(typeof(DevelopmentSettingsProvider).Assembly)
                 ));
             var settings = compositionContainer.GetExportedValue<LobbyServiceSettings>();
