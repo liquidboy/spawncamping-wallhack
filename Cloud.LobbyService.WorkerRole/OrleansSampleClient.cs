@@ -11,6 +11,7 @@
 
     using Backend.GrainImplementations;
     using Backend.GrainInterfaces;
+    using Backend.GameLogic.Models;
 
     public static class OrleansSampleClient
     {
@@ -44,7 +45,7 @@
                         "b94b40c2-c3da-4106-99cf-d9fb81e0111b",
                         "7b13b66b-accc-434c-ad82-e5cd0eb01aee"
                     }
-                        .Select(_ => Guid.Parse(_))
+                        .Select(_ => new ClientID { ID = Guid.Parse(_) })
                         .Select(gamerId => Task.Factory.StartNew(async () =>
                         {
                             GameServerStartParams gameServerInfo = null;

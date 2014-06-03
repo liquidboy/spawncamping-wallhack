@@ -59,7 +59,7 @@
                 }
                 var clientId = loginToLobbyRequest.ClientID;
 
-                var gamer = await Gamer.CreateAsync(clientId.ID, server =>
+                var gamer = await Gamer.CreateAsync(clientId, server =>
                 {
                     Trace.WriteLine(string.Format("Player {0} joins server {1}", clientId.ID, server.GameServerID));
                 });

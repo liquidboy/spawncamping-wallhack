@@ -63,6 +63,10 @@
       <Project>{5768fde9-a337-4b74-bd79-7b704f5d2ae4}</Project>
       <Name>Backend.GrainInterfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Frontend.Library\Frontend.Library.csproj">
+      <Project>{ae5fc089-41f1-4af2-affa-1ff305989ba3}</Project>
+      <Name>Frontend.Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

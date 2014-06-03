@@ -140,6 +140,10 @@
       <Project>{0593f317-d7ce-4e7c-816a-f895505366d7}</Project>
       <Name>Backend.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Frontend.Library\Frontend.Library.csproj">
+      <Project>{ae5fc089-41f1-4af2-affa-1ff305989ba3}</Project>
+      <Name>Frontend.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OrleansBlobStorageProvider\OrleansBlobStorageProvider.csproj">
       <Project>{944568ea-bc0b-49bc-af0f-b4a4a62858ac}</Project>
       <Name>OrleansBlobStorageProvider</Name>
