@@ -58,6 +58,8 @@
                 }
                 var clientId = loginToLobbyRequest.ClientID;
 
+
+
                 //Func<LoginToLobbyRequestMessage, BrokeredMessage> createJoinNotification = _ =>
                 //{
                 //    var joinMessageUpdate = new BrokeredMessage(string.Format("Connect from {0} on instance {1}",

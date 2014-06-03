@@ -18,13 +18,6 @@
         {
             return Task.Factory.StartNew(() =>
             {
-                if (!OrleansAzureClient.IsInitialized)
-                {
-                    var x = GrainClient.Current;
-                    OrleansAzureClient.Initialize("ClientConfiguration.xml");
-                }
-
-
                 var infinitelyRunningTasks = new string[] 
                     { 
                         "00000000-acf8-4f39-9cf1-14a84bb82980",
@@ -83,15 +76,6 @@
                 try
                 {
                     Task.WaitAll(infinitelyRunningTasks);
-
-
-                    while (true)
-                    {
-                        Trace.TraceInformation("Endless useless loop");
-                        Thread.Sleep(TimeSpan.FromSeconds(1));
-                    }
-
-                    // Trace.TraceInformation("Task.WaitAll ended?");
                 }
                 catch (Exception)
                 {

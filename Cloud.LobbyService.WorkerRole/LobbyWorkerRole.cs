@@ -33,13 +33,13 @@ namespace Cloud.LobbyService.WorkerRole
 
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
-        private readonly SiloHost siloHost = new SiloHost();
+        private SiloHost siloHost ;
 
         private Task lobbyTask;
 
         private LobbyServerImpl lobbyServerImpl;
 
-        private static Task orleansCLientTask;
+        private Task orleansClientTask;
 
         private void ComposeLobbyServiceEndpoints()
         {
@@ -52,6 +52,11 @@ namespace Cloud.LobbyService.WorkerRole
             Trace.TraceInformation("LobbyServiceInstanceId " + this.SharedSettings.InstanceId);
             Trace.TraceInformation("Settings.IPEndPoint    " + this.LobbyServiceSettings.IPEndPoint.ToString());
 
+            if (!OrleansAzureClient.IsInitialized)
+            {
+                OrleansAzureClient.Initialize("ClientConfiguration.xml");
+            }
+
             var server = new AsyncServerHost(this.LobbyServiceSettings.IPEndPoint);
             this.lobbyServerImpl = cc.GetExportedValue<LobbyServerImpl>();
             this.lobbyTask = server.Start(lobbyServerImpl, cts.Token);
@@ -63,15 +68,20 @@ namespace Cloud.LobbyService.WorkerRole
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.UseNagleAlgorithm = false;
 
+            var orleansSiloConfiguration = File.ReadAllText("OrleansConfiguration.xml")
+                .Replace("XXXDataConnectionStringValueXXX",
+                RoleEnvironment.GetConfigurationSettingValue("DataConnectionString"));
+            this.siloHost = new SiloHost();
+            this.siloHost.StartLobbyServiceSiloAppDomain(orleansSiloConfiguration);
+
             this.ComposeLobbyServiceEndpoints();
-            this.siloHost.StartLobbyServiceSilo();
 
             return true;
         }
 
         public override void Run() 
         {
-            LobbyWorkerRole.orleansCLientTask = OrleansSampleClient.LaunchOrleansClients();
+            this.orleansClientTask = OrleansSampleClient.LaunchOrleansClients();
 
             while (true)
             {

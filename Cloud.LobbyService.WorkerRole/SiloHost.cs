@@ -16,10 +16,8 @@
         private static bool siloStartResult;
         private static Task orleansSiloTask;
 
-        public void StartLobbyServiceSilo()
+        public void StartLobbyServiceSiloAppDomain(string orleansConfigurationXml)
         {
-            // var dire = new FileInfo(typeof(LobbyWorkerRole).Assembly.Location).Directory.FullName;
-
             // The Orleans silo environment is initialized in its own app domain in order to more
             // closely emulate the distributed situation, when the client and the server cannot
             // pass data via shared memory.
@@ -31,7 +29,8 @@
                     ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                     ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
                     PrivateBinPath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath,
-                    AppDomainInitializer = SiloHost.InitSilo
+                    AppDomainInitializer = SiloHost.InitSilo,
+                    AppDomainInitializerArguments = new string[] { orleansConfigurationXml }
                 });
         }
 
@@ -40,16 +39,11 @@
             SiloHost.orleansSiloHostDomain.DoCallBack(SiloHost.ShutdownSilo);
         }
 
-        static void InitSilo(string[] args)
+        private static void InitSilo(string[] args)
         {
             SiloHost.silo = new OrleansAzureSilo();
-
-            var cfgXml = File.ReadAllText("OrleansConfiguration.xml")
-                .Replace("XXXDataConnectionStringValueXXX",
-                RoleEnvironment.GetConfigurationSettingValue("DataConnectionString"));
-
             var siloConfiguration = new OrleansConfiguration();
-            siloConfiguration.Load(new StringReader(cfgXml));
+            siloConfiguration.Load(new StringReader(args[0]));
 
             SiloHost.siloStartResult = silo.Start(
                 deploymentId: RoleEnvironment.DeploymentId,
@@ -62,7 +56,7 @@
             });
         }
 
-        static void ShutdownSilo()
+        private static void ShutdownSilo()
         {
             SiloHost.silo.Stop();
         }
