@@ -133,6 +133,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Backend.GrainImplementations\Backend.GrainImplementations.csproj">
+      <Project>{bbab96c0-b679-4ccb-ad78-8cccfc86e252}</Project>
+      <Name>Backend.GrainImplementations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Backend.GrainInterfaces\Backend.GrainInterfaces.csproj">
+      <Project>{5768fde9-a337-4b74-bd79-7b704f5d2ae4}</Project>
+      <Name>Backend.GrainInterfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Backend.Utils\Backend.Utils.csproj">
       <Project>{0593f317-d7ce-4e7c-816a-f895505366d7}</Project>
       <Name>Backend.Utils</Name>
