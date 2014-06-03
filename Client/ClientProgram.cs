@@ -22,9 +22,7 @@
 
             if (clientCount == 1)
             {
-                Console.Write("Enter client ID: ");
-
-                var clientId = new ClientID { ID = int.Parse(Console.ReadLine()) };
+                var clientId = new ClientID { ID = Guid.NewGuid() };
 
                 var gameserver = GetGameServerAsync(clientId, CompletelyInsecureLobbyAuthentication.CreatePassword(clientId)).Result;
 
@@ -41,7 +39,7 @@
 
                 var clientTasks = Enumerable
                     .Range(1, clientCount)
-                    .Select(_ => new ClientID { ID = _ })
+                    .Select(_ => new ClientID { ID = Guid.NewGuid() })
                     .Select(clientId => new { ClientID = clientId, Password = CompletelyInsecureLobbyAuthentication.CreatePassword(clientId) })
                     .Select(_ => Task.Factory.StartNew(async () =>
                         {
@@ -142,7 +140,7 @@
                     try
                     {
                         var content = await GetChatMessage();
-                        await server.WriteCommandAsync(new SomeGameMessage { Stuff = content, From = new ClientID { ID = -1 } });
+                        await server.WriteCommandAsync(new SomeGameMessage { Stuff = content, From = new ClientID { ID = Guid.Empty } });
                         Console.WriteLine("Client {0} sending message {1}", clientId.ID, content);
                     }
                     catch (Exception ex)

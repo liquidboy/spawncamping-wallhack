@@ -22,8 +22,8 @@
             this.PlayerAuthenticator = new PlayerAuthenticator(secretKey);
         }
 
-        private ConcurrentDictionary<int, ConcurrentQueue<GameServerMessageBase>> queues = 
-            new ConcurrentDictionary<int, ConcurrentQueue<GameServerMessageBase>>();
+        private ConcurrentDictionary<Guid, ConcurrentQueue<GameServerMessageBase>> queues =
+            new ConcurrentDictionary<Guid, ConcurrentQueue<GameServerMessageBase>>();
 
         async Task ITcpServerHandler.HandleRequest(TcpClient tcpClient, CancellationToken cancellationToken)
         {

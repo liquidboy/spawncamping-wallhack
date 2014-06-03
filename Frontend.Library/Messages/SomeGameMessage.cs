@@ -20,7 +20,7 @@
             base.PostRead();
 
             this.Stuff = this.Args[0];
-            this.From = new ClientID{ ID = int.Parse(this.Args[1]) };
+            this.From = new ClientID{ ID = Guid.Parse(this.Args[1]) };
         }
 
         public override void PreWrite()

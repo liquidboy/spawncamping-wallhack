@@ -14,6 +14,7 @@
     using Backend.Utils;
     using Messages;
     using Security;
+    using Backend.GrainImplementations;
 
     [Export(typeof(LobbyServerImpl))]
     public class LobbyServerImpl : ITcpServerHandler, IPartImportsSatisfiedNotification, IDisposable
@@ -58,6 +59,10 @@
                 }
                 var clientId = loginToLobbyRequest.ClientID;
 
+                var gamer = await Gamer.CreateAsync(clientId.ID, server =>
+                {
+                    Trace.WriteLine(string.Format("Player {0} joins server {1}", clientId.ID, server.GameServerID));
+                });
 
 
                 //Func<LoginToLobbyRequestMessage, BrokeredMessage> createJoinNotification = _ =>

@@ -37,7 +37,7 @@
         {
             var name = ValidateAndGetNameImpl(token.Credential, gameserverId);
 
-            return new ClientID { ID = int.Parse(name) };
+            return new ClientID { ID = Guid.Parse(name) };
         }
 
         #region JWT Stuff

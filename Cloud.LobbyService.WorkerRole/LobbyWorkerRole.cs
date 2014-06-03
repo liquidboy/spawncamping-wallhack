@@ -25,30 +25,43 @@ namespace Cloud.LobbyService.WorkerRole
 
     public class LobbyWorkerRole : RoleEntryPoint
     {
+        public LobbyWorkerRole()
+        {
+            this.cc = new CompositionContainer(new AggregateCatalog(
+                new AssemblyCatalog(typeof(LobbyServiceSettings).Assembly),
+                new AssemblyCatalog(typeof(AzureSettings).Assembly)));
+
+            this.cc.SatisfyImportsOnce(this);
+        }
+
         [Import(typeof(LobbyServiceSettings))]
-        private LobbyServiceSettings LobbyServiceSettings { get; set; }
+        public LobbyServiceSettings LobbyServiceSettings { get; set; }
         
         [Import(typeof(SharedSettings))]
         public SharedSettings SharedSettings { get; set; }
 
+        private readonly CompositionContainer cc;
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
-
-        private SiloHost siloHost ;
-
+        private SiloHost siloHost;
         private Task lobbyTask;
-
         private LobbyServerImpl lobbyServerImpl;
 
-        private Task orleansClientTask;
-
-        private void ComposeLobbyServiceEndpoints()
+        public override bool OnStart()
         {
-            var cc = new CompositionContainer(new AggregateCatalog(
-                new AssemblyCatalog(typeof(LobbyServiceSettings).Assembly),
-                new AssemblyCatalog(typeof(AzureSettings).Assembly)));
-            cc.SatisfyImportsOnce(this);
+            ServicePointManager.DefaultConnectionLimit = 64;
+            ServicePointManager.Expect100Continue = false;
+            ServicePointManager.UseNagleAlgorithm = false;
 
-            // Trace.TraceInformation("ServiceBusCredentials  " + this.SharedSettings.ServiceBusCredentials);
+            #region Launch silo in separate AppDomain
+
+            var dataConnectionString = RoleEnvironment.GetConfigurationSettingValue("DataConnectionString");
+            var orleansSiloConfiguration = File.ReadAllText("OrleansConfiguration.xml").Replace(
+                "XXXDataConnectionStringValueXXX", dataConnectionString);
+            this.siloHost = new SiloHost();
+            this.siloHost.StartLobbyServiceSiloAppDomain(orleansSiloConfiguration);
+
+            #endregion
+
             Trace.TraceInformation("LobbyServiceInstanceId " + this.SharedSettings.InstanceId);
             Trace.TraceInformation("Settings.IPEndPoint    " + this.LobbyServiceSettings.IPEndPoint.ToString());
 
@@ -60,24 +73,11 @@ namespace Cloud.LobbyService.WorkerRole
             var server = new AsyncServerHost(this.LobbyServiceSettings.IPEndPoint);
             this.lobbyServerImpl = cc.GetExportedValue<LobbyServerImpl>();
             this.lobbyTask = server.Start(lobbyServerImpl, cts.Token);
-        }
-
-        public override bool OnStart()
-        {
-            ServicePointManager.DefaultConnectionLimit = 64;
-            ServicePointManager.Expect100Continue = false;
-            ServicePointManager.UseNagleAlgorithm = false;
-
-            var orleansSiloConfiguration = File.ReadAllText("OrleansConfiguration.xml")
-                .Replace("XXXDataConnectionStringValueXXX",
-                RoleEnvironment.GetConfigurationSettingValue("DataConnectionString"));
-            this.siloHost = new SiloHost();
-            this.siloHost.StartLobbyServiceSiloAppDomain(orleansSiloConfiguration);
-
-            this.ComposeLobbyServiceEndpoints();
 
             return true;
         }
+
+        private Task orleansClientTask;
 
         public override void Run() 
         {

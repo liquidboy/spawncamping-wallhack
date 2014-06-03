@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using Models;
+    using System;
 
     public class LoginToLobbyRequestMessage : GameServerMessageBase
     {
@@ -21,7 +22,7 @@
         {
             base.PostRead();
 
-            this.ClientID = new ClientID { ID = int.Parse(this.Args[0]) };
+            this.ClientID = new ClientID { ID = Guid.Parse(this.Args[0]) };
             this.Password = this.Args[1];
         }
 
