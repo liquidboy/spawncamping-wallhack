@@ -3,10 +3,13 @@
     using System.Net;
     using System.Linq;
     using System.Collections.Generic;
+    using System;
 
     public class LoginToLobbyResponseMessage : GameServerMessageBase
     {
         public IPEndPoint GameServer { get; private set; }
+
+        public Guid GameServerID { get; private set; }
 
         public int InnergameServerPort { get; private set; }
 
@@ -14,11 +17,12 @@
 
         public LoginToLobbyResponseMessage() { }
 
-        public LoginToLobbyResponseMessage(IPEndPoint gameServer, int innergameServerPort, GameServerUserToken token) 
+        public LoginToLobbyResponseMessage(IPEndPoint gameServer, int innergameServerPort, GameServerUserToken token, Guid gameServerID) 
         {
             this.GameServer = gameServer;
             this.InnergameServerPort = innergameServerPort;
             this.Token = token;
+            this.GameServerID = gameServerID;
         }
 
         public override void PostRead()
@@ -33,6 +37,7 @@
             {
                 Credential = this.Args[3]
             };
+            this.GameServerID = Guid.Parse(this.Args[4]);
         }
 
         public override void PreWrite()
@@ -43,7 +48,8 @@
                 this.GameServer.Address.ToString(),
                 this.GameServer.Port.ToString(),
                 this.InnergameServerPort.ToString(),
-                this.Token.Credential
+                this.Token.Credential,
+                this.GameServerID.ToString()
             };
         }
     }

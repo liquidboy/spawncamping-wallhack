@@ -33,7 +33,7 @@
             // start game server process here
             var gameServerParams = new GameServerStartParams
             {
-                GameServerID = this.GetPrimaryKey().ToString()
+                GameServerID = this.GetPrimaryKey()
             };
 
             Trace.TraceInformation(string.Format("Create game server process for GameID {0}", gameServerParams.GameServerID));

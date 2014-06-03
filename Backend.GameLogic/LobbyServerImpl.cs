@@ -15,6 +15,7 @@
     using Messages;
     using Security;
     using GrainImplementations;
+    using Backend.GrainInterfaces;
 
     [Export(typeof(LobbyServerImpl))]
     public class LobbyServerImpl : ITcpServerHandler, IPartImportsSatisfiedNotification
@@ -51,18 +52,21 @@
                 }
                 var clientId = loginToLobbyRequest.ClientID;
 
-                var gamer = await Gamer.CreateAsync(clientId, server =>
+
+                GameServerStartParams startParams = null;
+                var gamer = await Gamer.CreateAsync(clientId, server => { startParams = server; });
+
+                while (startParams == null)
                 {
-                    Trace.WriteLine(string.Format("Player {0} joins server {1}", clientId.ID, server.GameServerID));
-                });
+                    await Task.Delay(TimeSpan.FromMilliseconds(20));
+                }
 
-
-                var gameserverId = "gameserver123";
+                var gameserverId = startParams.GameServerID;
                 var innerGameServerPort = 4002;
-                var usertoken = this._playerAuthenticator.CreatePlayerToken(clientId, gameserverId);
+                var usertoken = this._playerAuthenticator.CreatePlayerToken(clientId, gameserverId.ToString());
 
                 await client.WriteCommandAsync(new LoginToLobbyResponseMessage(
-                    new IPEndPoint(IPAddress.Loopback, 4000), innerGameServerPort, usertoken));
+                    new IPEndPoint(IPAddress.Loopback, 4000), innerGameServerPort, usertoken, gameserverId));
             }
             catch (Exception ex)
             {

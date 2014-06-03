@@ -857,20 +857,20 @@ GrainFactoryBase.CheckGrainObserverParamInternal(playerObserver);
             Backend.GrainInterfaces.GameServerStartParams input = ((Backend.GrainInterfaces.GameServerStartParams)(original));
             Backend.GrainInterfaces.GameServerStartParams result = new Backend.GrainInterfaces.GameServerStartParams();
             Orleans.Serialization.SerializationContext.Current.RecordObject(original, result);
-            result.GameServerID = input.GameServerID;
+            result.GameServerID = ((Guid)(Orleans.Serialization.SerializationManager.DeepCopyInner(input.GameServerID)));
             return result;
         }
         
         public static void Serializer(object untypedInput, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
         {
             Backend.GrainInterfaces.GameServerStartParams input = ((Backend.GrainInterfaces.GameServerStartParams)(untypedInput));
-            Orleans.Serialization.SerializationManager.SerializeInner(input.GameServerID, stream, typeof(String));
+            Orleans.Serialization.SerializationManager.SerializeInner(input.GameServerID, stream, typeof(Guid));
         }
         
         public static object Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
         {
             Backend.GrainInterfaces.GameServerStartParams result = new Backend.GrainInterfaces.GameServerStartParams();
-            result.GameServerID = ((String)(Orleans.Serialization.SerializationManager.DeserializeInner(typeof(String), stream)));
+            result.GameServerID = ((Guid)(Orleans.Serialization.SerializationManager.DeserializeInner(typeof(Guid), stream)));
             return result;
         }
         

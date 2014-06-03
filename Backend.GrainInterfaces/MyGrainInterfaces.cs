@@ -3,10 +3,11 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Orleans;
+    using System;
 
     public class GameServerStartParams
     {
-        public string GameServerID { get; set; }
+        public Guid GameServerID { get; set; }
     }
 
     public interface IPlayerObserver : IGrainObserver

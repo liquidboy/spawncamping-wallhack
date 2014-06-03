@@ -81,8 +81,6 @@ namespace Cloud.LobbyService.WorkerRole
 
         public override void Run() 
         {
-            this.orleansClientTask = OrleansSampleClient.LaunchOrleansClients();
-
             while (true)
             {
                 Thread.Sleep(TimeSpan.FromMinutes(1));
