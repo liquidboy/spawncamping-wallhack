@@ -12,9 +12,9 @@ namespace Backend.GameLogic.Scaling
     using System.Threading.Tasks;
     using System.Xml.Linq;
 
-    using Microsoft.WindowsAzure;
-    using Microsoft.WindowsAzure.Management.Compute;
-    using Microsoft.WindowsAzure.Management.Compute.Models;
+    //using Microsoft.WindowsAzure;
+    //using Microsoft.WindowsAzure.Management.Compute;
+    //using Microsoft.WindowsAzure.Management.Compute.Models;
 
     using Configuration;
     using System.Threading;
@@ -22,7 +22,7 @@ namespace Backend.GameLogic.Scaling
 
     public class ScalingAgent
     {
-        private ComputeManagementClient computeManagementClient;
+        // private ComputeManagementClient computeManagementClient;
         private string subscriptionID;
         private string subscriptionManagementCertificateThumbprint;
         private string servicename;
@@ -32,38 +32,38 @@ namespace Backend.GameLogic.Scaling
             this.subscriptionID = subscriptionID;
             this.subscriptionManagementCertificateThumbprint = subscriptionManagementCertificateThumbprint;
             this.servicename = servicename;
-            this.computeManagementClient = GetComputeManagementClient();
+            // this.computeManagementClient = GetComputeManagementClient();
         }
 
         public async Task ScaleAsync()
         {
-            var detailed = await computeManagementClient.HostedServices.GetDetailedAsync(servicename);
-            var deployment = detailed.Deployments.First(_ => _.DeploymentSlot == DeploymentSlot.Production);
-            var doc = XDocument.Parse(deployment.Configuration);
+            //var detailed = await computeManagementClient.HostedServices.GetDetailedAsync(servicename);
+            //var deployment = detailed.Deployments.First(_ => _.DeploymentSlot == DeploymentSlot.Production);
+            //var doc = XDocument.Parse(deployment.Configuration);
 
-            setInstanceCount(doc, Names.GameRole.Name, 5);
+            //setInstanceCount(doc, Names.GameRole.Name, 5);
 
-            var operationResponse = await computeManagementClient.Deployments.BeginChangingConfigurationBySlotAsync(
-                    serviceName: detailed.ServiceName,
-                    deploymentSlot: deployment.DeploymentSlot,
-                    cancellationToken: CancellationToken.None,
-                    parameters: new DeploymentChangeConfigurationParameters()
-                    {
-                        Configuration = doc.ToString()
-                    });
+            //var operationResponse = await computeManagementClient.Deployments.BeginChangingConfigurationBySlotAsync(
+            //        serviceName: detailed.ServiceName,
+            //        deploymentSlot: deployment.DeploymentSlot,
+            //        cancellationToken: CancellationToken.None,
+            //        parameters: new DeploymentChangeConfigurationParameters()
+            //        {
+            //            Configuration = doc.ToString()
+            //        });
 
-            if (operationResponse.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                Trace.TraceError(string.Format(
-                            "Problem scaling: HTTPStatus: {0} RequestID {1}",
-                            operationResponse.StatusCode.ToString(),
-                            operationResponse.RequestId));
-            }
+            //if (operationResponse.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
+            //    Trace.TraceError(string.Format(
+            //                "Problem scaling: HTTPStatus: {0} RequestID {1}",
+            //                operationResponse.StatusCode.ToString(),
+            //                operationResponse.RequestId));
+            //}
 
-            Trace.TraceInformation(string.Format(
-                        "Scaling done: HTTPStatus: {0} RequestID {1}",
-                        operationResponse.StatusCode.ToString(),
-                        operationResponse.RequestId));
+            //Trace.TraceInformation(string.Format(
+            //            "Scaling done: HTTPStatus: {0} RequestID {1}",
+            //            operationResponse.StatusCode.ToString(),
+            //            operationResponse.RequestId));
         }
 
         private static XName n(string name)
@@ -130,13 +130,13 @@ namespace Backend.GameLogic.Scaling
             return managementCert;
         }
 
-        private ComputeManagementClient GetComputeManagementClient()
-        {
-            string subscriptionId = this.subscriptionID;
-            X509Certificate2 managementCert = GetManagementCert();
-            SubscriptionCloudCredentials creds = new CertificateCloudCredentials(subscriptionId, managementCert);
-            ComputeManagementClient computeManagementClient = CloudContext.Clients.CreateComputeManagementClient(creds);
-            return computeManagementClient;
-        }
+        //private ComputeManagementClient GetComputeManagementClient()
+        //{
+        //    string subscriptionId = this.subscriptionID;
+        //    X509Certificate2 managementCert = GetManagementCert();
+        //    SubscriptionCloudCredentials creds = new CertificateCloudCredentials(subscriptionId, managementCert);
+        //    ComputeManagementClient computeManagementClient = CloudContext.Clients.CreateComputeManagementClient(creds);
+        //    return computeManagementClient;
+        //}
     }
 }

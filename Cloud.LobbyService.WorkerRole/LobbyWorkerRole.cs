@@ -22,7 +22,7 @@ namespace Cloud.LobbyService.WorkerRole
     using Backend.GrainInterfaces;
     using Backend.GrainImplementations;
 
-    public class WorkerRole : RoleEntryPoint
+    public class LobbyWorkerRole : RoleEntryPoint
     {
         [Import(typeof(LobbyServiceSettings))]
         private LobbyServiceSettings LobbyServiceSettings { get; set; }
@@ -36,26 +36,50 @@ namespace Cloud.LobbyService.WorkerRole
 
         private LobbyServerImpl lobbyServerImpl;
 
-        private OrleansAzureSilo silo;
+        private static AppDomain orleansSiloHostDomain;
+        private static OrleansAzureSilo silo;
+        private static bool siloStartResult;
+        private static Task orleansCLientTask;
+        private static Task orleansSiloTask;
 
         private void ComposeLobbyServiceEndpoints()
         {
             var cc = new CompositionContainer(new AggregateCatalog(
+                new AssemblyCatalog(typeof(LobbyServiceSettings).Assembly),
                 new AssemblyCatalog(typeof(AzureSettings).Assembly)));
             cc.SatisfyImportsOnce(this);
 
-            Trace.TraceInformation("ServiceBusCredentials  " + this.SharedSettings.ServiceBusCredentials);
+            // Trace.TraceInformation("ServiceBusCredentials  " + this.SharedSettings.ServiceBusCredentials);
             Trace.TraceInformation("LobbyServiceInstanceId " + this.SharedSettings.InstanceId);
             Trace.TraceInformation("Settings.IPEndPoint    " + this.LobbyServiceSettings.IPEndPoint.ToString());
 
-            this.lobbyServerImpl = cc.GetExportedValue<LobbyServerImpl>();
             var server = new AsyncServerHost(this.LobbyServiceSettings.IPEndPoint);
+            this.lobbyServerImpl = cc.GetExportedValue<LobbyServerImpl>();
             this.lobbyTask = server.Start(lobbyServerImpl, cts.Token);
         }
 
-        private bool StartLobbyServiceSilo()
+        private void StartLobbyServiceSilo()
         {
-            this.silo = new OrleansAzureSilo();
+            // var dire = new FileInfo(typeof(LobbyWorkerRole).Assembly.Location).Directory.FullName;
+
+            // The Orleans silo environment is initialized in its own app domain in order to more
+            // closely emulate the distributed situation, when the client and the server cannot
+            // pass data via shared memory.
+            LobbyWorkerRole.orleansSiloHostDomain = AppDomain.CreateDomain(
+                friendlyName: "OrleansHost", 
+                securityInfo: null,
+                info: new AppDomainSetup 
+                {
+                    ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                    ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
+                    PrivateBinPath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath,
+                    AppDomainInitializer = LobbyWorkerRole.InitSilo
+                });
+        }
+
+        static void InitSilo(string[] args)
+        {
+            LobbyWorkerRole.silo = new OrleansAzureSilo();
 
             var cfgXml = File.ReadAllText("OrleansConfiguration.xml")
                 .Replace("XXXDataConnectionStringValueXXX",
@@ -64,14 +88,17 @@ namespace Cloud.LobbyService.WorkerRole
             var siloConfiguration = new OrleansConfiguration();
             siloConfiguration.Load(new StringReader(cfgXml));
 
-            return silo.Start(
+            LobbyWorkerRole.siloStartResult = silo.Start(
                 deploymentId: RoleEnvironment.DeploymentId,
                 myRoleInstance: RoleEnvironment.CurrentRoleInstance,
                 config: siloConfiguration);
+
+            LobbyWorkerRole.orleansSiloTask = Task.Factory.StartNew(() => 
+            { 
+                LobbyWorkerRole.silo.Run(); 
+            });
         }
 
-
-        Task orleansCLientTask;
 
         public override bool OnStart()
         {
@@ -80,14 +107,19 @@ namespace Cloud.LobbyService.WorkerRole
             ServicePointManager.UseNagleAlgorithm = false;
 
             this.ComposeLobbyServiceEndpoints();
-            return this.StartLobbyServiceSilo();
+            this.StartLobbyServiceSilo();
+
+            return true;
         }
 
         public override void Run() 
         {
-            this.orleansCLientTask = OrleansClient.LaunchOrleansClients();
+            LobbyWorkerRole.orleansCLientTask = OrleansClient.LaunchOrleansClients();
 
-            this.silo.Run(); 
+            while (true)
+            {
+                Thread.Sleep(TimeSpan.FromMinutes(1));
+            }
         }
 
         public override void OnStop()
@@ -95,9 +127,14 @@ namespace Cloud.LobbyService.WorkerRole
             this.cts.Cancel();
             this.lobbyServerImpl.Dispose();
 
-            this.silo.Stop(); 
+            LobbyWorkerRole.orleansSiloHostDomain.DoCallBack(ShutdownSilo);
 
             base.OnStop();
+        }
+
+        static void ShutdownSilo()
+        {
+            LobbyWorkerRole.silo.Stop();
         }
     }
 
@@ -180,7 +217,7 @@ namespace Cloud.LobbyService.WorkerRole
                         Thread.Sleep(TimeSpan.FromSeconds(1));
                     }
 
-                    Trace.TraceInformation("Task.WaitAll ended?");
+                    // Trace.TraceInformation("Task.WaitAll ended?");
                 }
                 catch (Exception)
                 {

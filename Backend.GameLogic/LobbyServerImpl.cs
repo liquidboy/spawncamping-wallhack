@@ -10,7 +10,6 @@
     using System.Reactive.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.ServiceBus.Messaging;
 
     using Backend.Utils;
     using Messages;

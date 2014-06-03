@@ -13,7 +13,7 @@
 
         public string StorageConnectionString { get { return this.SettingsProvider.GetSetting("StorageConnectionString"); } }
 
-        public string ServiceBusCredentials { get { return this.SettingsProvider.GetSetting("ServiceBusCredentials"); } }
+        // public string ServiceBusCredentials { get { return this.SettingsProvider.GetSetting("ServiceBusCredentials"); } }
 
         public string DNSName { get { return this.SettingsProvider.GetSetting("DNSName"); } }
     }

@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceConfiguration serviceName="Cloud.LobbyService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2014-01.2.3">
   <Role name="Cloud.LobbyService.WorkerRole">
-    <Instances count="6" />
+    <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="ServiceBusCredentials" value="" />
-      <Setting name="StorageConnectionString" value="" />
+      <Setting name="StorageConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="DNSName" value="127.0.0.1" />
       <Setting name="SubscriptionID" value="5cc34a74-cb29-467a-93d4-1ddfb4ffffff" />
       <Setting name="SubscriptionManagementCertificateThumbprint" value="" />
@@ -20,7 +20,7 @@
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
-      <Setting name="StorageConnectionString" value="" />
+      <Setting name="StorageConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="ServiceBusCredentials" value="" />
     </ConfigurationSettings>
   </Role>
