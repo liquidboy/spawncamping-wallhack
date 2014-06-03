@@ -110,8 +110,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OrleansSampleClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LobbyWorkerRole.cs" />
+    <Compile Include="SiloHost.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
