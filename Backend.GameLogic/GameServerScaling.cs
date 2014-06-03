@@ -6,9 +6,9 @@
     using System.Threading.Tasks;
     using System.Xml.Linq;
 
-    //using Microsoft.WindowsAzure;
-    //using Microsoft.WindowsAzure.Management.Compute;
-    //using Microsoft.WindowsAzure.Management.Compute.Models;
+    using Microsoft.WindowsAzure;
+    using Microsoft.WindowsAzure.Management.Compute;
+    using Microsoft.WindowsAzure.Management.Compute.Models;
 
     using Configuration;
     using System.Threading;
@@ -24,11 +24,11 @@
         
         void IPartImportsSatisfiedNotification.OnImportsSatisfied()
         {
-            //var subscriptionID = this.LobbyServiceSettings.SubscriptionID;
-            //var subscriptionManagementCertificateThumbprint = this.LobbyServiceSettings.SubscriptionManagementCertificateThumbprint;
-            //var cloudServiceName = this.LobbyServiceSettings.GameServerCloudServiceName;
+            var subscriptionID = this.LobbyServiceSettings.SubscriptionID;
+            var subscriptionManagementCertificateThumbprint = this.LobbyServiceSettings.SubscriptionManagementCertificateThumbprint;
+            var cloudServiceName = this.LobbyServiceSettings.GameServerCloudServiceName;
 
-            //this.agent = new Scaling.ScalingAgent(subscriptionID, subscriptionManagementCertificateThumbprint, cloudServiceName);
+            this.agent = new Scaling.ScalingAgent(subscriptionID, subscriptionManagementCertificateThumbprint, cloudServiceName);
         }
 
         public async Task ScaleAsync()
