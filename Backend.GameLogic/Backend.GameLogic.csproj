@@ -128,7 +128,6 @@
     <Compile Include="Configuration\LobbyServiceSettings.cs" />
     <Compile Include="GameServerVMAgent.cs" />
     <Compile Include="Configuration\ISettingsProvider.cs" />
-    <Compile Include="LobbyServerDatabase.cs" />
     <Compile Include="LobbyServerImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

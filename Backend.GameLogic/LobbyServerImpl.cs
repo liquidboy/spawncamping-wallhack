@@ -11,17 +11,14 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Backend.Utils;
+    using Utils;
     using Messages;
     using Security;
-    using Backend.GrainImplementations;
+    using GrainImplementations;
 
     [Export(typeof(LobbyServerImpl))]
     public class LobbyServerImpl : ITcpServerHandler, IPartImportsSatisfiedNotification, IDisposable
     {
-        [Import(typeof(ILobbyServerDatabase))]
-        public ILobbyServerDatabase LobbyServerDatabase { get; set; }
-
         [Import(typeof(SymmetricKeyGenerator))]
         public SymmetricKeyGenerator GameAuthenticationHandler { get; set; }
 
@@ -31,9 +28,6 @@
 
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
         {
-            // Read current state from azure storage table 
-            this.LobbyServerDatabase.LoadAsync().Wait();
-
             _playerAuthenticator = this.GameAuthenticationHandler.CreateAuthenticator();
         }
 
