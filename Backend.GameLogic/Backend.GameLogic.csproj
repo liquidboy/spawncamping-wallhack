@@ -120,8 +120,6 @@
     <Compile Include="Configuration\Names.cs" />
     <Compile Include="Configuration\SharedSettings.cs" />
     <Compile Include="GameServerScaling.cs" />
-    <Compile Include="Models\ClientID.cs" />
-    <Compile Include="Models\ClientState.cs" />
     <Compile Include="Scaling\ScalingAgent.cs" />
     <Compile Include="Security\CompletelyInsecureLobbyAuthentication.cs" />
     <Compile Include="Security\PlayerAuthenticator.cs" />
@@ -131,23 +129,17 @@
     <Compile Include="GameServerVMAgent.cs" />
     <Compile Include="Configuration\ISettingsProvider.cs" />
     <Compile Include="LobbyServerDatabase.cs" />
-    <Compile Include="Messages\GameServerMessage.cs" />
-    <Compile Include="Messages\GameServerMessageBase.cs" />
-    <Compile Include="Messages\LoginToGameServerRequest.cs" />
-    <Compile Include="Messages\SomeGameMessage.cs" />
-    <Compile Include="Messages\Xtensions.cs" />
-    <Compile Include="Messages\ErrorMessage.cs" />
-    <Compile Include="Messages\GameServerUserToken.cs" />
-    <Compile Include="LobbyClientImpl.cs" />
     <Compile Include="LobbyServerImpl.cs" />
-    <Compile Include="Messages\LoginToLobbyResponseMessage.cs" />
-    <Compile Include="Messages\LoginToLobbyRequestMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Backend.Utils\Backend.Utils.csproj">
       <Project>{0593f317-d7ce-4e7c-816a-f895505366d7}</Project>
       <Name>Backend.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Frontend.Library\Frontend.Library.csproj">
+      <Project>{ae5fc089-41f1-4af2-affa-1ff305989ba3}</Project>
+      <Name>Frontend.Library</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
