@@ -24,15 +24,13 @@
                 ));
             var settings = compositionContainer.GetExportedValue<LobbyServiceSettings>();
 
-            using (var lobbyServerImpl = compositionContainer.GetExportedValue<LobbyServerImpl>())
-            {
-                var server = new AsyncServerHost(settings.IPEndPoint);
-                Task t = server.Start(lobbyServerImpl, cts.Token);
+            var lobbyServerImpl = compositionContainer.GetExportedValue<LobbyServerImpl>();
+            var server = new AsyncServerHost(settings.IPEndPoint);
+            Task t = server.Start(lobbyServerImpl, cts.Token);
 
-                Console.WriteLine("Loby server launched");
-                Console.ReadLine();
-                cts.Cancel();
-            }
+            Console.WriteLine("Loby server launched");
+            Console.ReadLine();
+            cts.Cancel();
         }
     }
 }

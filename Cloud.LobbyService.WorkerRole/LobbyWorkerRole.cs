@@ -92,7 +92,6 @@ namespace Cloud.LobbyService.WorkerRole
         public override void OnStop()
         {
             this.cts.Cancel();
-            this.lobbyServerImpl.Dispose();
             this.siloHost.Shutdown();
 
             base.OnStop();
