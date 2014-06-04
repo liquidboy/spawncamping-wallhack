@@ -15,7 +15,7 @@
     using Messages;
     using Security;
     using GrainImplementations;
-    using Backend.GrainInterfaces;
+    using GrainInterfaces;
     using Frontend.Library.Models;
 
     [Export(typeof(LobbyServerImpl))]
@@ -53,14 +53,7 @@
                 }
                 var clientId = loginToLobbyRequest.ClientID;
 
-                GameServerStartParams startParams = null;
-                var gamer = await Gamer.CreateAsync(clientId, server => { startParams = server; });
-
-                while (startParams == null)
-                {
-                    await Task.Delay(TimeSpan.FromMilliseconds(50));
-                }
-
+                var startParams = await Gamer.GetGameServerAsync(clientId);
                 var gameserverId = startParams.GameServerID;
                 var innerGameServerPort = 4002;
                 var usertoken = this._playerAuthenticator.CreatePlayerToken(clientId, startParams.GameServerID);

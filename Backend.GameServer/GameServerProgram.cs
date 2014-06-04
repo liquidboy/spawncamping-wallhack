@@ -14,27 +14,33 @@
         {
             Console.Title = "Backend.GameServer";
 
-            if (args.Length != 3)
+
+            if (args.Length != 4)
             {
                 Console.Error.WriteLine("Provide ip address (such as 127.0.0.1), TCP port and secret key (base64) as command line args");
                 return;
             }
 
+            var argIpAddress = args[0];
+            var argPortNumber = args[1];
+            var argSecretKey = args[2];
+            var argGameServerId = args[3];
+
+
             IPAddress address;
-            if (!IPAddress.TryParse(args[0], out address)) {
+            if (!IPAddress.TryParse(argIpAddress, out address)) {
                 Console.Error.WriteLine("\"{0}\" is not a valid IP address", args[0]);
                 return;
             }
             int port;
-            if (!int.TryParse(args[1], out port)) {
+            if (!int.TryParse(argPortNumber, out port))
+            {
                 Console.Error.WriteLine("\"{0}\" is not a valid TCP port", args[1]);
                 return;
             }
             var ipEndPoint = new IPEndPoint(address, port);
-
-            byte[] secretKey = Convert.FromBase64String(args[2]);
-
-            var gameServerID = new GameServerID { ID = Guid.Parse(args[3]) };
+            byte[] secretKey = Convert.FromBase64String(argSecretKey);
+            var gameServerID = new GameServerID { ID = Guid.Parse(argGameServerId) };
 
             Console.WriteLine("Listen on {0}", ipEndPoint);
 

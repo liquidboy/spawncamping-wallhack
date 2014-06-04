@@ -38,7 +38,7 @@
                 GameServerID = new GameServerID { ID = this.GetPrimaryKey() }
             };
 
-            gameServerParams.GameServerID.ID = Guid.Parse("9c02e618-bc51-4c41-ae8d-f6d0d2a913c8");             // TODO DELETE THIS LINE
+            gameServerParams.GameServerID.ID = Guid.Parse("9c02e618-bc51-4c41-ae8d-f6d0d2a913c8"); // TODO DELETE THIS LINE
 
 
             Trace.TraceInformation(string.Format("Create game server process for GameID {0}", gameServerParams.GameServerID));
