@@ -2,6 +2,7 @@
 {
     using Backend.GameLogic;
     using Backend.Utils.Networking;
+    using Frontend.Library.Models;
     using System;
     using System.Net;
     using System.Threading;
@@ -33,12 +34,14 @@
 
             byte[] secretKey = Convert.FromBase64String(args[2]);
 
+            var gameServerID = new GameServerID { ID = Guid.Parse(args[3]) };
+
             Console.WriteLine("Listen on {0}", ipEndPoint);
 
             var cts = new CancellationTokenSource();
             var server = new AsyncServerHost(ipEndPoint);
 
-            var gameServerImpl = new GameServerImpl(secretKey);
+            var gameServerImpl = new GameServerImpl(gameServerID, secretKey);
             Task t = server.Start(gameServerImpl, cts.Token);
 
             Console.WriteLine("Launched game server process on {0}", ipEndPoint);

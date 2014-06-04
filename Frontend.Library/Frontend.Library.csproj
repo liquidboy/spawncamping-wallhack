@@ -51,6 +51,8 @@
     <Compile Include="Messages\Xtensions.cs" />
     <Compile Include="Models\ClientID.cs" />
     <Compile Include="Models\ClientState.cs" />
+    <Compile Include="Models\GameServerStartParams.cs" />
+    <Compile Include="Models\PlayerInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

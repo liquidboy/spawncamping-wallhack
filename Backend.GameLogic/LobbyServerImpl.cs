@@ -16,6 +16,7 @@
     using Security;
     using GrainImplementations;
     using Backend.GrainInterfaces;
+    using Frontend.Library.Models;
 
     [Export(typeof(LobbyServerImpl))]
     public class LobbyServerImpl : ITcpServerHandler, IPartImportsSatisfiedNotification
@@ -52,21 +53,20 @@
                 }
                 var clientId = loginToLobbyRequest.ClientID;
 
-
                 GameServerStartParams startParams = null;
                 var gamer = await Gamer.CreateAsync(clientId, server => { startParams = server; });
 
                 while (startParams == null)
                 {
-                    await Task.Delay(TimeSpan.FromMilliseconds(20));
+                    await Task.Delay(TimeSpan.FromMilliseconds(50));
                 }
 
                 var gameserverId = startParams.GameServerID;
                 var innerGameServerPort = 4002;
-                var usertoken = this._playerAuthenticator.CreatePlayerToken(clientId, gameserverId.ToString());
+                var usertoken = this._playerAuthenticator.CreatePlayerToken(clientId, startParams.GameServerID);
 
                 await client.WriteCommandAsync(new LoginToLobbyResponseMessage(
-                    new IPEndPoint(IPAddress.Loopback, 4000), innerGameServerPort, usertoken, gameserverId));
+                    new IPEndPoint(IPAddress.Loopback, 4000), innerGameServerPort, usertoken, startParams.GameServerID));
             }
             catch (Exception ex)
             {

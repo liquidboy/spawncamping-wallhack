@@ -23,10 +23,514 @@ namespace Backend.GrainInterfaces
     using System.IO;
     using System.Collections.Generic;
     using Orleans;
-    using System.Reflection;
-    using Orleans.Serialization;
-    using Backend.GrainInterfaces;
+    using Frontend.Library.Models;
     
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+    public class GameServerGrainFactory
+    {
+        
+
+                        public static IGameServerGrain GetGrain(long primaryKey)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IGameServerGrain), 1930156440, primaryKey));
+                        }
+
+                        public static IGameServerGrain GetGrain(long primaryKey, string grainClassNamePrefix)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IGameServerGrain), 1930156440, primaryKey, grainClassNamePrefix));
+                        }
+
+                        public static IGameServerGrain GetGrain(Guid primaryKey)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IGameServerGrain), 1930156440, primaryKey));
+                        }
+
+                        public static IGameServerGrain GetGrain(Guid primaryKey, string grainClassNamePrefix)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IGameServerGrain), 1930156440, primaryKey, grainClassNamePrefix));
+                        }
+
+            public static IGameServerGrain Cast(IAddressable grainRef)
+            {
+                
+                return GameServerGrainReference.Cast(grainRef);
+            }
+        
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+        [System.SerializableAttribute()]
+        [Orleans.GrainReferenceAttribute("Backend.GrainInterfaces.IGameServerGrain")]
+        internal class GameServerGrainReference : Orleans.GrainReference, IGameServerGrain, Orleans.IAddressable
+        {
+            
+
+            public static IGameServerGrain Cast(IAddressable grainRef)
+            {
+                
+                return (IGameServerGrain) GrainReference.CastInternal(typeof(IGameServerGrain), (GrainReference gr) => { return new GameServerGrainReference(gr);}, grainRef, 1930156440);
+            }
+
+                protected override int InterfaceId { get { return 1930156440; } }
+
+                public override bool IsCompatible(int interfaceId) { return interfaceId == this.InterfaceId; }
+
+                protected override string InterfaceName { get { return "Backend.GrainInterfaces.IGameServerGrain"; } }
+
+                protected override string GetMethodName(int interfaceId, int methodId) { return GameServerGrainMethodInvoker.GetMethodName(interfaceId, methodId); }
+            
+            protected internal GameServerGrainReference(GrainReference reference) : 
+                    base(reference)
+            {
+            }
+            
+            [Orleans.CopierMethodAttribute()]
+            public static object _Copier(object original)
+            {
+                GameServerGrainReference input = ((GameServerGrainReference)(original));
+                return ((GameServerGrainReference)(GrainReference.CopyGrainReference(input)));
+            }
+            
+            [Orleans.SerializerMethodAttribute()]
+            public static void _Serializer(object original, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
+            {
+                GameServerGrainReference input = ((GameServerGrainReference)(original));
+                GrainReference.SerializeGrainReference(input, stream, expected);
+            }
+            
+            [Orleans.DeserializerMethodAttribute()]
+            public static object _Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
+            {
+                return GameServerGrainReference.Cast(((Orleans.GrainReference)(GrainReference.DeserializeGrainReference(expected, stream))));
+            }
+            
+            public System.Threading.Tasks.Task StartGame(System.Collections.Generic.List<IPlayerGrain> playersToLaunch)
+            {
+
+                return base.InvokeMethodAsync<object>(974021661, new object[] {playersToLaunch}, TimeSpan.Zero );
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+    [Orleans.MethodInvokerAttribute("Backend.GrainInterfaces.IGameServerGrain", 1930156440)]
+    internal class GameServerGrainMethodInvoker : IGrainMethodInvoker
+    {
+        
+        public int InterfaceId
+        {
+            get
+            {
+                return 1930156440;
+            }
+        }
+        
+        public async System.Threading.Tasks.Task<Object> Invoke(IAddressable grain, int interfaceId, int methodId, object[] arguments)
+        {
+                if (grain == null) throw new System.ArgumentNullException("grain");
+                switch (interfaceId)
+                {
+                    case 1930156440:  // IGameServerGrain
+                        switch (methodId)
+                        {
+                            case 974021661: 
+                                await ((IGameServerGrain)grain).StartGame((System.Collections.Generic.List<IPlayerGrain>)arguments[0]);
+                              return true;
+                            default: 
+                                throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
+                        }
+                    default:
+                        throw new System.InvalidCastException("interfaceId="+interfaceId);
+                }
+        }
+        
+        public static string GetMethodName(int interfaceId, int methodId)
+        {
+
+            switch (interfaceId)
+            {
+                
+                case 1930156440:  // IGameServerGrain
+                    switch (methodId)
+                    {
+                        case 974021661:
+                            return "StartGame";
+                    case -606142484:
+                            return "GetProperties";
+                    
+                        default: 
+                            throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
+                    }
+
+                default:
+                    throw new System.InvalidCastException("interfaceId="+interfaceId);
+            }
+        }
+    }
+    
+    [Serializable()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+    public class GameServerGrainProperties
+    {
+        
+
+            public Dictionary<string,object> AsDictionary()
+            {  
+                var retValue = new Dictionary<string,object>();
+                return retValue;
+            }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+    public class LobbyGrainFactory
+    {
+        
+
+                        public static ILobbyGrain GetGrain(long primaryKey)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(ILobbyGrain), 880933729, primaryKey));
+                        }
+
+                        public static ILobbyGrain GetGrain(long primaryKey, string grainClassNamePrefix)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(ILobbyGrain), 880933729, primaryKey, grainClassNamePrefix));
+                        }
+
+                        public static ILobbyGrain GetGrain(Guid primaryKey)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(ILobbyGrain), 880933729, primaryKey));
+                        }
+
+                        public static ILobbyGrain GetGrain(Guid primaryKey, string grainClassNamePrefix)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(ILobbyGrain), 880933729, primaryKey, grainClassNamePrefix));
+                        }
+
+            public static ILobbyGrain Cast(IAddressable grainRef)
+            {
+                
+                return LobbyGrainReference.Cast(grainRef);
+            }
+        
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+        [System.SerializableAttribute()]
+        [Orleans.GrainReferenceAttribute("Backend.GrainInterfaces.ILobbyGrain")]
+        internal class LobbyGrainReference : Orleans.GrainReference, ILobbyGrain, Orleans.IAddressable
+        {
+            
+
+            public static ILobbyGrain Cast(IAddressable grainRef)
+            {
+                
+                return (ILobbyGrain) GrainReference.CastInternal(typeof(ILobbyGrain), (GrainReference gr) => { return new LobbyGrainReference(gr);}, grainRef, 880933729);
+            }
+
+                protected override int InterfaceId { get { return 880933729; } }
+
+                public override bool IsCompatible(int interfaceId) { return interfaceId == this.InterfaceId; }
+
+                protected override string InterfaceName { get { return "Backend.GrainInterfaces.ILobbyGrain"; } }
+
+                protected override string GetMethodName(int interfaceId, int methodId) { return LobbyGrainMethodInvoker.GetMethodName(interfaceId, methodId); }
+            
+            protected internal LobbyGrainReference(GrainReference reference) : 
+                    base(reference)
+            {
+            }
+            
+            [Orleans.CopierMethodAttribute()]
+            public static object _Copier(object original)
+            {
+                LobbyGrainReference input = ((LobbyGrainReference)(original));
+                return ((LobbyGrainReference)(GrainReference.CopyGrainReference(input)));
+            }
+            
+            [Orleans.SerializerMethodAttribute()]
+            public static void _Serializer(object original, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
+            {
+                LobbyGrainReference input = ((LobbyGrainReference)(original));
+                GrainReference.SerializeGrainReference(input, stream, expected);
+            }
+            
+            [Orleans.DeserializerMethodAttribute()]
+            public static object _Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
+            {
+                return LobbyGrainReference.Cast(((Orleans.GrainReference)(GrainReference.DeserializeGrainReference(expected, stream))));
+            }
+            
+            public System.Threading.Tasks.Task RegisterPlayer(Backend.GrainInterfaces.IPlayerGrain player, Frontend.Library.Models.PlayerInfo playerInfo)
+            {
+
+                return base.InvokeMethodAsync<object>(1100016107, new object[] {player is GrainBase ? Backend.GrainInterfaces.PlayerGrainFactory.Cast(player.AsReference()) : player, playerInfo}, TimeSpan.Zero );
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+    [Orleans.MethodInvokerAttribute("Backend.GrainInterfaces.ILobbyGrain", 880933729)]
+    internal class LobbyGrainMethodInvoker : IGrainMethodInvoker
+    {
+        
+        public int InterfaceId
+        {
+            get
+            {
+                return 880933729;
+            }
+        }
+        
+        public async System.Threading.Tasks.Task<Object> Invoke(IAddressable grain, int interfaceId, int methodId, object[] arguments)
+        {
+                if (grain == null) throw new System.ArgumentNullException("grain");
+                switch (interfaceId)
+                {
+                    case 880933729:  // ILobbyGrain
+                        switch (methodId)
+                        {
+                            case 1100016107: 
+                                await ((ILobbyGrain)grain).RegisterPlayer((IPlayerGrain)arguments[0], (Frontend.Library.Models.PlayerInfo)arguments[1]);
+                              return true;
+                            default: 
+                                throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
+                        }
+                    default:
+                        throw new System.InvalidCastException("interfaceId="+interfaceId);
+                }
+        }
+        
+        public static string GetMethodName(int interfaceId, int methodId)
+        {
+
+            switch (interfaceId)
+            {
+                
+                case 880933729:  // ILobbyGrain
+                    switch (methodId)
+                    {
+                        case 1100016107:
+                            return "RegisterPlayer";
+                    case -606142484:
+                            return "GetProperties";
+                    
+                        default: 
+                            throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
+                    }
+
+                default:
+                    throw new System.InvalidCastException("interfaceId="+interfaceId);
+            }
+        }
+    }
+    
+    [Serializable()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+    public class LobbyGrainProperties
+    {
+        
+
+            public Dictionary<string,object> AsDictionary()
+            {  
+                var retValue = new Dictionary<string,object>();
+                return retValue;
+            }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+    public class PlayerGrainFactory
+    {
+        
+
+                        public static IPlayerGrain GetGrain(long primaryKey)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IPlayerGrain), -1571374391, primaryKey));
+                        }
+
+                        public static IPlayerGrain GetGrain(long primaryKey, string grainClassNamePrefix)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IPlayerGrain), -1571374391, primaryKey, grainClassNamePrefix));
+                        }
+
+                        public static IPlayerGrain GetGrain(Guid primaryKey)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IPlayerGrain), -1571374391, primaryKey));
+                        }
+
+                        public static IPlayerGrain GetGrain(Guid primaryKey, string grainClassNamePrefix)
+                        {
+                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IPlayerGrain), -1571374391, primaryKey, grainClassNamePrefix));
+                        }
+
+            public static IPlayerGrain Cast(IAddressable grainRef)
+            {
+                
+                return PlayerGrainReference.Cast(grainRef);
+            }
+        
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+        [System.SerializableAttribute()]
+        [Orleans.GrainReferenceAttribute("Backend.GrainInterfaces.IPlayerGrain")]
+        internal class PlayerGrainReference : Orleans.GrainReference, IPlayerGrain, Orleans.IAddressable
+        {
+            
+
+            public static IPlayerGrain Cast(IAddressable grainRef)
+            {
+                
+                return (IPlayerGrain) GrainReference.CastInternal(typeof(IPlayerGrain), (GrainReference gr) => { return new PlayerGrainReference(gr);}, grainRef, -1571374391);
+            }
+
+                protected override int InterfaceId { get { return -1571374391; } }
+
+                public override bool IsCompatible(int interfaceId) { return interfaceId == this.InterfaceId; }
+
+                protected override string InterfaceName { get { return "Backend.GrainInterfaces.IPlayerGrain"; } }
+
+                protected override string GetMethodName(int interfaceId, int methodId) { return PlayerGrainMethodInvoker.GetMethodName(interfaceId, methodId); }
+            
+            protected internal PlayerGrainReference(GrainReference reference) : 
+                    base(reference)
+            {
+            }
+            
+            [Orleans.CopierMethodAttribute()]
+            public static object _Copier(object original)
+            {
+                PlayerGrainReference input = ((PlayerGrainReference)(original));
+                return ((PlayerGrainReference)(GrainReference.CopyGrainReference(input)));
+            }
+            
+            [Orleans.SerializerMethodAttribute()]
+            public static void _Serializer(object original, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
+            {
+                PlayerGrainReference input = ((PlayerGrainReference)(original));
+                GrainReference.SerializeGrainReference(input, stream, expected);
+            }
+            
+            [Orleans.DeserializerMethodAttribute()]
+            public static object _Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
+            {
+                return PlayerGrainReference.Cast(((Orleans.GrainReference)(GrainReference.DeserializeGrainReference(expected, stream))));
+            }
+            
+            public System.Threading.Tasks.Task<Frontend.Library.Models.PlayerInfo> Subscribe(Backend.GrainInterfaces.IPlayerObserver playerObserver)
+            {
+GrainFactoryBase.CheckGrainObserverParamInternal(playerObserver);
+
+                return base.InvokeMethodAsync<Frontend.Library.Models.PlayerInfo>(-1236982852, new object[] {playerObserver is GrainBase ? Backend.GrainInterfaces.PlayerObserverFactory.Cast(playerObserver.AsReference()) : playerObserver}, TimeSpan.Zero );
+            }
+            
+            public System.Threading.Tasks.Task GameServerStarts(Frontend.Library.Models.GameServerStartParams gameServerStartParams)
+            {
+
+                return base.InvokeMethodAsync<object>(384970127, new object[] {gameServerStartParams}, TimeSpan.Zero );
+            }
+            
+            public System.Threading.Tasks.Task GameEnded()
+            {
+
+                return base.InvokeMethodAsync<object>(484987070, new object[] {}, TimeSpan.Zero );
+            }
+            
+            public System.Threading.Tasks.Task<Frontend.Library.Models.GameServerStartParams> GetCurrentGame()
+            {
+
+                return base.InvokeMethodAsync<Frontend.Library.Models.GameServerStartParams>(-210510288, new object[] {}, TimeSpan.Zero );
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+    [Orleans.MethodInvokerAttribute("Backend.GrainInterfaces.IPlayerGrain", -1571374391)]
+    internal class PlayerGrainMethodInvoker : IGrainMethodInvoker
+    {
+        
+        public int InterfaceId
+        {
+            get
+            {
+                return -1571374391;
+            }
+        }
+        
+        public async System.Threading.Tasks.Task<Object> Invoke(IAddressable grain, int interfaceId, int methodId, object[] arguments)
+        {
+                if (grain == null) throw new System.ArgumentNullException("grain");
+                switch (interfaceId)
+                {
+                    case -1571374391:  // IPlayerGrain
+                        switch (methodId)
+                        {
+                            case -1236982852: 
+                                return await ((IPlayerGrain)grain).Subscribe((IPlayerObserver)arguments[0]);
+                            case 384970127: 
+                                await ((IPlayerGrain)grain).GameServerStarts((Frontend.Library.Models.GameServerStartParams)arguments[0]);
+                              return true;
+                            case 484987070: 
+                                await ((IPlayerGrain)grain).GameEnded();
+                              return true;
+                            case -210510288: 
+                                return await ((IPlayerGrain)grain).GetCurrentGame();
+                            default: 
+                                throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
+                        }
+                    default:
+                        throw new System.InvalidCastException("interfaceId="+interfaceId);
+                }
+        }
+        
+        public static string GetMethodName(int interfaceId, int methodId)
+        {
+
+            switch (interfaceId)
+            {
+                
+                case -1571374391:  // IPlayerGrain
+                    switch (methodId)
+                    {
+                        case -1236982852:
+                            return "Subscribe";
+                    case 384970127:
+                            return "GameServerStarts";
+                    case 484987070:
+                            return "GameEnded";
+                    case -210510288:
+                            return "GetCurrentGame";
+                    case -606142484:
+                            return "GetProperties";
+                    
+                        default: 
+                            throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
+                    }
+
+                default:
+                    throw new System.InvalidCastException("interfaceId="+interfaceId);
+            }
+        }
+    }
+    
+    [Serializable()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
+    public class PlayerGrainProperties
+    {
+        
+
+            public Dictionary<string,object> AsDictionary()
+            {  
+                var retValue = new Dictionary<string,object>();
+                return retValue;
+            }
+    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
@@ -100,7 +604,7 @@ namespace Backend.GrainInterfaces
                 return PlayerObserverReference.Cast(((Orleans.GrainReference)(GrainReference.DeserializeGrainReference(expected, stream))));
             }
             
-            public void GameServerStarts(GameServerStartParams gameServerStartParams)
+            public void GameServerStarts(Frontend.Library.Models.GameServerStartParams gameServerStartParams)
             {
 
                 base.InvokeOneWayMethod(384970127, new object[] {gameServerStartParams} );
@@ -122,7 +626,7 @@ namespace Backend.GrainInterfaces
             }
         }
         
-        public async System.Threading.Tasks.Task<System.Object> Invoke(IAddressable grain, int interfaceId, int methodId, object[] arguments)
+        public async System.Threading.Tasks.Task<Object> Invoke(IAddressable grain, int interfaceId, int methodId, object[] arguments)
         {
                 if (grain == null) throw new System.ArgumentNullException("grain");
                 switch (interfaceId)
@@ -336,563 +840,41 @@ GrainFactoryBase.CheckGrainObserverParamInternal(playerObserver);
                 return retValue;
             }
     }
+}
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//     Runtime Version:4.0.30319.34209
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+namespace Backend.GrainInterfacesSerializers
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using Orleans.Serialization;
+    using Frontend.Library.Models;
+    using System.Collections;
+    using System.Runtime.InteropServices;
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-    public class PlayerGrainFactory
-    {
-        
-
-                        public static IPlayerGrain GetGrain(long primaryKey)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IPlayerGrain), -1571374391, primaryKey));
-                        }
-
-                        public static IPlayerGrain GetGrain(long primaryKey, string grainClassNamePrefix)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IPlayerGrain), -1571374391, primaryKey, grainClassNamePrefix));
-                        }
-
-                        public static IPlayerGrain GetGrain(Guid primaryKey)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IPlayerGrain), -1571374391, primaryKey));
-                        }
-
-                        public static IPlayerGrain GetGrain(Guid primaryKey, string grainClassNamePrefix)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IPlayerGrain), -1571374391, primaryKey, grainClassNamePrefix));
-                        }
-
-            public static IPlayerGrain Cast(IAddressable grainRef)
-            {
-                
-                return PlayerGrainReference.Cast(grainRef);
-            }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-        [System.SerializableAttribute()]
-        [Orleans.GrainReferenceAttribute("Backend.GrainInterfaces.IPlayerGrain")]
-        internal class PlayerGrainReference : Orleans.GrainReference, IPlayerGrain, Orleans.IAddressable
-        {
-            
-
-            public static IPlayerGrain Cast(IAddressable grainRef)
-            {
-                
-                return (IPlayerGrain) GrainReference.CastInternal(typeof(IPlayerGrain), (GrainReference gr) => { return new PlayerGrainReference(gr);}, grainRef, -1571374391);
-            }
-
-                protected override int InterfaceId { get { return -1571374391; } }
-
-                public override bool IsCompatible(int interfaceId) { return interfaceId == this.InterfaceId; }
-
-                protected override string InterfaceName { get { return "Backend.GrainInterfaces.IPlayerGrain"; } }
-
-                protected override string GetMethodName(int interfaceId, int methodId) { return PlayerGrainMethodInvoker.GetMethodName(interfaceId, methodId); }
-            
-            protected internal PlayerGrainReference(GrainReference reference) : 
-                    base(reference)
-            {
-            }
-            
-            [Orleans.CopierMethodAttribute()]
-            public static object _Copier(object original)
-            {
-                PlayerGrainReference input = ((PlayerGrainReference)(original));
-                return ((PlayerGrainReference)(GrainReference.CopyGrainReference(input)));
-            }
-            
-            [Orleans.SerializerMethodAttribute()]
-            public static void _Serializer(object original, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
-            {
-                PlayerGrainReference input = ((PlayerGrainReference)(original));
-                GrainReference.SerializeGrainReference(input, stream, expected);
-            }
-            
-            [Orleans.DeserializerMethodAttribute()]
-            public static object _Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
-            {
-                return PlayerGrainReference.Cast(((Orleans.GrainReference)(GrainReference.DeserializeGrainReference(expected, stream))));
-            }
-            
-            public System.Threading.Tasks.Task<Backend.GrainInterfaces.PlayerInfo> Subscribe(Backend.GrainInterfaces.IPlayerObserver playerObserver)
-            {
-GrainFactoryBase.CheckGrainObserverParamInternal(playerObserver);
-
-                return base.InvokeMethodAsync<Backend.GrainInterfaces.PlayerInfo>(-1236982852, new object[] {playerObserver is GrainBase ? Backend.GrainInterfaces.PlayerObserverFactory.Cast(playerObserver.AsReference()) : playerObserver}, TimeSpan.Zero );
-            }
-            
-            public System.Threading.Tasks.Task GameServerStarts(Backend.GrainInterfaces.GameServerStartParams gameServerStartParams)
-            {
-
-                return base.InvokeMethodAsync<object>(384970127, new object[] {gameServerStartParams}, TimeSpan.Zero );
-            }
-            
-            public System.Threading.Tasks.Task GameEnded()
-            {
-
-                return base.InvokeMethodAsync<object>(484987070, new object[] {}, TimeSpan.Zero );
-            }
-            
-            public System.Threading.Tasks.Task<Backend.GrainInterfaces.GameServerStartParams> GetCurrentGame()
-            {
-
-                return base.InvokeMethodAsync<Backend.GrainInterfaces.GameServerStartParams>(-210510288, new object[] {}, TimeSpan.Zero );
-            }
-        }
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-    [Orleans.MethodInvokerAttribute("Backend.GrainInterfaces.IPlayerGrain", -1571374391)]
-    internal class PlayerGrainMethodInvoker : IGrainMethodInvoker
-    {
-        
-        public int InterfaceId
-        {
-            get
-            {
-                return -1571374391;
-            }
-        }
-        
-        public async System.Threading.Tasks.Task<Object> Invoke(IAddressable grain, int interfaceId, int methodId, object[] arguments)
-        {
-                if (grain == null) throw new System.ArgumentNullException("grain");
-                switch (interfaceId)
-                {
-                    case -1571374391:  // IPlayerGrain
-                        switch (methodId)
-                        {
-                            case -1236982852: 
-                                return await ((IPlayerGrain)grain).Subscribe((IPlayerObserver)arguments[0]);
-                            case 384970127: 
-                                await ((IPlayerGrain)grain).GameServerStarts((GameServerStartParams)arguments[0]);
-                              return true;
-                            case 484987070: 
-                                await ((IPlayerGrain)grain).GameEnded();
-                              return true;
-                            case -210510288: 
-                                return await ((IPlayerGrain)grain).GetCurrentGame();
-                            default: 
-                                throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
-                        }
-                    default:
-                        throw new System.InvalidCastException("interfaceId="+interfaceId);
-                }
-        }
-        
-        public static string GetMethodName(int interfaceId, int methodId)
-        {
-
-            switch (interfaceId)
-            {
-                
-                case -1571374391:  // IPlayerGrain
-                    switch (methodId)
-                    {
-                        case -1236982852:
-                            return "Subscribe";
-                    case 384970127:
-                            return "GameServerStarts";
-                    case 484987070:
-                            return "GameEnded";
-                    case -210510288:
-                            return "GetCurrentGame";
-                    case -606142484:
-                            return "GetProperties";
-                    
-                        default: 
-                            throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
-                    }
-
-                default:
-                    throw new System.InvalidCastException("interfaceId="+interfaceId);
-            }
-        }
-    }
-    
-    [Serializable()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-    public class PlayerGrainProperties
-    {
-        
-
-            public Dictionary<string,object> AsDictionary()
-            {  
-                var retValue = new Dictionary<string,object>();
-                return retValue;
-            }
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-    public class LobbyGrainFactory
-    {
-        
-
-                        public static ILobbyGrain GetGrain(long primaryKey)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(ILobbyGrain), 880933729, primaryKey));
-                        }
-
-                        public static ILobbyGrain GetGrain(long primaryKey, string grainClassNamePrefix)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(ILobbyGrain), 880933729, primaryKey, grainClassNamePrefix));
-                        }
-
-                        public static ILobbyGrain GetGrain(Guid primaryKey)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(ILobbyGrain), 880933729, primaryKey));
-                        }
-
-                        public static ILobbyGrain GetGrain(Guid primaryKey, string grainClassNamePrefix)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(ILobbyGrain), 880933729, primaryKey, grainClassNamePrefix));
-                        }
-
-            public static ILobbyGrain Cast(IAddressable grainRef)
-            {
-                
-                return LobbyGrainReference.Cast(grainRef);
-            }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-        [System.SerializableAttribute()]
-        [Orleans.GrainReferenceAttribute("Backend.GrainInterfaces.ILobbyGrain")]
-        internal class LobbyGrainReference : Orleans.GrainReference, ILobbyGrain, Orleans.IAddressable
-        {
-            
-
-            public static ILobbyGrain Cast(IAddressable grainRef)
-            {
-                
-                return (ILobbyGrain) GrainReference.CastInternal(typeof(ILobbyGrain), (GrainReference gr) => { return new LobbyGrainReference(gr);}, grainRef, 880933729);
-            }
-
-                protected override int InterfaceId { get { return 880933729; } }
-
-                public override bool IsCompatible(int interfaceId) { return interfaceId == this.InterfaceId; }
-
-                protected override string InterfaceName { get { return "Backend.GrainInterfaces.ILobbyGrain"; } }
-
-                protected override string GetMethodName(int interfaceId, int methodId) { return LobbyGrainMethodInvoker.GetMethodName(interfaceId, methodId); }
-            
-            protected internal LobbyGrainReference(GrainReference reference) : 
-                    base(reference)
-            {
-            }
-            
-            [Orleans.CopierMethodAttribute()]
-            public static object _Copier(object original)
-            {
-                LobbyGrainReference input = ((LobbyGrainReference)(original));
-                return ((LobbyGrainReference)(GrainReference.CopyGrainReference(input)));
-            }
-            
-            [Orleans.SerializerMethodAttribute()]
-            public static void _Serializer(object original, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
-            {
-                LobbyGrainReference input = ((LobbyGrainReference)(original));
-                GrainReference.SerializeGrainReference(input, stream, expected);
-            }
-            
-            [Orleans.DeserializerMethodAttribute()]
-            public static object _Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
-            {
-                return LobbyGrainReference.Cast(((Orleans.GrainReference)(GrainReference.DeserializeGrainReference(expected, stream))));
-            }
-            
-            public System.Threading.Tasks.Task RegisterPlayer(Backend.GrainInterfaces.IPlayerGrain player, Backend.GrainInterfaces.PlayerInfo playerInfo)
-            {
-
-                return base.InvokeMethodAsync<object>(1100016107, new object[] {player is GrainBase ? Backend.GrainInterfaces.PlayerGrainFactory.Cast(player.AsReference()) : player, playerInfo}, TimeSpan.Zero );
-            }
-        }
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-    [Orleans.MethodInvokerAttribute("Backend.GrainInterfaces.ILobbyGrain", 880933729)]
-    internal class LobbyGrainMethodInvoker : IGrainMethodInvoker
-    {
-        
-        public int InterfaceId
-        {
-            get
-            {
-                return 880933729;
-            }
-        }
-        
-        public async System.Threading.Tasks.Task<Object> Invoke(IAddressable grain, int interfaceId, int methodId, object[] arguments)
-        {
-                if (grain == null) throw new System.ArgumentNullException("grain");
-                switch (interfaceId)
-                {
-                    case 880933729:  // ILobbyGrain
-                        switch (methodId)
-                        {
-                            case 1100016107: 
-                                await ((ILobbyGrain)grain).RegisterPlayer((IPlayerGrain)arguments[0], (PlayerInfo)arguments[1]);
-                              return true;
-                            default: 
-                                throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
-                        }
-                    default:
-                        throw new System.InvalidCastException("interfaceId="+interfaceId);
-                }
-        }
-        
-        public static string GetMethodName(int interfaceId, int methodId)
-        {
-
-            switch (interfaceId)
-            {
-                
-                case 880933729:  // ILobbyGrain
-                    switch (methodId)
-                    {
-                        case 1100016107:
-                            return "RegisterPlayer";
-                    case -606142484:
-                            return "GetProperties";
-                    
-                        default: 
-                            throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
-                    }
-
-                default:
-                    throw new System.InvalidCastException("interfaceId="+interfaceId);
-            }
-        }
-    }
-    
-    [Serializable()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-    public class LobbyGrainProperties
-    {
-        
-
-            public Dictionary<string,object> AsDictionary()
-            {  
-                var retValue = new Dictionary<string,object>();
-                return retValue;
-            }
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-    public class GameServerGrainFactory
-    {
-        
-
-                        public static IGameServerGrain GetGrain(long primaryKey)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IGameServerGrain), 1930156440, primaryKey));
-                        }
-
-                        public static IGameServerGrain GetGrain(long primaryKey, string grainClassNamePrefix)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IGameServerGrain), 1930156440, primaryKey, grainClassNamePrefix));
-                        }
-
-                        public static IGameServerGrain GetGrain(Guid primaryKey)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IGameServerGrain), 1930156440, primaryKey));
-                        }
-
-                        public static IGameServerGrain GetGrain(Guid primaryKey, string grainClassNamePrefix)
-                        {
-                            return Cast(GrainFactoryBase.MakeGrainReferenceInternal(typeof(IGameServerGrain), 1930156440, primaryKey, grainClassNamePrefix));
-                        }
-
-            public static IGameServerGrain Cast(IAddressable grainRef)
-            {
-                
-                return GameServerGrainReference.Cast(grainRef);
-            }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-        [System.SerializableAttribute()]
-        [Orleans.GrainReferenceAttribute("Backend.GrainInterfaces.IGameServerGrain")]
-        internal class GameServerGrainReference : Orleans.GrainReference, IGameServerGrain, Orleans.IAddressable
-        {
-            
-
-            public static IGameServerGrain Cast(IAddressable grainRef)
-            {
-                
-                return (IGameServerGrain) GrainReference.CastInternal(typeof(IGameServerGrain), (GrainReference gr) => { return new GameServerGrainReference(gr);}, grainRef, 1930156440);
-            }
-
-                protected override int InterfaceId { get { return 1930156440; } }
-
-                public override bool IsCompatible(int interfaceId) { return interfaceId == this.InterfaceId; }
-
-                protected override string InterfaceName { get { return "Backend.GrainInterfaces.IGameServerGrain"; } }
-
-                protected override string GetMethodName(int interfaceId, int methodId) { return GameServerGrainMethodInvoker.GetMethodName(interfaceId, methodId); }
-            
-            protected internal GameServerGrainReference(GrainReference reference) : 
-                    base(reference)
-            {
-            }
-            
-            [Orleans.CopierMethodAttribute()]
-            public static object _Copier(object original)
-            {
-                GameServerGrainReference input = ((GameServerGrainReference)(original));
-                return ((GameServerGrainReference)(GrainReference.CopyGrainReference(input)));
-            }
-            
-            [Orleans.SerializerMethodAttribute()]
-            public static void _Serializer(object original, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
-            {
-                GameServerGrainReference input = ((GameServerGrainReference)(original));
-                GrainReference.SerializeGrainReference(input, stream, expected);
-            }
-            
-            [Orleans.DeserializerMethodAttribute()]
-            public static object _Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
-            {
-                return GameServerGrainReference.Cast(((Orleans.GrainReference)(GrainReference.DeserializeGrainReference(expected, stream))));
-            }
-            
-            public System.Threading.Tasks.Task StartGame(System.Collections.Generic.List<IPlayerGrain> playersToLaunch)
-            {
-
-                return base.InvokeMethodAsync<object>(974021661, new object[] {playersToLaunch}, TimeSpan.Zero );
-            }
-        }
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-    [Orleans.MethodInvokerAttribute("Backend.GrainInterfaces.IGameServerGrain", 1930156440)]
-    internal class GameServerGrainMethodInvoker : IGrainMethodInvoker
-    {
-        
-        public int InterfaceId
-        {
-            get
-            {
-                return 1930156440;
-            }
-        }
-        
-        public async System.Threading.Tasks.Task<Object> Invoke(IAddressable grain, int interfaceId, int methodId, object[] arguments)
-        {
-                if (grain == null) throw new System.ArgumentNullException("grain");
-                switch (interfaceId)
-                {
-                    case 1930156440:  // IGameServerGrain
-                        switch (methodId)
-                        {
-                            case 974021661: 
-                                await ((IGameServerGrain)grain).StartGame((System.Collections.Generic.List<IPlayerGrain>)arguments[0]);
-                              return true;
-                            default: 
-                                throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
-                        }
-                    default:
-                        throw new System.InvalidCastException("interfaceId="+interfaceId);
-                }
-        }
-        
-        public static string GetMethodName(int interfaceId, int methodId)
-        {
-
-            switch (interfaceId)
-            {
-                
-                case 1930156440:  // IGameServerGrain
-                    switch (methodId)
-                    {
-                        case 974021661:
-                            return "StartGame";
-                    case -606142484:
-                            return "GetProperties";
-                    
-                        default: 
-                            throw new NotImplementedException("interfaceId="+interfaceId+",methodId="+methodId);
-                    }
-
-                default:
-                    throw new System.InvalidCastException("interfaceId="+interfaceId);
-            }
-        }
-    }
-    
-    [Serializable()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Orleans-CodeGenerator", "1.0.814.60418")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute()]
-    public class GameServerGrainProperties
-    {
-        
-
-            public Dictionary<string,object> AsDictionary()
-            {  
-                var retValue = new Dictionary<string,object>();
-                return retValue;
-            }
-    }
     
     [Orleans.RegisterSerializerAttribute()]
-    internal class Backend_GrainInterfaces_GameServerStartParamsSerialization
+    internal class Frontend_Library_Models_PlayerInfoSerialization
     {
         
-        static Backend_GrainInterfaces_GameServerStartParamsSerialization()
+        static Frontend_Library_Models_PlayerInfoSerialization()
         {
             Register();
         }
         
         public static object DeepCopier(object original)
         {
-            Backend.GrainInterfaces.GameServerStartParams input = ((Backend.GrainInterfaces.GameServerStartParams)(original));
-            Backend.GrainInterfaces.GameServerStartParams result = new Backend.GrainInterfaces.GameServerStartParams();
-            Orleans.Serialization.SerializationContext.Current.RecordObject(original, result);
-            result.GameServerID = ((Guid)(Orleans.Serialization.SerializationManager.DeepCopyInner(input.GameServerID)));
-            return result;
-        }
-        
-        public static void Serializer(object untypedInput, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
-        {
-            Backend.GrainInterfaces.GameServerStartParams input = ((Backend.GrainInterfaces.GameServerStartParams)(untypedInput));
-            Orleans.Serialization.SerializationManager.SerializeInner(input.GameServerID, stream, typeof(Guid));
-        }
-        
-        public static object Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
-        {
-            Backend.GrainInterfaces.GameServerStartParams result = new Backend.GrainInterfaces.GameServerStartParams();
-            result.GameServerID = ((Guid)(Orleans.Serialization.SerializationManager.DeserializeInner(typeof(Guid), stream)));
-            return result;
-        }
-        
-        public static void Register()
-        {
-            Orleans.Serialization.SerializationManager.Register(typeof(Backend.GrainInterfaces.GameServerStartParams), DeepCopier, Serializer, Deserializer);
-        }
-    }
-    
-    [Orleans.RegisterSerializerAttribute()]
-    internal class Backend_GrainInterfaces_PlayerInfoSerialization
-    {
-        
-        static Backend_GrainInterfaces_PlayerInfoSerialization()
-        {
-            Register();
-        }
-        
-        public static object DeepCopier(object original)
-        {
-            Backend.GrainInterfaces.PlayerInfo input = ((Backend.GrainInterfaces.PlayerInfo)(original));
-            Backend.GrainInterfaces.PlayerInfo result = new Backend.GrainInterfaces.PlayerInfo();
+            Frontend.Library.Models.PlayerInfo input = ((Frontend.Library.Models.PlayerInfo)(original));
+            Frontend.Library.Models.PlayerInfo result = new Frontend.Library.Models.PlayerInfo();
             Orleans.Serialization.SerializationContext.Current.RecordObject(original, result);
             result.PlayerName = input.PlayerName;
             result.Strength = input.Strength;
@@ -901,14 +883,14 @@ GrainFactoryBase.CheckGrainObserverParamInternal(playerObserver);
         
         public static void Serializer(object untypedInput, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
         {
-            Backend.GrainInterfaces.PlayerInfo input = ((Backend.GrainInterfaces.PlayerInfo)(untypedInput));
+            Frontend.Library.Models.PlayerInfo input = ((Frontend.Library.Models.PlayerInfo)(untypedInput));
             Orleans.Serialization.SerializationManager.SerializeInner(input.PlayerName, stream, typeof(String));
             Orleans.Serialization.SerializationManager.SerializeInner(input.Strength, stream, typeof(Int32));
         }
         
         public static object Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
         {
-            Backend.GrainInterfaces.PlayerInfo result = new Backend.GrainInterfaces.PlayerInfo();
+            Frontend.Library.Models.PlayerInfo result = new Frontend.Library.Models.PlayerInfo();
             result.PlayerName = ((String)(Orleans.Serialization.SerializationManager.DeserializeInner(typeof(String), stream)));
             result.Strength = ((Int32)(Orleans.Serialization.SerializationManager.DeserializeInner(typeof(Int32), stream)));
             return result;
@@ -916,7 +898,81 @@ GrainFactoryBase.CheckGrainObserverParamInternal(playerObserver);
         
         public static void Register()
         {
-            Orleans.Serialization.SerializationManager.Register(typeof(Backend.GrainInterfaces.PlayerInfo), DeepCopier, Serializer, Deserializer);
+            Orleans.Serialization.SerializationManager.Register(typeof(Frontend.Library.Models.PlayerInfo), DeepCopier, Serializer, Deserializer);
+        }
+    }
+    
+    [Orleans.RegisterSerializerAttribute()]
+    internal class Frontend_Library_Models_GameServerStartParamsSerialization
+    {
+        
+        static Frontend_Library_Models_GameServerStartParamsSerialization()
+        {
+            Register();
+        }
+        
+        public static object DeepCopier(object original)
+        {
+            Frontend.Library.Models.GameServerStartParams input = ((Frontend.Library.Models.GameServerStartParams)(original));
+            Frontend.Library.Models.GameServerStartParams result = new Frontend.Library.Models.GameServerStartParams();
+            Orleans.Serialization.SerializationContext.Current.RecordObject(original, result);
+            result.GameServerID = ((GameServerID)(Orleans.Serialization.SerializationManager.DeepCopyInner(input.GameServerID)));
+            return result;
+        }
+        
+        public static void Serializer(object untypedInput, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
+        {
+            Frontend.Library.Models.GameServerStartParams input = ((Frontend.Library.Models.GameServerStartParams)(untypedInput));
+            Orleans.Serialization.SerializationManager.SerializeInner(input.GameServerID, stream, typeof(GameServerID));
+        }
+        
+        public static object Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
+        {
+            Frontend.Library.Models.GameServerStartParams result = new Frontend.Library.Models.GameServerStartParams();
+            result.GameServerID = ((GameServerID)(Orleans.Serialization.SerializationManager.DeserializeInner(typeof(GameServerID), stream)));
+            return result;
+        }
+        
+        public static void Register()
+        {
+            Orleans.Serialization.SerializationManager.Register(typeof(Frontend.Library.Models.GameServerStartParams), DeepCopier, Serializer, Deserializer);
+        }
+    }
+    
+    [Orleans.RegisterSerializerAttribute()]
+    internal class Frontend_Library_Models_GameServerIDSerialization
+    {
+        
+        static Frontend_Library_Models_GameServerIDSerialization()
+        {
+            Register();
+        }
+        
+        public static object DeepCopier(object original)
+        {
+            Frontend.Library.Models.GameServerID input = ((Frontend.Library.Models.GameServerID)(original));
+            Frontend.Library.Models.GameServerID result = new Frontend.Library.Models.GameServerID();
+            Orleans.Serialization.SerializationContext.Current.RecordObject(original, result);
+            result.ID = ((Guid)(Orleans.Serialization.SerializationManager.DeepCopyInner(input.ID)));
+            return result;
+        }
+        
+        public static void Serializer(object untypedInput, Orleans.Serialization.BinaryTokenStreamWriter stream, System.Type expected)
+        {
+            Frontend.Library.Models.GameServerID input = ((Frontend.Library.Models.GameServerID)(untypedInput));
+            Orleans.Serialization.SerializationManager.SerializeInner(input.ID, stream, typeof(Guid));
+        }
+        
+        public static object Deserializer(System.Type expected, Orleans.Serialization.BinaryTokenStreamReader stream)
+        {
+            Frontend.Library.Models.GameServerID result = new Frontend.Library.Models.GameServerID();
+            result.ID = ((Guid)(Orleans.Serialization.SerializationManager.DeserializeInner(typeof(Guid), stream)));
+            return result;
+        }
+        
+        public static void Register()
+        {
+            Orleans.Serialization.SerializationManager.Register(typeof(Frontend.Library.Models.GameServerID), DeepCopier, Serializer, Deserializer);
         }
     }
 }

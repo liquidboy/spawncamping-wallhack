@@ -12,13 +12,17 @@
     using Messages;
     using Security;
     using Models;
+    using Frontend.Library.Models;
 
     public class GameServerImpl : ITcpServerHandler
     {
         public PlayerAuthenticator PlayerAuthenticator { get; private set; }
 
-        public GameServerImpl(byte[] secretKey)
+        public GameServerID GameServerID { get; private set; }
+
+        public GameServerImpl(GameServerID gameserverID, byte[] secretKey)
         {
+            this.GameServerID = gameserverID;
             this.PlayerAuthenticator = new PlayerAuthenticator(secretKey);
         }
 
@@ -46,8 +50,8 @@
                 }
                 var joinMessage = joinMessageResponse.Message;
 
-                var gameserverId = "gameserver123";
-                clientId = this.PlayerAuthenticator.ValidateClientID(joinMessage.Token, gameserverId);
+
+                clientId = this.PlayerAuthenticator.ValidateClientID(joinMessage.Token, this.GameServerID);
 
                 var myQueue = new ConcurrentQueue<GameServerMessageBase>();
                 bool clientExistsAlready = false;

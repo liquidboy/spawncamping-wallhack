@@ -1,6 +1,7 @@
 ﻿namespace Backend.GrainImplementations
 {
     using Backend.GrainInterfaces;
+    using Frontend.Library.Models;
     using System;
     using System.Threading.Tasks;
 

@@ -1,10 +1,10 @@
 ﻿namespace Backend.GrainImplementations
 {
+    using Backend.GameLogic.Models;
     using Backend.GrainInterfaces;
+    using Frontend.Library.Models;
     using System;
     using System.Threading.Tasks;
-    using Backend.GrainInterfaces;
-    using Backend.GameLogic.Models;
 
     public class Gamer
     {

@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Frontend.Library.Models;
 
     [Reentrant]
     public class LobbyGrain : 

@@ -7,6 +7,8 @@
 
     using Backend.GrainInterfaces;
     using Orleans;
+    using Frontend.Library.Models;
+    using System;
 
     [StorageProvider(ProviderName = "GameServerState")]
     public class GameServerGrain : GrainBase<IGameServerGrainState>, IGameServerGrain
@@ -33,8 +35,11 @@
             // start game server process here
             var gameServerParams = new GameServerStartParams
             {
-                GameServerID = this.GetPrimaryKey()
+                GameServerID = new GameServerID { ID = this.GetPrimaryKey() }
             };
+
+            gameServerParams.GameServerID.ID = Guid.Parse("9c02e618-bc51-4c41-ae8d-f6d0d2a913c8");             // TODO DELETE THIS LINE
+
 
             Trace.TraceInformation(string.Format("Create game server process for GameID {0}", gameServerParams.GameServerID));
  

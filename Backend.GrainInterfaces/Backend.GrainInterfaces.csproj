@@ -44,9 +44,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyGrainInterfaces.cs" />
+    <Compile Include="IGameServerGrain.cs" />
+    <Compile Include="IGameServerGrainState.cs" />
+    <Compile Include="ILobbyGrain.cs" />
+    <Compile Include="ILobbyGrainState.cs" />
+    <Compile Include="IPlayerGrain.cs" />
+    <Compile Include="IPlayerGrainState.cs" />
+    <Compile Include="IPlayerObserver.cs" />
+    <Compile Include="IPlayerRegistrationGrain.cs" />
     <Compile Include="Properties\orleans.codegen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Frontend.Library\Frontend.Library.csproj">
+      <Project>{ae5fc089-41f1-4af2-affa-1ff305989ba3}</Project>
+      <Name>Frontend.Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

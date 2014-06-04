@@ -15,6 +15,7 @@
 
     using Messages;
     using Models;
+    using Frontend.Library.Models;
 
     /// <summary>
     /// Authenticates JSON Web Tokens in the scope of the game. The LobbyServer issues these tokens, and the GameServer instances consume them. 
@@ -26,14 +27,14 @@
             this._synchroniedKey = secretKey;
         }
 
-        public GameServerUserToken CreatePlayerToken(ClientID clientID, string gameserverId)
+        public GameServerUserToken CreatePlayerToken(ClientID clientID, GameServerID gameserverId)
         {
             var name = clientID.ID.ToString();
 
             return new GameServerUserToken { Credential = CreatePlayerTokenImpl(name, gameserverId) };
         }
 
-        public ClientID ValidateClientID(GameServerUserToken token, string gameserverId)
+        public ClientID ValidateClientID(GameServerUserToken token, GameServerID gameserverId)
         {
             var name = ValidateAndGetNameImpl(token.Credential, gameserverId);
 
@@ -44,14 +45,14 @@
 
         private byte[] _synchroniedKey;
 
-        private string ComposeAudienceUrl(string gameserverId)
+        private string ComposeAudienceUrl(GameServerID gameserverId)
         {
-            return string.Format("game://{0}", gameserverId);
+            return string.Format("game://{0}", gameserverId.ID.ToString());
         }
 
         private readonly string _validIssuer = "lobbyservice";
 
-        private string CreatePlayerTokenImpl(string name, string gameserverId)
+        private string CreatePlayerTokenImpl(string name, GameServerID gameserverId)
         {
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -75,7 +76,7 @@
             return tokenHandler.WriteToken(token);
         }
 
-        private string ValidateAndGetNameImpl(string tokenString, string gameserverId)
+        private string ValidateAndGetNameImpl(string tokenString, GameServerID gameserverId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var validationParameters = new TokenValidationParameters()

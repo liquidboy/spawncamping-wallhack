@@ -4,12 +4,13 @@
     using System.Linq;
     using System.Collections.Generic;
     using System;
+    using Frontend.Library.Models;
 
     public class LoginToLobbyResponseMessage : GameServerMessageBase
     {
         public IPEndPoint GameServer { get; private set; }
 
-        public Guid GameServerID { get; private set; }
+        public GameServerID GameServerID { get; private set; }
 
         public int InnergameServerPort { get; private set; }
 
@@ -17,7 +18,7 @@
 
         public LoginToLobbyResponseMessage() { }
 
-        public LoginToLobbyResponseMessage(IPEndPoint gameServer, int innergameServerPort, GameServerUserToken token, Guid gameServerID) 
+        public LoginToLobbyResponseMessage(IPEndPoint gameServer, int innergameServerPort, GameServerUserToken token, GameServerID gameServerID) 
         {
             this.GameServer = gameServer;
             this.InnergameServerPort = innergameServerPort;
@@ -37,7 +38,7 @@
             {
                 Credential = this.Args[3]
             };
-            this.GameServerID = Guid.Parse(this.Args[4]);
+            this.GameServerID = new GameServerID { ID = Guid.Parse(this.Args[4]) };
         }
 
         public override void PreWrite()
@@ -49,7 +50,7 @@
                 this.GameServer.Port.ToString(),
                 this.InnergameServerPort.ToString(),
                 this.Token.Credential,
-                this.GameServerID.ToString()
+                this.GameServerID.ID.ToString()
             };
         }
     }

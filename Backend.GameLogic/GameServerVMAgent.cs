@@ -13,6 +13,7 @@
     using Security;
     using Configuration;
     using Microsoft.DPE.Samples.ChGeuer;
+    using Frontend.Library.Models;
 
     /// <summary>
     /// Manages the game server processes on a virtual machine. 
@@ -34,6 +35,8 @@
         private CloudTable m_table;
         private const string lobbyServiceTableName = "gameserveragents";
 
+        private readonly GameServerID gameServerId = new GameServerID { ID = Guid.Parse("9c02e618-bc51-4c41-ae8d-f6d0d2a913c8") };
+
         void IPartImportsSatisfiedNotification.OnImportsSatisfied() 
         {
             var storageAccount = CloudStorageAccount.Parse(this.SharedSettings.StorageConnectionString);
@@ -50,7 +53,8 @@
                 {
                     this.Settings.ProxyIPEndPoint.Address,
                     internalServerPort,
-                    this.SymmetricKeyGenerator.GetKeyForGameServer()
+                    this.SymmetricKeyGenerator.GetKeyForGameServer(),
+                    gameServerId.ID.ToString()
                 });
 
                 var process = new Process
