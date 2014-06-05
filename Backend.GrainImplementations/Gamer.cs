@@ -1,43 +1,32 @@
 ﻿namespace Backend.GrainImplementations
 {
-    using GameLogic.Models;
+    using System.Threading.Tasks;
     using GrainInterfaces;
     using Frontend.Library.Models;
-    using System;
-    using System.Threading.Tasks;
+    using Backend.GameLogic.Models;
 
     public class Gamer
     {
-        public ClientID Id { get; private set; }
-        public IPlayerRegistrationGrain PlayerGrain { get; private set; }
-        public PlayerObserver PlayerObserver { get; private set; }
+        private TaskCompletionSource<GameServerStartParams> _tcs = new TaskCompletionSource<GameServerStartParams>();
+        private PlayerObserver _playerObserver;
+        private IPlayerRegistrationGrain _playerGrain;
 
         private Gamer() { }
 
-        private static async Task<Gamer> CreateAsync(ClientID clientId, Action<GameServerStartParams> onGameServerStarted)
+        public static async Task<Gamer> ConstructorAsync(ClientID clientId)
         {
-            if (onGameServerStarted == null) throw new ArgumentNullException("onGameServerStarted");
+            var gamer = new Gamer();
 
-            var gamer = new Gamer { Id = clientId };
-            gamer.PlayerGrain = PlayerRegistrationGrainFactory.GetGrain(gamer.Id.ID);
-            gamer.PlayerObserver = await PlayerObserver.CreateAsync(onGameServerStarted);
-
-            await gamer.PlayerObserver.Subscribe(gamer.PlayerGrain);
+            gamer._playerGrain = PlayerRegistrationGrainFactory.GetGrain(clientId.ID);
+            gamer._playerObserver = await PlayerObserver.CreateAsync(val => gamer._tcs.TrySetResult(val));
 
             return gamer;
         }
 
-        public static async Task<GameServerStartParams> GetGameServerAsync(ClientID clientId)
+        public async Task<GameServerStartParams> GetAsync()
         {
-            GameServerStartParams startParams = null;
-            var gamer = await Gamer.CreateAsync(clientId, server => { startParams = server; });
-
-            while (startParams == null)
-            {
-                await Task.Delay(TimeSpan.FromMilliseconds(50));
-            }
-
-            return startParams;
+            await this._playerObserver.Subscribe(this._playerGrain);
+            return await _tcs.Task;
         }
     }
 }
