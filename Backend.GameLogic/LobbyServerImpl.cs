@@ -53,8 +53,11 @@
                 }
                 var clientId = loginrequest.ClientID;
 
-                var gamer = await Gamer.ConstructorAsync(clientId);
-                var startParams = await gamer.GetAsync();
+                //var gamer = await Gamer.ConstructorAsync(clientId);
+                //var startParams = await gamer.GetAsync();
+
+                var startParams = await Gamer.GetAsync(clientId);
+
 
                 var gameserverId = startParams.GameServerID;
                 var innerGameServerPort = 4002;
