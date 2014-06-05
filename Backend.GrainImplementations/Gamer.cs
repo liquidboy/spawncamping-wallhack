@@ -13,6 +13,7 @@
 
         private Gamer() { }
 
+
         public static async Task<Gamer> ConstructorAsync(ClientID clientId)
         {
             var gamer = new Gamer();
@@ -27,6 +28,22 @@
         {
             await this._playerObserver.Subscribe(this._playerGrain);
             return await _tcs.Task;
+        }
+
+
+        private static async Task<GameServerStartParams> GetGameServer_DOES_NOT_WORK_Async(ClientID clientId)
+        {
+            // This function does not work:
+            //
+            // Object associated with Grain ID *cliObj/d2a24dbb has been garbage collected. 
+            // Deleting object reference and unregistering it. Backend.GrainInterfaces.IPlayerObserver:GameServerStarts()	
+
+            var taskCompletionSource = new TaskCompletionSource<GameServerStartParams>();
+            var grain = PlayerRegistrationGrainFactory.GetGrain(clientId.ID);
+            var observer = await PlayerObserver.CreateAsync(val => taskCompletionSource.TrySetResult(val));
+            await observer.Subscribe(grain);
+
+            return await taskCompletionSource.Task;
         }
     }
 }
