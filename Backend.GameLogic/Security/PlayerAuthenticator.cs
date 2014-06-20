@@ -69,7 +69,7 @@
                 SigningCredentials = new SigningCredentials(
                     new InMemorySymmetricSecurityKey(this._synchroniedKey),
                     "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256",
-                    "http://www.w3.org/2001/04/xmlenc#sha256"),
+                    "http://www.w3.org/2001/04/xmlenc#sha256") 
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);

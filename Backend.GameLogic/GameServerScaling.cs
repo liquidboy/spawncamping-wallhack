@@ -26,14 +26,13 @@
         {
             var subscriptionID = this.LobbyServiceSettings.SubscriptionID;
             var subscriptionManagementCertificateThumbprint = this.LobbyServiceSettings.SubscriptionManagementCertificateThumbprint;
-            var cloudServiceName = this.LobbyServiceSettings.GameServerCloudServiceName;
 
-            this.agent = new Scaling.ScalingAgent(subscriptionID, subscriptionManagementCertificateThumbprint, cloudServiceName);
+            this.agent = new Scaling.ScalingAgent(subscriptionID, subscriptionManagementCertificateThumbprint);
         }
 
         public async Task ScaleAsync()
         {
-            await this.agent.ScaleAsync();
+            // await this.agent.ScaleAsync();
         }
     }
 }
