@@ -1,13 +1,27 @@
 ﻿namespace ManagementClientSample
 {
     using Backend.GameLogic.Scaling;
+    using System;
     using System.Threading.Tasks;
 
     class Program
     {
         static void Main(string[] args)
         {
-            RunAsync().Wait();
+            try
+            {
+                RunAsync().Wait();
+            }
+            catch (AggregateException ae)
+            {
+                foreach (var e1 in ae.InnerExceptions)
+                {
+                    for (var e = e1; e != null; e = e.InnerException)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
         }
 
         static async Task RunAsync()

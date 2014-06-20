@@ -2,25 +2,24 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
+    using System.Dynamic;
     using System.Linq;
     using System.Security.Cryptography.X509Certificates;
-    using System.Threading;
+    using System.Text;
     using System.Threading.Tasks;
-    using System.Xml.Linq;
+
     using Microsoft.WindowsAzure;
     using Microsoft.WindowsAzure.Management;
     using Microsoft.WindowsAzure.Management.Compute;
     using Microsoft.WindowsAzure.Management.Compute.Models;
     using Microsoft.WindowsAzure.Management.Scheduler;
     using Microsoft.WindowsAzure.Management.Storage;
+    using Microsoft.WindowsAzure.Management.Storage.Models;
     using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Blob;
-    using System.Text;
-    using Newtonsoft.Json;
-using Microsoft.WindowsAzure.Management.Storage.Models;
     using Microsoft.WindowsAzure.Storage.Auth;
+    using Microsoft.WindowsAzure.Storage.Blob;
+    
+    using Newtonsoft.Json;
 
     public class ScalingAgent
     {
@@ -73,6 +72,8 @@ using Microsoft.WindowsAzure.Management.Storage.Models;
             var imageLabel = "Windows Server 2012 R2 Datacenter, May 2014";
 
             var vmname = string.Format("cgp{0}", System.DateTime.UtcNow.ToString("yyMMddhhmmss"));
+            vmname = "cgp140620070845";
+
             var imageName = (await computeManagementClient.VirtualMachineOSImages.ListAsync())
                 .Where(_ => _.Category == "Public" && _.Label == imageLabel)
                 .First().Name;
@@ -89,19 +90,22 @@ using Microsoft.WindowsAzure.Management.Storage.Models;
                 storageAccount.Name, vmname);
 
             var role = new Role
-            {
-                RoleName = vmname,
-                Label = vmname,
-                RoleSize = instanceSize,
-                VMImageName = imageName,
-                ProvisionGuestAgent = true,
-                RoleType = "PersistentVMRole",
-                OSVirtualHardDisk = new OSVirtualHardDisk
                 {
-                    HostCaching = "ReadWrite",
-                    MediaLink = new Uri(osDiskMediaLocation)
+                    RoleName = vmname,
+                    Label = vmname,
+                    RoleSize = instanceSize,
+                    // VMImageName = imageName,
+                    ProvisionGuestAgent = true,
+                    RoleType = "PersistentVMRole",
+                    OSVirtualHardDisk = new OSVirtualHardDisk
+                    {
+                        HostCaching = "ReadWrite",
+                        MediaLink = new Uri(osDiskMediaLocation), 
+                        Name = vmname, 
+                        Label = vmname,
+                        SourceImageName = imageName
+                    }
                 }
-            }
                 .AddWindowsProvisioningConfiguration(
                     computerName: vmname,
                     adminUserName: adminuser,
@@ -123,13 +127,22 @@ using Microsoft.WindowsAzure.Management.Storage.Models;
                     filename: "cgp140620110755.ps1", 
                     arguments: "c:\\hello_from_customscriptextension");
 
+
+            //await this.computeManagementClient.HostedServices.CreateAsync(new HostedServiceCreateParameters 
+            //{ 
+            //    ServiceName = vmname, 
+            //    Label = vmname, 
+            //    Description = vmname,
+            //    Location = datacenter
+            //});
+
             await computeManagementClient.VirtualMachines.CreateDeploymentAsync(
                 serviceName: vmname,
                 parameters: new VirtualMachineCreateDeploymentParameters
                 {
                     Name = vmname,
                     Label = vmname,
-                    DeploymentSlot = DeploymentSlot.Production,
+                    // DeploymentSlot = DeploymentSlot.Production,
                     Roles = new List<Role> { role }
                 });
         }
@@ -145,7 +158,7 @@ using Microsoft.WindowsAzure.Management.Storage.Models;
             return new Uri(address);
         }
 
-        public static void CreateVMDeployment(IVirtualMachineOperations operations, string cloudServiceName, string deploymentName, List<Role> roleList, DeploymentSlot slot = DeploymentSlot.Production)
+        public static async void CreateVMDeploymentAsync(IVirtualMachineOperations operations, string cloudServiceName, string deploymentName, List<Role> roleList, DeploymentSlot slot = DeploymentSlot.Production)
         {
             try
             {
@@ -156,7 +169,7 @@ using Microsoft.WindowsAzure.Management.Storage.Models;
                     Roles = roleList,
                     DeploymentSlot = slot
                 };
-                operations.CreateDeployment(cloudServiceName, createDeploymentParams);
+                await operations.CreateDeploymentAsync(cloudServiceName, createDeploymentParams);
             }
             catch (CloudException e)
             {
@@ -330,45 +343,31 @@ using Microsoft.WindowsAzure.Management.Storage.Models;
             });
         }
 
-        internal class PrivateConfigParameter
-        {
-            public string storageAccountName { get; set; }
-            public string storageAccountKey { get; set; }
-        }
-
-        internal class PublicConfigParameter
-        {
-            public string[] fileUris { get; set; }
-            public string commandToExecute { get; set; }
-        }
-
         public static Role AddCustomScriptExtension(this Role role, 
             CloudStorageAccount storageAccount, string containerName, string filename, string arguments)
         {
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
             CloudBlockBlob script = blobClient.GetContainerReference(containerName).GetBlockBlobReference(filename);
 
-            var publicCfg = new PublicConfigParameter
-            { 
-                fileUris = new[] { string.Format("{0}{1}", 
+            dynamic publicCfg = new ExpandoObject();
+            publicCfg.fileUris = new string[] 
+            {
+                string.Format("{0}{1}", 
                     script.Uri.ToString(), 
                     script.GetSharedAccessSignature(
                         new SharedAccessBlobPolicy
                         {
                             Permissions = SharedAccessBlobPermissions.Read,
                             SharedAccessExpiryTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(50))
-                        })) },
-                commandToExecute = string.Format(
+                        })) 
+            };
+            publicCfg.commandToExecute = string.Format(
                     "powershell -ExecutionPolicy Unrestricted -file {0} {1}", 
-                    script.Name, arguments)
-                             
-            };
+                    script.Name, arguments);
 
-            var privateCfg = new PrivateConfigParameter
-            {
-                storageAccountName = storageAccount.Credentials.AccountName,
-                storageAccountKey = storageAccount.Credentials.ExportBase64EncodedKey()
-            };
+            dynamic privateCfg = new ExpandoObject();
+            privateCfg.storageAccountName = storageAccount.Credentials.AccountName;
+            privateCfg.storageAccountKey = storageAccount.Credentials.ExportBase64EncodedKey();
 
             return role.AddExtension(new ResourceExtensionReference
             {
@@ -379,16 +378,10 @@ using Microsoft.WindowsAzure.Management.Storage.Models;
                 State = "Enable",
                 ResourceExtensionParameterValues = new List<ResourceExtensionParameterValue> 
                 {
-                    new ResourceExtensionParameterValue { Key = "CustomScriptExtensionPublicConfigParameter", Value = publicCfg.ToBase64EncodedJson(), Type = "Public", },
-                    new ResourceExtensionParameterValue { Key = "CustomScriptExtensionPrivateConfigParameter", Value = privateCfg.ToBase64EncodedJson(), Type = "Private" }
+                    new ResourceExtensionParameterValue { Key = "CustomScriptExtensionPublicConfigParameter", Value = JsonConvert.SerializeObject(publicCfg), Type = "Public", },
+                    new ResourceExtensionParameterValue { Key = "CustomScriptExtensionPrivateConfigParameter", Value = JsonConvert.SerializeObject(privateCfg), Type = "Private" }
                 }
             });
-        }
-
-        public static string ToBase64EncodedJson(this object value)
-        {
-            var json = JsonConvert.SerializeObject(value);
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
         }
 
         public static async Task<CloudStorageAccount> ToCloudStorageAccountAsync(this StorageManagementClient managementClient, StorageAccount storageAccountFromManagementAPI)
