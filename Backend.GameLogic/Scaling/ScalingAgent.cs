@@ -89,6 +89,23 @@
             var osDiskMediaLocation = string.Format("https://{0}.blob.core.windows.net/vhds/{1}-OSDisk.vhd",
                 storageAccount.Name, vmname);
 
+
+
+            var containerName = "scripts";
+            var filename = "cgp140620110755.ps1";
+            var realStorageAccount = await storageManagementClient.ToCloudStorageAccountAsync(storageAccount);
+            CloudBlobClient blobClient = realStorageAccount.CreateCloudBlobClient();
+            CloudBlobContainer container = blobClient.GetContainerReference(containerName);
+            await container.CreateIfNotExistsAsync();
+            CloudBlockBlob script = container.GetBlockBlobReference(filename);
+            await script.UploadTextAsync(@"
+param($dir)
+mkdir $dir
+mkdir C:\testdir
+");
+
+
+
             var role = new Role
                 {
                     RoleName = vmname,
@@ -122,9 +139,9 @@
                     })
                 .AddBGInfoExtension()
                 .AddCustomScriptExtension(
-                    storageAccount: await storageManagementClient.ToCloudStorageAccountAsync(storageAccount), 
+                    storageAccount: realStorageAccount, 
                     containerName: "scripts", 
-                    filename: "cgp140620110755.ps1", 
+                    filename: "cgp140620110755.ps1",
                     arguments: "c:\\hello_from_customscriptextension");
 
 
@@ -368,6 +385,8 @@
             dynamic privateCfg = new ExpandoObject();
             privateCfg.storageAccountName = storageAccount.Credentials.AccountName;
             privateCfg.storageAccountKey = storageAccount.Credentials.ExportBase64EncodedKey();
+
+            
 
             return role.AddExtension(new ResourceExtensionReference
             {
