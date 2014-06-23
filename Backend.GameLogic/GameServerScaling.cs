@@ -27,7 +27,7 @@
             var subscriptionID = this.LobbyServiceSettings.SubscriptionID;
             var subscriptionManagementCertificateThumbprint = this.LobbyServiceSettings.SubscriptionManagementCertificateThumbprint;
 
-            this.agent = new Scaling.ScalingAgent(subscriptionID, subscriptionManagementCertificateThumbprint);
+            this.agent = new Scaling.ScalingAgent(subscriptionID, subscriptionManagementCertificateThumbprint, StoreLocation.LocalMachine);
         }
 
         public async Task ScaleAsync()

@@ -2,11 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Dynamic;
     using System.Linq;
     using System.Security.Cryptography.X509Certificates;
-    using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
+    using System.Xml.Linq;
 
     using Microsoft.WindowsAzure;
     using Microsoft.WindowsAzure.Management;
@@ -18,27 +20,20 @@
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Auth;
     using Microsoft.WindowsAzure.Storage.Blob;
-    
+
     using Newtonsoft.Json;
 
     public class ScalingAgent
     {
-        private string subscriptionID;
-        private string subscriptionManagementCertificateThumbprint;
+        private readonly ComputeManagementClient computeManagementClient;
+        private readonly StorageManagementClient storageManagementClient;
+        private readonly CloudServiceManagementClient cloudServiceManagementClient;
+        private readonly ManagementClient managementClient;
 
-        private ComputeManagementClient computeManagementClient;
-        private StorageManagementClient storageManagementClient;
-        private CloudServiceManagementClient cloudServiceManagementClient;
-        private ManagementClient managementClient;
-
-
-        public ScalingAgent(string subscriptionID, string subscriptionManagementCertificateThumbprint)
+        public ScalingAgent(string subscriptionID, string subscriptionManagementCertificateThumbprint, StoreLocation storeLocation)
         {
-            this.subscriptionID = subscriptionID;
-            this.subscriptionManagementCertificateThumbprint = subscriptionManagementCertificateThumbprint;
-
-            X509Certificate2 managementCert = this.subscriptionManagementCertificateThumbprint.FindX509CertificateByThumbprint();
-            SubscriptionCloudCredentials creds = new CertificateCloudCredentials(this.subscriptionID, managementCert);
+            X509Certificate2 managementCert = subscriptionManagementCertificateThumbprint.FindX509CertificateByThumbprint(storeLocation);
+            SubscriptionCloudCredentials creds = new CertificateCloudCredentials(subscriptionID, managementCert);
 
             this.computeManagementClient = CloudContext.Clients.CreateComputeManagementClient(creds);
             this.storageManagementClient = CloudContext.Clients.CreateStorageManagementClient(creds);
@@ -46,65 +41,40 @@
             this.managementClient = CloudContext.Clients.CreateManagementClient(creds);
         }
 
+
         public async Task ScaleAsync()
         {
-            //foreach (var s in (await this.computeManagementClient.HostedServices.ListAsync()))
-            //{
-            //    Console.WriteLine(s.ServiceName);
-            //}
-
-            //foreach (var s in (await this.managementClient.RoleSizes.ListAsync()).Where(_ => _.SupportedByVirtualMachines).OrderBy(_ => _.Cores))
-            //{
-            //    Console.WriteLine("Name {0}", s.Name);
-            //}
-
-            //foreach (var s in await managementClient.Locations.ListAsync())
-            //{
-            //    Console.WriteLine("Location name {0} dieplay \"{1}\"", s.Name, s.DisplayName);
-            //}
-
-            //foreach (var s in await storageManagementClient.StorageAccounts.ListAsync())
-            //{
-            //    Console.WriteLine("Storage  {0} region {1}", s.Name, s.Properties.GeoPrimaryRegion);
-            //}
-
-
-            var imageLabel = "Windows Server 2012 R2 Datacenter, May 2014";
-
             var vmname = string.Format("cgp{0}", System.DateTime.UtcNow.ToString("yyMMddhhmmss"));
-            vmname = "cgp140620070845";
+            var imageLabel = "Windows Server 2012 R2 Datacenter, May 2014";
+            var datacenter = "West Europe";
+            var adminuser = "chgeuer";
+            var adminpass = Environment.GetEnvironmentVariable("AzureVmAdminPassword");
+            var instanceSize = "Basic_A2";
+            var externalRdpPort = 54523;
 
             var imageName = (await computeManagementClient.VirtualMachineOSImages.ListAsync())
                 .Where(_ => _.Category == "Public" && _.Label == imageLabel)
                 .First().Name;
 
-            var instanceSize = "Basic_A0";
-            var datacenter = "West Europe";
-            var adminuser = "chgeuer";
-            var externalRdpPort = 54523;
-            var adminpass = Environment.GetEnvironmentVariable("AzureVmAdminPassword");
-
-            var storageAccount = (await storageManagementClient.StorageAccounts.ListAsync()).Where(_ => _.Properties.Location == datacenter).First();
+            var storageAccount = (await storageManagementClient.StorageAccounts.ListAsync())
+                .Where(_ => _.Properties.Location == datacenter).First();
 
             var osDiskMediaLocation = string.Format("https://{0}.blob.core.windows.net/vhds/{1}-OSDisk.vhd",
                 storageAccount.Name, vmname);
 
-
-
             var containerName = "scripts";
-            var filename = "cgp140620110755.ps1";
+            var filename = string.Format("cgp{0}.ps1", vmname);
             var realStorageAccount = await storageManagementClient.ToCloudStorageAccountAsync(storageAccount);
             CloudBlobClient blobClient = realStorageAccount.CreateCloudBlobClient();
             CloudBlobContainer container = blobClient.GetContainerReference(containerName);
             await container.CreateIfNotExistsAsync();
             CloudBlockBlob script = container.GetBlockBlobReference(filename);
+
             await script.UploadTextAsync(@"
-param($dir)
-mkdir $dir
-mkdir C:\testdir
-");
-
-
+                param($dir)
+                mkdir $dir
+                mkdir C:\testdir
+                ");
 
             var role = new Role
                 {
@@ -137,7 +107,7 @@ mkdir C:\testdir
                         Port = externalRdpPort,
                         LocalPort = 3389
                     })
-                .AddBGInfoExtension()
+                // .AddBGInfoExtension()
                 .AddCustomScriptExtension(
                     storageAccount: realStorageAccount, 
                     containerName: "scripts", 
@@ -145,119 +115,108 @@ mkdir C:\testdir
                     arguments: "c:\\hello_from_customscriptextension");
 
 
-            //await this.computeManagementClient.HostedServices.CreateAsync(new HostedServiceCreateParameters 
-            //{ 
-            //    ServiceName = vmname, 
-            //    Label = vmname, 
-            //    Description = vmname,
-            //    Location = datacenter
-            //});
+            var services = await this.computeManagementClient.HostedServices.ListAsync();
+            if (services.Count(_ => _.ServiceName == vmname) == 0) 
+            {
 
-            await computeManagementClient.VirtualMachines.CreateDeploymentAsync(
+                Console.WriteLine("Create hosted service {0}", vmname);
+                await this.computeManagementClient.HostedServices.CreateAsync(new HostedServiceCreateParameters
+                {
+                    ServiceName = vmname,
+                    Label = vmname,
+                    Description = vmname,
+                    Location = datacenter
+                });
+            }
+
+            Console.WriteLine("Create deployment {0}", vmname);
+            var status = await computeManagementClient.VirtualMachines.CreateDeploymentAsync(
                 serviceName: vmname,
                 parameters: new VirtualMachineCreateDeploymentParameters
                 {
                     Name = vmname,
                     Label = vmname,
-                    // DeploymentSlot = DeploymentSlot.Production,
+                    DeploymentSlot = DeploymentSlot.Production, 
                     Roles = new List<Role> { role }
                 });
-        }
 
-        private static Uri GetVhdUri(string blobcontainerAddress,
-            string cloudServiceName, string vmName, bool cacheDisk = false, bool https = false)
-        {
-            var now = DateTime.UtcNow;
-            string dateString = now.Year + "-" + now.Month + "-" + now.Day;
-
-            var address = string.Format("http{0}://{1}/{2}-{3}-{4}-{5}-650.vhd", https ? "s" :
-                string.Empty, blobcontainerAddress, cloudServiceName, vmName, cacheDisk ? "-CacheDisk" : string.Empty, dateString);
-            return new Uri(address);
-        }
-
-        public static async void CreateVMDeploymentAsync(IVirtualMachineOperations operations, string cloudServiceName, string deploymentName, List<Role> roleList, DeploymentSlot slot = DeploymentSlot.Production)
-        {
-            try
+            Console.WriteLine("Status: {0}", status.Status.ToString());
+            if (status.Error != null)
             {
-                VirtualMachineCreateDeploymentParameters createDeploymentParams = new VirtualMachineCreateDeploymentParameters
-                {
-                    Name = deploymentName,
-                    Label = cloudServiceName,
-                    Roles = roleList,
-                    DeploymentSlot = slot
-                };
-                await operations.CreateDeploymentAsync(cloudServiceName, createDeploymentParams);
-            }
-            catch (CloudException e)
-            {
-                throw e;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: {0}", status.Error.Message);
+                Console.ResetColor();
             }
         }
 
-        //public async Task ScaleAsync()
-        //{
-        //    var detailed = await computeManagementClient.HostedServices.GetDetailedAsync(serviceName);
-        //    var deployment = detailed.Deployments.First(_ => _.DeploymentSlot == DeploymentSlot.Production);
-        //    var doc = XDocument.Parse(deployment.Configuration);
-        //
-        //    setInstanceCount(doc, Names.GameRole.Name, 5);
-        //
-        //    var operationResponse = await computeManagementClient.Deployments.BeginChangingConfigurationBySlotAsync(
-        //            serviceName: detailed.ServiceName,
-        //            deploymentSlot: deployment.DeploymentSlot,
-        //            cancellationToken: CancellationToken.None,
-        //            parameters: new DeploymentChangeConfigurationParameters()
-        //            {
-        //                Configuration = doc.ToString()
-        //            });
-        //
-        //    if (operationResponse.StatusCode != System.Net.HttpStatusCode.OK)
-        //    {
-        //        Trace.TraceError(string.Format(
-        //                    "Problem scaling: HTTPStatus: {0} RequestID {1}",
-        //                    operationResponse.StatusCode.ToString(),
-        //                    operationResponse.RequestId));
-        //    }
-        //
-        //    Trace.TraceInformation(string.Format(
-        //                "Scaling done: HTTPStatus: {0} RequestID {1}",
-        //                operationResponse.StatusCode.ToString(),
-        //                operationResponse.RequestId));
-        //}
-        //
-        //private static XName n(string name)
-        //{
-        //    return XName.Get(name,
-        //        "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration");
-        //}
-        //
-        //private static int getInstanceCount(XDocument doc, string rolename)
-        //{
-        //    var role = doc.Root.Elements(n("Role")).FirstOrDefault(_ => _.Attribute("name").Value == rolename);
-        //    if (role == null) return -1;
-        //    var v = role.Element(n("Instances")).Attribute("count").Value;
-        //    return int.Parse(v);
-        //}
-        //
-        //private static void setInstanceCount(XDocument doc, string rolename, int newInstanceCount)
-        //{
-        //    if (newInstanceCount < 1)
-        //    {
-        //        newInstanceCount = 1;
-        //    }
+        #region PaaS scaling
 
-        //    var role = doc.Root.Elements(n("Role")).FirstOrDefault(_ => _.Attribute("name").Value == rolename);
-        //    role.Element(n("Instances")).Attribute("count").Value = newInstanceCount.ToString();
-        //}
+        public async Task ScalePaaSAsync(string serviceName)
+        {
+            var roleName = "Cloud.SampleWorkerRole";
+            var detailed = await computeManagementClient.HostedServices.GetDetailedAsync(serviceName);
+            var deployment = detailed.Deployments.First(_ => _.DeploymentSlot == DeploymentSlot.Production);
+            var doc = XDocument.Parse(deployment.Configuration);
 
-        //private static void changeInstanceCount(XDocument doc, string rolename, int deltaCount)
-        //{
-        //    int oldCount = getInstanceCount(doc, rolename);
-        //    var newCount = oldCount + deltaCount;
-        //    setInstanceCount(doc, rolename, newCount);
-        //}
+            setInstanceCount(doc, roleName, 5);
+
+            var operationResponse = await computeManagementClient.Deployments.BeginChangingConfigurationBySlotAsync(
+                    serviceName: detailed.ServiceName,
+                    deploymentSlot: deployment.DeploymentSlot,
+                    cancellationToken: CancellationToken.None,
+                    parameters: new DeploymentChangeConfigurationParameters()
+                    {
+                        Configuration = doc.ToString()
+                    });
+
+            if (operationResponse.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                Trace.TraceError(string.Format(
+                            "Problem scaling: HTTPStatus: {0} RequestID {1}",
+                            operationResponse.StatusCode.ToString(),
+                            operationResponse.RequestId));
+            }
+
+            Trace.TraceInformation(string.Format(
+                        "Scaling done: HTTPStatus: {0} RequestID {1}",
+                        operationResponse.StatusCode.ToString(),
+                        operationResponse.RequestId));
+        }
+
+        private static XName n(string name)
+        {
+            return XName.Get(name,
+                "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration");
+        }
+
+        private static int getInstanceCount(XDocument doc, string rolename)
+        {
+            var role = doc.Root.Elements(n("Role")).FirstOrDefault(_ => _.Attribute("name").Value == rolename);
+            if (role == null) return -1;
+            var v = role.Element(n("Instances")).Attribute("count").Value;
+            return int.Parse(v);
+        }
+
+        private static void setInstanceCount(XDocument doc, string rolename, int newInstanceCount)
+        {
+            if (newInstanceCount < 1)
+            {
+                newInstanceCount = 1;
+            }
+
+            var role = doc.Root.Elements(n("Role")).FirstOrDefault(_ => _.Attribute("name").Value == rolename);
+            role.Element(n("Instances")).Attribute("count").Value = newInstanceCount.ToString();
+        }
+
+        private static void changeInstanceCount(XDocument doc, string rolename, int deltaCount)
+        {
+            int oldCount = getInstanceCount(doc, rolename);
+            var newCount = oldCount + deltaCount;
+            setInstanceCount(doc, rolename, newCount);
+        }
+
+        #endregion
     }
-
 
     public static class ScalingExtensions
     {
@@ -271,7 +230,10 @@ mkdir C:\testdir
             var configurationSet = role.ConfigurationSets.FirstOrDefault(_ => _.ConfigurationSetType == configurationSetType);
             if (configurationSet == null)
             {
-                configurationSet = new ConfigurationSet { ConfigurationSetType = configurationSetType };
+                configurationSet = new ConfigurationSet 
+                { 
+                    ConfigurationSetType = configurationSetType 
+                };
                 role.ConfigurationSets.Add(configurationSet);
             }
 
@@ -284,17 +246,32 @@ mkdir C:\testdir
         {
             var configurationSet = role.GetConfigurationSet("WindowsProvisioningConfiguration");
 
+            configurationSet.HostName = computerName;
             configurationSet.ComputerName = computerName;
             configurationSet.AdminUserName = adminUserName;
             configurationSet.AdminPassword = adminPassword;
             configurationSet.ResetPasswordOnFirstLogon |= resetPasswordOnFirstLogon;
             configurationSet.EnableAutomaticUpdates |= enableAutomaticUpdates;
 
-            // TimeZone = "",
-            // DomainJoin = new DomainJoinSettings { },
-            // StoredCertificateSettings = new List<StoredCertificateSettings> { new StoredCertificateSettings { StoreName = "My", Thumbprint = "..." }},
-            // WindowsRemoteManagement = new WindowsRemoteManagementSettings { Listeners = new List<WindowsRemoteManagementListener> { new WindowsRemoteManagementListener { ListenerType = VirtualMachineWindowsRemoteManagementListenerType.Https, CertificateThumbprint = "... "}}},
-            // CustomData = System.Convert.ToBase64String(), // Optional in WindowsProvisioningConfiguration. Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length of the binary array is 65535 bytes. The file is saved to %SYSTEMDRIVE%\AzureData\CustomData.bin. If the file exists, it is overwritten. The security on directory is set to System:Full Control and Administrators:Full Control.
+            //configurationSet.TimeZone = "";
+            //configurationSet.DomainJoin = new DomainJoinSettings 
+            //{ 
+            //    Credentials = new DomainJoinCredentials 
+            //    { 
+            //        Domain = "", 
+            //        UserName = "...", 
+            //        Password = "..." 
+            //    }, 
+            //    DomainToJoin = "...", 
+            //    LdapMachineObjectOU = "O=...",
+            //    Provisioning = new DomainJoinProvisioning
+            //    {
+            //         AccountData = "..."
+            //    } 
+            //};
+            //configurationSet.StoredCertificateSettings = new List<StoredCertificateSettings> { new StoredCertificateSettings { StoreName = "My", Thumbprint = "..." }},
+            //configurationSet.WindowsRemoteManagement = new WindowsRemoteManagementSettings { Listeners = new List<WindowsRemoteManagementListener> { new WindowsRemoteManagementListener { ListenerType = VirtualMachineWindowsRemoteManagementListenerType.Https, CertificateThumbprint = "... "}}},
+            //configurationSet.CustomData = System.Convert.ToBase64String(), // Optional in WindowsProvisioningConfiguration. Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length of the binary array is 65535 bytes. The file is saved to %SYSTEMDRIVE%\AzureData\CustomData.bin. If the file exists, it is overwritten. The security on directory is set to System:Full Control and Administrators:Full Control.
 
             return role;
         }
@@ -315,10 +292,16 @@ mkdir C:\testdir
         {
             var configurationSet = role.GetConfigurationSet("NetworkConfiguration");
 
-            if (configurationSet.InputEndpoints == null) { configurationSet.InputEndpoints = new List<InputEndpoint>(); }
+            if (configurationSet.InputEndpoints == null) 
+            { 
+                configurationSet.InputEndpoints = new List<InputEndpoint>(); 
+            }
 
             var existingInputEndpoint = configurationSet.InputEndpoints.FirstOrDefault(_ => _.Name == inputEndpoint.Name);
-            if (existingInputEndpoint != null) { configurationSet.InputEndpoints.Remove(existingInputEndpoint); }
+            if (existingInputEndpoint != null) 
+            { 
+                configurationSet.InputEndpoints.Remove(existingInputEndpoint); 
+            }
 
             configurationSet.InputEndpoints.Add(inputEndpoint);
 
@@ -366,6 +349,7 @@ mkdir C:\testdir
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
             CloudBlockBlob script = blobClient.GetContainerReference(containerName).GetBlockBlobReference(filename);
 
+
             dynamic publicCfg = new ExpandoObject();
             publicCfg.fileUris = new string[] 
             {
@@ -375,18 +359,20 @@ mkdir C:\testdir
                         new SharedAccessBlobPolicy
                         {
                             Permissions = SharedAccessBlobPermissions.Read,
-                            SharedAccessExpiryTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(50))
+                            SharedAccessExpiryTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(55))
                         })) 
             };
             publicCfg.commandToExecute = string.Format(
                     "powershell -ExecutionPolicy Unrestricted -file {0} {1}", 
                     script.Name, arguments);
+            string customScriptExtensionPublicConfigParameter = JsonConvert.SerializeObject(publicCfg);
+
 
             dynamic privateCfg = new ExpandoObject();
             privateCfg.storageAccountName = storageAccount.Credentials.AccountName;
             privateCfg.storageAccountKey = storageAccount.Credentials.ExportBase64EncodedKey();
+            var customScriptExtensionPrivateConfigParameter = JsonConvert.SerializeObject(privateCfg);
 
-            
 
             return role.AddExtension(new ResourceExtensionReference
             {
@@ -397,8 +383,18 @@ mkdir C:\testdir
                 State = "Enable",
                 ResourceExtensionParameterValues = new List<ResourceExtensionParameterValue> 
                 {
-                    new ResourceExtensionParameterValue { Key = "CustomScriptExtensionPublicConfigParameter", Value = JsonConvert.SerializeObject(publicCfg), Type = "Public", },
-                    new ResourceExtensionParameterValue { Key = "CustomScriptExtensionPrivateConfigParameter", Value = JsonConvert.SerializeObject(privateCfg), Type = "Private" }
+                    new ResourceExtensionParameterValue 
+                    { 
+                        Type = "Public", 
+                        Key = "CustomScriptExtensionPublicConfigParameter", 
+                        Value = customScriptExtensionPublicConfigParameter
+                    },
+                    new ResourceExtensionParameterValue 
+                    { 
+                        Type = "Private",
+                        Key = "CustomScriptExtensionPrivateConfigParameter", 
+                        Value = customScriptExtensionPrivateConfigParameter 
+                    }
                 }
             });
         }
@@ -410,12 +406,12 @@ mkdir C:\testdir
             return new CloudStorageAccount(new StorageCredentials(storageAccountFromManagementAPI.Name, keys.PrimaryKey), useHttps: true);
         }
 
-        public static X509Certificate2 FindX509CertificateByThumbprint(this string managementCertThumbprint)
+        public static X509Certificate2 FindX509CertificateByThumbprint(this string managementCertThumbprint, StoreLocation storeLocation)
         {
             return FindX509Certificate(managementCertThumbprint,
                 X509FindType.FindByThumbprint,
                 StoreName.My,
-                StoreLocation.LocalMachine);
+                storeLocation);
         }
 
         public static X509Certificate2 FindX509Certificate(this string findValue, X509FindType findType, StoreName storeName, StoreLocation storeLocation)
