@@ -110,8 +110,6 @@
             }
         }
 
-       
-
         #region IDisposable
 
         // Flag: Has Dispose already been called? 

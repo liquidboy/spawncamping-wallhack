@@ -14,7 +14,6 @@
         {
             Console.Title = "Backend.GameServer";
 
-
             if (args.Length != 4)
             {
                 Console.Error.WriteLine("Provide ip address (such as 127.0.0.1), TCP port and secret key (base64) as command line args");

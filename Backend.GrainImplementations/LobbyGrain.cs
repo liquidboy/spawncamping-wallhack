@@ -20,10 +20,11 @@
         async Task ILobbyGrain.RegisterPlayer(IPlayerGrain player, PlayerInfo playerInfo)
         {
             List<Tuple<IPlayerGrain, PlayerInfo>> playerSet = null;
+            var newPlayer = new Tuple<IPlayerGrain, PlayerInfo>(player, playerInfo);
 
             lock (_lock) // do the collection mgmt operations in a locked section, do awaiting the game server spawn outside
             {
-                this.playersInLobby.Add(new Tuple<IPlayerGrain, PlayerInfo>(player, playerInfo));
+                this.playersInLobby.Add(newPlayer);
                 if (this.playersInLobby.Count == MAX_PLAYERS)
                 {
                     playerSet = this.playersInLobby;

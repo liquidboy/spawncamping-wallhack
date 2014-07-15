@@ -14,6 +14,9 @@ namespace Cloud.GameServerHost.WorkerRole
     using Backend.GameLogic;
     using Backend.Utils.Networking;
     using Backend.GameLogic.Configuration;
+    using Microsoft.DPE.Samples.ChGeuer;
+    using System.Text;
+    using System.IO;
 
     public class GameServerWorkerRole : RoleEntryPoint
     {
@@ -39,40 +42,64 @@ namespace Cloud.GameServerHost.WorkerRole
             compositionContainer.SatisfyImportsOnce(this);
         }
 
+        private Func<Process> CreateProxyProcess()
+        {
+            return () =>
+            {
+                var arguments = new StringBuilder();
+                arguments.Append(string.Format(" {0}", this.Settings.ProxyIPEndPoint.Address.ToString()));
+                arguments.Append(string.Format(" {0}", this.Settings.ProxyIPEndPoint.Port.ToString()));
+
+                var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        WorkingDirectory = ".",
+                        FileName = "Backend.ProxyServer.exe",
+                        Arguments = arguments.ToString(),
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    },
+                    EnableRaisingEvents = true
+                };
+
+                //Func<string, string> getVariable = variable => process.StartInfo.EnvironmentVariables[variable];
+                //Action<string, string> setVariable = (variable, value) => process.StartInfo.EnvironmentVariables[variable] = value;
+                //setVariable("JAVA_HOME", relToTomcat(jdkFolder));
+
+                Action<DataReceivedEventArgs> outputDataReceived = args => Trace.WriteLine(args.Data, "stdout");
+                Action<DataReceivedEventArgs> errorDataReceived = args => Trace.WriteLine(args.Data, "stderr");
+
+                process.OutputDataReceived += (s, a) => outputDataReceived(a);
+                process.ErrorDataReceived += (s, a) => errorDataReceived(a);
+
+                return process;
+            };
+        }
+
+
         public override bool OnStart()
         {
             ServicePointManager.DefaultConnectionLimit = 64;
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.UseNagleAlgorithm = false;
 
-            #region Start TCP proxy
 
-            var proxyServerHost = new AsyncServerHost(this.Settings.ProxyIPEndPoint);
-            var defaultForwarderAddress = this.Settings.ProxyIPEndPoint.Address;
-            this.proxyTask = proxyServerHost.StartFunctional(async (client, ct) => await ProxyConnection.ProxyLogic(client, cts, defaultForwarderAddress), cts.Token);
+            var proxyHost = new RestartingProcessHost(CreateProxyProcess(), cts, 
+                RestartingProcessHost.RestartPolicy.IgnoreCrashes());
+            this.proxyTask = proxyHost.StartRunTask();
 
-            #endregion
 
             this.agentTask = this.agent.Start(cts);
 
             return base.OnStart();
         }
 
-        private async Task RunAsync(CancellationToken ct)
-        {
-            Trace.TraceInformation("Cloud.GameServerHost.WorkerRole entry point called", "Information");
-
-            while (!ct.IsCancellationRequested)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(10));
-
-                Trace.TraceInformation("Working", "Information");
-            }
-        }
 
         public override void Run()
         {
-            RunAsync(this.cts.Token).Wait();
+            Task.WaitAll(this.proxyTask, this.agentTask);
         }
 
         public override void OnStop()

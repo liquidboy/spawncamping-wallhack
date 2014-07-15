@@ -80,14 +80,14 @@
               <lifelineMoniker Id="06cb3654-e6fc-4e57-952e-d1668a2e1eff" LastKnownName="LobbyService" />
             </covered>
           </messageOccurrenceSpecification>
-          <messageOccurrenceSpecification Id="91ba2ad4-86c8-4371-baa4-8734c3342ff2" name="MessageOccurrenceSpecification">
-            <covered>
-              <lifelineMoniker Id="030d115b-b8d5-4d2a-882c-038bcb5249cd" LastKnownName="PlayerObserver 1" />
-            </covered>
-          </messageOccurrenceSpecification>
           <messageOccurrenceSpecification Id="e8795c72-6f6d-4026-9c0f-75fdced84fb6" name="MessageOccurrenceSpecification">
             <covered>
               <lifelineMoniker Id="06cb3654-e6fc-4e57-952e-d1668a2e1eff" LastKnownName="LobbyService" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification Id="91ba2ad4-86c8-4371-baa4-8734c3342ff2" name="MessageOccurrenceSpecification">
+            <covered>
+              <lifelineMoniker Id="030d115b-b8d5-4d2a-882c-038bcb5249cd" LastKnownName="PlayerObserver 1" />
             </covered>
           </messageOccurrenceSpecification>
           <executionOccurrenceSpecification Id="e2dfd25c-47aa-41e1-9634-e7cdaa54b839" name="ExecutionOccurrenceSpecification">
@@ -164,14 +164,14 @@
               <lifelineMoniker Id="2a83111b-4adb-4224-83da-1bb3bca7d93f" LastKnownName="PlayerGrain" />
             </covered>
           </executionOccurrenceSpecification>
-          <messageOccurrenceSpecification Id="2109a62d-b357-4d90-8507-a3095bf0d1c4" name="MessageOccurrenceSpecification">
-            <covered>
-              <lifelineMoniker Id="2a486f03-3c00-40fb-ae99-91de9257afbd" LastKnownName="PlayerRegistrationGrain" />
-            </covered>
-          </messageOccurrenceSpecification>
           <messageOccurrenceSpecification Id="cd87f581-e7e2-4881-9a44-c9bad8c7a59c" name="MessageOccurrenceSpecification">
             <covered>
               <lifelineMoniker Id="2a83111b-4adb-4224-83da-1bb3bca7d93f" LastKnownName="PlayerGrain" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification Id="2109a62d-b357-4d90-8507-a3095bf0d1c4" name="MessageOccurrenceSpecification">
+            <covered>
+              <lifelineMoniker Id="2a486f03-3c00-40fb-ae99-91de9257afbd" LastKnownName="PlayerRegistrationGrain" />
             </covered>
           </messageOccurrenceSpecification>
           <messageOccurrenceSpecification Id="996cbe68-7c0b-4e76-8939-6cb8ed0dfd26" name="MessageOccurrenceSpecification">
@@ -399,14 +399,14 @@
               <lifelineMoniker Id="2a83111b-4adb-4224-83da-1bb3bca7d93f" LastKnownName="PlayerGrain" />
             </covered>
           </executionOccurrenceSpecification>
-          <messageOccurrenceSpecification Id="c9e21536-c6db-44a4-bb8f-6c8bdb63bd4b" name="MessageOccurrenceSpecification">
-            <covered>
-              <lifelineMoniker Id="8a1c0842-9ff7-406e-812b-554cdf7c4991" LastKnownName="GameServerGrain" />
-            </covered>
-          </messageOccurrenceSpecification>
           <messageOccurrenceSpecification Id="63558aac-ed84-4cb6-8cff-ef81039064f2" name="MessageOccurrenceSpecification">
             <covered>
               <lifelineMoniker Id="2a83111b-4adb-4224-83da-1bb3bca7d93f" LastKnownName="PlayerGrain" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification Id="c9e21536-c6db-44a4-bb8f-6c8bdb63bd4b" name="MessageOccurrenceSpecification">
+            <covered>
+              <lifelineMoniker Id="8a1c0842-9ff7-406e-812b-554cdf7c4991" LastKnownName="GameServerGrain" />
             </covered>
           </messageOccurrenceSpecification>
           <behaviorExecutionSpecification Id="5134bf96-6b62-4b7a-8368-fd492b1a86a8" name="BehaviorExecutionSpecification">
@@ -469,17 +469,12 @@
               <lifelineMoniker Id="06cb3654-e6fc-4e57-952e-d1668a2e1eff" LastKnownName="LobbyService" />
             </covered>
           </executionOccurrenceSpecification>
-          <messageOccurrenceSpecification Id="6d6db7e7-e870-44ea-bf77-379b96e5cd88" name="MessageOccurrenceSpecification">
-            <covered>
-              <lifelineMoniker Id="030d115b-b8d5-4d2a-882c-038bcb5249cd" LastKnownName="PlayerObserver 1" />
-            </covered>
-          </messageOccurrenceSpecification>
           <messageOccurrenceSpecification Id="7c8c0472-c657-4e94-ac3d-47bcbf1b6e32" name="MessageOccurrenceSpecification">
             <covered>
               <lifelineMoniker Id="06cb3654-e6fc-4e57-952e-d1668a2e1eff" LastKnownName="LobbyService" />
             </covered>
           </messageOccurrenceSpecification>
-          <messageOccurrenceSpecification Id="1fe5dde7-b9bf-40aa-ad97-5ff733d7a052" name="MessageOccurrenceSpecification">
+          <messageOccurrenceSpecification Id="6d6db7e7-e870-44ea-bf77-379b96e5cd88" name="MessageOccurrenceSpecification">
             <covered>
               <lifelineMoniker Id="030d115b-b8d5-4d2a-882c-038bcb5249cd" LastKnownName="PlayerObserver 1" />
             </covered>
@@ -487,6 +482,11 @@
           <messageOccurrenceSpecification Id="b490d0f8-1210-46f6-aed9-ff9ef1020cb6" name="MessageOccurrenceSpecification">
             <covered>
               <lifelineMoniker Id="2a83111b-4adb-4224-83da-1bb3bca7d93f" LastKnownName="PlayerGrain" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification Id="1fe5dde7-b9bf-40aa-ad97-5ff733d7a052" name="MessageOccurrenceSpecification">
+            <covered>
+              <lifelineMoniker Id="030d115b-b8d5-4d2a-882c-038bcb5249cd" LastKnownName="PlayerObserver 1" />
             </covered>
           </messageOccurrenceSpecification>
           <executionOccurrenceSpecification Id="d46af9d0-2393-4be3-996e-4601ff149b0e" name="ExecutionOccurrenceSpecification">
@@ -549,14 +549,14 @@
               <lifelineMoniker Id="8a1c0842-9ff7-406e-812b-554cdf7c4991" LastKnownName="GameServerGrain" />
             </covered>
           </executionOccurrenceSpecification>
-          <messageOccurrenceSpecification Id="ac1e69f2-1c5f-477f-8003-e6e185bd66b3" name="MessageOccurrenceSpecification">
-            <covered>
-              <lifelineMoniker Id="4784c379-d5dd-4fb4-b9ed-4b9c9dbf305b" LastKnownName="LobbyGrain" />
-            </covered>
-          </messageOccurrenceSpecification>
           <messageOccurrenceSpecification Id="0506cf43-e3fa-4930-a0d5-c1a44069b3f2" name="MessageOccurrenceSpecification">
             <covered>
               <lifelineMoniker Id="2a486f03-3c00-40fb-ae99-91de9257afbd" LastKnownName="PlayerRegistrationGrain" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification Id="ac1e69f2-1c5f-477f-8003-e6e185bd66b3" name="MessageOccurrenceSpecification">
+            <covered>
+              <lifelineMoniker Id="4784c379-d5dd-4fb4-b9ed-4b9c9dbf305b" LastKnownName="LobbyGrain" />
             </covered>
           </messageOccurrenceSpecification>
           <executionOccurrenceSpecification Id="2a9604ff-ff69-4441-869a-7be4999f9c40" name="ExecutionOccurrenceSpecification">

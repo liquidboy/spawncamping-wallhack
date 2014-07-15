@@ -14,6 +14,7 @@
     <Name>Cloud.LobbyService</Name>
     <UseWebProjectPorts>False</UseWebProjectPorts>
     <UseEmulatorExpressByDefault>False</UseEmulatorExpressByDefault>
+    <PackageEnableRemoteDebugger>False</PackageEnableRemoteDebugger>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
